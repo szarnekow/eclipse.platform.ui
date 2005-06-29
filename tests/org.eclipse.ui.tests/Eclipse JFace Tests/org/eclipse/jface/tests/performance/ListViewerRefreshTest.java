@@ -60,6 +60,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 
 		tagIfNecessary("JFace - Refresh 100 item ListViewer 10 times",
 				Dimension.ELAPSED_PROCESS);
+		setDegradationComment("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=99022");
 
 		openBrowser();
 
@@ -70,7 +71,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, JFacePerformanceSuite.MIN_ITERATIONS, ITERATIONS,
+		}, MIN_ITERATIONS, ITERATIONS,
 				JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

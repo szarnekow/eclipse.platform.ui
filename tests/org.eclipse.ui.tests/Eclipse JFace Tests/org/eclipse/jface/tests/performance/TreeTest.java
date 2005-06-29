@@ -171,6 +171,7 @@ public class TreeTest extends ViewerTest {
 
 		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
 				Dimension.ELAPSED_PROCESS);
+		setDegradationComment("https://bugs.eclipse.org/bugs/show_bug.cgi?id=101853");
 
 		doTestAdd(100, TEST_COUNT, false);
 	}
@@ -181,18 +182,10 @@ public class TreeTest extends ViewerTest {
 	 * @param count
 	 * @throws CoreException
 	 */
-	private void doTestAdd(final int increment, final int total,final boolean preSort)
+	protected void doTestAdd(final int increment, final int total,final boolean preSort)
 			throws CoreException {
 
 		openBrowser();
-
-		int iterations = ITERATIONS;
-		int minIterations = JFacePerformanceSuite.MIN_ITERATIONS;
-
-		if (total > 100) {// Cut it down for large data sets
-			iterations = ITERATIONS / 5;
-			minIterations = minIterations / 5;
-		}
 
 		exercise(new TestRunnable() {
 			public void run() {
@@ -223,7 +216,7 @@ public class TreeTest extends ViewerTest {
 				stopMeasuring();
 
 			}
-		}, minIterations, iterations, JFacePerformanceSuite.MAX_TIME);
+		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
 		assertPerformance();
