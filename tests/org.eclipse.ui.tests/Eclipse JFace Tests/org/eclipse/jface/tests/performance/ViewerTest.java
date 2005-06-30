@@ -29,7 +29,7 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 	Shell browserShell;
 	
 	public static int ITERATIONS = 100;
-	public static int MIN_ITERATIONS = 20;
+	public static int MIN_ITERATIONS = 5;
 
 	public ViewerTest(String testName, int tagging) {
 		super(testName, tagging);
