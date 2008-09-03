@@ -40,7 +40,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
-	Map collationKeys = new HashMap(0);
+	Map collationKeys = null;
 	private String folder;
 	IMarker marker;
 
@@ -67,8 +67,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getAttributeValue(java.lang.String,
-	 *      boolean)
+	 * @seeorg.eclipse.ui.internal.provisional.views.markers.MarkerItem#
+	 * getAttributeValue(java.lang.String, boolean)
 	 */
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
 		Object value = getAttributeValue(attribute);
@@ -80,8 +80,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.markers.MarkerItem#getAttributeValue(java.lang.String,
-	 *      int)
+	 * @see
+	 * org.eclipse.ui.views.markers.MarkerItem#getAttributeValue(java.lang.String
+	 * , int)
 	 */
 	public int getAttributeValue(String attribute, int defaultValue) {
 
@@ -115,9 +116,12 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		return value;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getAttributeValue(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getAttributeValue
+	 * (java.lang.String, java.lang.String)
 	 */
 	public String getAttributeValue(String attribute, String defaultValue) {
 
@@ -127,7 +131,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		// The following toString() is a no-op for string attribute
 		// values (which we expect!), but safeguards against clients
 		// who used non-String objects (e.g. Integer) as attribute values,
-		// see bug 218249. 
+		// see bug 218249.
 		return value.toString();
 	}
 
@@ -143,7 +147,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
 	MarkerSupportItem[] getChildren() {
 		return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
@@ -158,13 +163,16 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @return CollationKey
 	 */
 	CollationKey getCollationKey(String attribute, String defaultValue) {
-		if (collationKeys.containsKey(attribute))
+
+		if (collationKeys != null && collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
 		String attributeValue = getAttributeValue(attribute, defaultValue);
 		if (attributeValue.length() == 0)
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		CollationKey key = Collator.getInstance().getCollationKey(
 				attributeValue);
+		if (collationKeys == null)
+			collationKeys = new HashMap(2);
 		collationKeys.put(attribute, key);
 		return key;
 	}
@@ -172,7 +180,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
 	long getCreationTime() {
 		try {
@@ -186,7 +195,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
 	String getDescription() {
 		return getAttributeValue(IMarker.MESSAGE,
@@ -246,7 +256,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName
+	 * ()
 	 */
 	String getMarkerTypeName() {
 		try {
@@ -347,6 +359,14 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setMarker(IMarker marker) {
 		this.marker = marker;
+		attributeCache.clear();
+	}
+
+	/**
+	 * Clear the cached values for performance reasons.
+	 */
+	void clearCaches() {
+		collationKeys = null;
 		attributeCache.clear();
 	}
 }
