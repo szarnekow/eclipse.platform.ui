@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - but 194734
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -14,7 +15,7 @@ package org.eclipse.core.databinding.property;
 /**
  * Marker interface for all listener types in the properties framework.
  * 
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 1.2
  */

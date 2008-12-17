@@ -369,8 +369,7 @@ public abstract class SimpleMapProperty extends MapProperty implements
 		final Realm realm = master.getRealm();
 		IObservableFactory factory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return new SimpleMapPropertyObservableMap(realm, target,
-						SimpleMapProperty.this);
+				return SimpleMapProperty.this.observeMap(realm, target);
 			}
 		};
 		return MasterDetailObservables.detailMap(master, factory);

@@ -135,8 +135,7 @@ public abstract class SimpleValueProperty extends ValueProperty {
 		final Realm realm = master.getRealm();
 		IObservableFactory factory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return new SimpleValuePropertyObservableValue(realm, target,
-						SimpleValueProperty.this);
+				return SimpleValueProperty.this.observeValue(realm, target);
 			}
 		};
 		return MasterDetailObservables.detailValue(master, factory, valueType);

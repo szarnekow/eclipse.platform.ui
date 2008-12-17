@@ -422,12 +422,13 @@ public abstract class SimpleListProperty extends ListProperty {
 
 	public IObservableList observeDetailList(IObservableValue master) {
 		final Realm realm = master.getRealm();
-		return MasterDetailObservables.detailList(master,
-				new IObservableFactory() {
-					public IObservable createObservable(Object target) {
-						return observeList(realm, target);
-					}
-				}, getElementType());
+		IObservableFactory factory = new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return SimpleListProperty.this.observeList(realm, target);
+			}
+		};
+		return MasterDetailObservables.detailList(master, factory,
+				getElementType());
 	}
 
 	/**
