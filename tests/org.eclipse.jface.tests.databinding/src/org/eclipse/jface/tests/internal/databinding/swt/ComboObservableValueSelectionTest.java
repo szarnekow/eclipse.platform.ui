@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bug 213145, 194734
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -22,10 +22,10 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+import org.eclipse.jface.databinding.swt.ComboProperties;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class ComboObservableValueSelectionTest extends TestCase {
 	private Delegate delegate;
@@ -67,9 +67,11 @@ public class ComboObservableValueSelectionTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ComboObservableValueSelectionTest.class.toString());
+		TestSuite suite = new TestSuite(ComboObservableValueSelectionTest.class
+				.toString());
 		suite.addTestSuite(ComboObservableValueSelectionTest.class);
-		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(SWTMutableObservableValueContractTest
+				.suite(new Delegate()));
 		return suite;
 	}
 
@@ -91,16 +93,15 @@ public class ComboObservableValueSelectionTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ComboObservableValue(realm, combo,
-					SWTProperties.SELECTION);
+			return new SWTObservableValueDecorator(ComboProperties.selection()
+					.observeValue(realm, combo), combo);
 		}
 
 		public void change(IObservable observable) {
 			int index = combo
 					.indexOf((String) createValue((IObservableValue) observable));
 
-			combo.select(index);
-			combo.notifyListeners(SWT.Selection, null);
+			((IObservableValue) observable).setValue(combo.getItem(index));
 		}
 
 		public Object getValueType(IObservableValue observable) {

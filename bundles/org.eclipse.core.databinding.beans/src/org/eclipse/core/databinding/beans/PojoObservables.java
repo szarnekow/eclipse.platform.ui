@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 221704, 234686, 246625, 226289, 246782
+ *     Matthew Hall - bugs 221704, 234686, 246625, 226289, 246782, 194734
  *******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -23,15 +23,15 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.map.IMapProperty;
+import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
-import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
-import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap;
+import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
 
 /**
  * A factory for creating observable objects for POJOs (plain old java objects)
@@ -73,10 +73,12 @@ final public class PojoObservables {
 	 */
 	public static IObservableValue observeValue(Realm realm, Object pojo,
 			String propertyName) {
-
-		PropertyDescriptor descriptor = BeansObservables.getPropertyDescriptor(
-				pojo.getClass(), propertyName);
-		return new JavaBeanObservableValue(realm, pojo, descriptor, false);
+		IValueProperty property = PojoProperties.value(pojo.getClass(),
+				propertyName);
+		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
+				.getPropertyDescriptor();
+		return new BeanObservableValueDecorator(property.observeValue(realm,
+				pojo), propertyDescriptor);
 	}
 
 	/**
@@ -94,9 +96,12 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class pojoClass, String propertyName) {
-		PropertyDescriptor descriptor = BeansObservables.getPropertyDescriptor(
-				pojoClass, propertyName);
-		return new JavaBeanObservableMap(domain, descriptor, false);
+		IValueProperty property = PojoProperties.value(pojoClass,
+				propertyName);
+		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
+				.getPropertyDescriptor();
+		return new BeanObservableMapDecorator(property
+				.observeDetailValues(domain), propertyDescriptor);
 	}
 
 	/**
@@ -161,10 +166,12 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(Realm realm, Object pojo,
 			String propertyName, Class keyType, Class valueType) {
-		PropertyDescriptor descriptor = BeansObservables.getPropertyDescriptor(
-				pojo.getClass(), propertyName);
-		return new JavaBeanPropertyObservableMap(realm, pojo, descriptor,
-				keyType, valueType, false);
+		IMapProperty property = PojoProperties.map(pojo.getClass(),
+				propertyName, keyType, valueType);
+		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
+				.getPropertyDescriptor();
+		return new BeanObservableMapDecorator(property.observeMap(realm, pojo),
+				propertyDescriptor);
 	}
 
 	/**
@@ -250,9 +257,9 @@ final public class PojoObservables {
 	 * collection-typed named property of the given bean object. The returned
 	 * list is mutable. When an item is added or removed the setter is invoked
 	 * for the list on the parent bean to provide notification to other
-	 * listeners via <code>PropertyChangeEvents</code>. This is done to
-	 * provide the same behavior as is expected from arrays as specified in the
-	 * bean spec in section 7.2.
+	 * listeners via <code>PropertyChangeEvents</code>. This is done to provide
+	 * the same behavior as is expected from arrays as specified in the bean
+	 * spec in section 7.2.
 	 * 
 	 * @param realm
 	 *            the realm
@@ -261,8 +268,8 @@ final public class PojoObservables {
 	 * @param propertyName
 	 *            the name of the property
 	 * @param elementType
-	 *            type of the elements in the list. If <code>null</code> and
-	 *            the property is an array the type will be inferred. If
+	 *            type of the elements in the list. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
 	 *            <code>null</code> and the property type cannot be inferred
 	 *            element type will be <code>null</code>.
 	 * @return an observable list tracking the collection-typed named property
@@ -270,13 +277,12 @@ final public class PojoObservables {
 	 */
 	public static IObservableList observeList(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
-		PropertyDescriptor propertyDescriptor = BeansObservables
-				.getPropertyDescriptor(pojo.getClass(), propertyName);
-		elementType = BeansObservables.getCollectionElementType(elementType,
-				propertyDescriptor);
-
-		return new JavaBeanObservableList(realm, pojo, propertyDescriptor,
-				elementType, false);
+		IListProperty property = PojoProperties.list(pojo.getClass(),
+				propertyName, elementType);
+		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
+				.getPropertyDescriptor();
+		return new BeanObservableListDecorator(property
+				.observeList(realm, pojo), propertyDescriptor);
 	}
 
 	/**
@@ -360,13 +366,12 @@ final public class PojoObservables {
 	 */
 	public static IObservableSet observeSet(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
-		PropertyDescriptor propertyDescriptor = BeansObservables
-				.getPropertyDescriptor(pojo.getClass(), propertyName);
-		elementType = BeansObservables.getCollectionElementType(elementType,
+		ISetProperty property = PojoProperties.set(pojo.getClass(),
+				propertyName, elementType);
+		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
+				.getPropertyDescriptor();
+		return new BeanObservableSetDecorator(property.observeSet(realm, pojo),
 				propertyDescriptor);
-
-		return new JavaBeanObservableSet(realm, pojo, propertyDescriptor,
-				elementType, false);
 	}
 
 	/**
@@ -594,11 +599,8 @@ final public class PojoObservables {
 
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, propertyName), propertyType);
-		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, BeansObservables.getValueTypePropertyDescriptor(master,
-						propertyName));
-
-		return decorator;
+		return new BeanObservableValueDecorator(value, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/**
@@ -645,11 +647,9 @@ final public class PojoObservables {
 		IObservableList observableList = MasterDetailObservables.detailList(
 				master, listFactory(realm, propertyName, propertyType),
 				propertyType);
-		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
-				observableList, BeansObservables
-						.getValueTypePropertyDescriptor(master, propertyName));
-
-		return decorator;
+		return new BeanObservableListDecorator(observableList,
+				BeanPropertyHelper.getValueTypePropertyDescriptor(master,
+						propertyName));
 	}
 
 	/**
@@ -697,11 +697,8 @@ final public class PojoObservables {
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
 				master, setFactory(realm, propertyName, propertyType),
 				propertyType);
-		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
-				observableSet, BeansObservables.getValueTypePropertyDescriptor(
-						master, propertyName));
-
-		return decorator;
+		return new BeanObservableSetDecorator(observableSet, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/**
@@ -733,17 +730,16 @@ final public class PojoObservables {
 	 * @param propertyName
 	 * @return an observable map that tracks the map-type named property for the
 	 *         current value of the master observable value.
-	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)} instead
+	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)}
+	 *             instead
 	 */
 	public static IObservableMap observeDetailMap(Realm realm,
 			IObservableValue master, String propertyName) {
 		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
 				master, mapPropertyFactory(realm, propertyName));
-		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
-				observableMap, BeansObservables.getValueTypePropertyDescriptor(
-						master, propertyName));
-		return decorator;
+		return new BeanObservableMapDecorator(observableMap, BeanPropertyHelper
+				.getValueTypePropertyDescriptor(master, propertyName));
 	}
 
 	/**
