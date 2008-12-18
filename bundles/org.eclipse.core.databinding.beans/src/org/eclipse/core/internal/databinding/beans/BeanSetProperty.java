@@ -34,7 +34,6 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  */
 public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty {
 	private PropertyDescriptor propertyDescriptor;
-	private Class elementType;
 
 	/**
 	 * @param propertyDescriptor
@@ -140,6 +139,7 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 		String propertyName = propertyDescriptor.getName();
 		String s = beanClass.getName() + "." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
 
+		Class elementType = (Class) getElementType();
 		if (elementType != null)
 			s += " <" + elementType.getName() + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;
