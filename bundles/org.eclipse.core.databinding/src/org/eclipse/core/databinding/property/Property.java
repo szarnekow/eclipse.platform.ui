@@ -13,6 +13,8 @@ package org.eclipse.core.databinding.property;
 
 /**
  * Abstract IProperty implementation
+ * 
+ * @since 1.2
  */
 public abstract class Property implements IProperty {
 	/**
