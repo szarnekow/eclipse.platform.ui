@@ -36,9 +36,15 @@ import org.eclipse.core.internal.databinding.Util;
  * <p>
  * Subclasses must implement these methods:
  * <ul>
- * <li>{@link #getKeyType()}
- * <li>{@link #getValueType()}
+ * <li> {@link #doGetMap(Object)}
+ * <li> {@link #setMap(Object, Map, MapDiff)}
+ * <li> {@link #adaptListener(IMapPropertyChangeListener)}
+ * <li> {@link #addListener(Object, INativePropertyListener)}
+ * <li> {@link #removeListener(Object, INativePropertyListener)}
  * </ul>
+ * <p>
+ * In addition, we recommended overriding {@link #toString()} to return a
+ * description suitable for debugging purposes.
  * 
  * @since 1.2
  */

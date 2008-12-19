@@ -34,13 +34,15 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <p>
  * Subclasses must implement these methods:
  * <ul>
- * <li> {@link #getSet(Object)}
+ * <li> {@link #doGetSet(Object)}
  * <li> {@link #setSet(Object, Set, SetDiff)}
  * <li> {@link #adaptListener(ISetPropertyChangeListener)}
  * <li> {@link #addListener(Object, INativePropertyListener)}
  * <li> {@link #removeListener(Object, INativePropertyListener)}
- * <li> {@link #toString()}
  * </ul>
+ * <p>
+ * In addition, we recommended overriding {@link #toString()} to return a
+ * description suitable for debugging purposes.
  * 
  * @since 1.2
  */

@@ -33,8 +33,10 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <li> {@link #adaptListener(IValuePropertyChangeListener)}
  * <li> {@link #addListener(Object, INativePropertyListener)}
  * <li> {@link #removeListener(Object, INativePropertyListener)}
- * <li> {@link #toString()}
  * </ul>
+ * <p>
+ * In addition, we recommended overriding {@link #toString()} to return a
+ * description suitable for debugging purposes.
  * 
  * @since 1.2
  */
