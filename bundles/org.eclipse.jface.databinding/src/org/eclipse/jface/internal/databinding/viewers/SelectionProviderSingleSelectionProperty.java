@@ -11,37 +11,27 @@
 
 package org.eclipse.jface.internal.databinding.viewers;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.value.IValuePropertyChangeListener;
-import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.databinding.property.value.ValuePropertyChangeEvent;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
  * 
  */
 public class SelectionProviderSingleSelectionProperty extends
-		SimpleValueProperty {
+		ViewerValueProperty {
 	/**
 	 * 
 	 */
 	public SelectionProviderSingleSelectionProperty() {
 		super(null);
-	}
-
-	public IObservableValue observeValue(Object source) {
-		Viewer viewer = (Viewer) source;
-		return observeValue(SWTObservables.getRealm(viewer.getControl()
-				.getDisplay()), viewer);
 	}
 
 	public Object getValue(Object source) {

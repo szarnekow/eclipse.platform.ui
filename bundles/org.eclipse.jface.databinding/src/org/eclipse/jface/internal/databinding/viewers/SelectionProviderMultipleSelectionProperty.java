@@ -14,37 +14,27 @@ package org.eclipse.jface.internal.databinding.viewers;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.list.IListPropertyChangeListener;
 import org.eclipse.core.databinding.property.list.ListPropertyChangeEvent;
-import org.eclipse.core.databinding.property.list.SimpleListProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
  * 
  */
 public class SelectionProviderMultipleSelectionProperty extends
-		SimpleListProperty {
+		ViewerListProperty {
 	/**
 	 */
 	public SelectionProviderMultipleSelectionProperty() {
 		super(Object.class);
-	}
-
-	public IObservableList observeList(Object source) {
-		Viewer viewer = (Viewer) source;
-		return observeList(SWTObservables.getRealm(viewer.getControl()
-				.getDisplay()), viewer);
 	}
 
 	protected List doGetList(Object source) {

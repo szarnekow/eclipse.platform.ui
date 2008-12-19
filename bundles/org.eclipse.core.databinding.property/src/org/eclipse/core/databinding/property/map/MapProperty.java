@@ -24,7 +24,10 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public abstract class MapProperty extends Property implements IMapProperty {
 	public IObservableMap observeMap(Object source) {
-		return observeMap(Realm.getDefault(), source);
+		Realm realm = getPreferredRealm(source);
+		if (realm == null)
+			realm = Realm.getDefault();
+		return observeMap(realm, source);
 	}
 
 	public final IMapProperty chain(IValueProperty detailValues) {

@@ -17,34 +17,24 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.set.ISetPropertyChangeListener;
 import org.eclipse.core.databinding.property.set.SetPropertyChangeEvent;
-import org.eclipse.core.databinding.property.set.SimpleSetProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
  * 
  */
-public class CheckableCheckedElementsProperty extends SimpleSetProperty {
+public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 	/**
 	 * @param elementType
 	 */
 	public CheckableCheckedElementsProperty(Object elementType) {
 		super(elementType);
-	}
-
-	public IObservableSet observeSet(Object source) {
-		Viewer viewer = (Viewer) source;
-		return observeSet(SWTObservables.getRealm(viewer.getControl()
-				.getDisplay()), viewer);
 	}
 
 	protected Set doGetSet(Object source) {

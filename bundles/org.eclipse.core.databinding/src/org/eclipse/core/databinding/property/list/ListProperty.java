@@ -24,7 +24,10 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public abstract class ListProperty extends Property implements IListProperty {
 	public IObservableList observeList(Object source) {
-		return observeList(Realm.getDefault(), source);
+		Realm realm = getPreferredRealm(source);
+		if (realm == null)
+			realm = Realm.getDefault();
+		return observeList(realm, source);
 	}
 
 	public final IListProperty chain(IValueProperty detailValue) {

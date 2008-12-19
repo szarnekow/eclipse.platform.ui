@@ -14,27 +14,18 @@ package org.eclipse.jface.internal.databinding.swt;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.list.IListPropertyChangeListener;
-import org.eclipse.core.databinding.property.list.SimpleListProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
  * 
  */
-public abstract class ControlStringListProperty extends SimpleListProperty {
+public abstract class ControlStringListProperty extends WidgetListProperty {
 	protected ControlStringListProperty() {
 		super(String.class);
-	}
-
-	public IObservableList observeList(Object source) {
-		Widget widget = (Widget) source;
-		return observeList(SWTObservables.getRealm(widget.getDisplay()), widget);
 	}
 
 	protected void setList(Object source, List list, ListDiff diff) {

@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.value.IValuePropertyChangeListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
@@ -38,10 +38,11 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 		this.events = events;
 	}
 
-	public IObservableValue observeValue(Object source) {
-		Widget widget = (Widget) source;
-		return observeValue(SWTObservables.getRealm(widget.getDisplay()),
-				widget);
+	protected Realm getPreferredRealm(Object source) {
+		if (source instanceof Widget) {
+			return SWTObservables.getRealm(((Widget) source).getDisplay());
+		}
+		return super.getPreferredRealm(source);
 	}
 
 	public INativePropertyListener adaptListener(

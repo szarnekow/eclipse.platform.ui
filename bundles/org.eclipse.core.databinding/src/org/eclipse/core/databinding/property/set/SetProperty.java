@@ -25,7 +25,10 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public abstract class SetProperty extends Property implements ISetProperty {
 	public IObservableSet observeSet(Object source) {
-		return observeSet(Realm.getDefault(), source);
+		Realm realm = getPreferredRealm(source);
+		if (realm == null)
+			realm = Realm.getDefault();
+		return observeSet(realm, source);
 	}
 
 	public final IMapProperty chain(IValueProperty detailValues) {

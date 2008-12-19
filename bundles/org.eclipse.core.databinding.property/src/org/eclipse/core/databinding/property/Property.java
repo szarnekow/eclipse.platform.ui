@@ -11,10 +11,38 @@
 
 package org.eclipse.core.databinding.property;
 
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.map.IMapProperty;
+import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
+
 /**
  * Abstract IProperty implementation
  * 
  * @since 1.2
  */
 public abstract class Property implements IProperty {
+	/**
+	 * Returns the preferred realm to use when observing the specified property
+	 * source. This method is used to determine the default realm for methods
+	 * lacking an explicit or implicit realm.
+	 * <p>
+	 * The default implementation of this method returns <code>null</code>
+	 * (indicating no preference). Subclasses may override this method to
+	 * return an appropriate realm.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return the preferred realm to use when observing the specified property
+	 *         source, or null if the source object has no implicit preference.
+	 * 
+	 * @see IValueProperty#observeValue(Object)
+	 * @see IListProperty#observeList(Object)
+	 * @see ISetProperty#observeSet(Object)
+	 * @see IMapProperty#observeMap(Object)
+	 */
+	protected Realm getPreferredRealm(Object source) {
+		return null;
+	}
 }

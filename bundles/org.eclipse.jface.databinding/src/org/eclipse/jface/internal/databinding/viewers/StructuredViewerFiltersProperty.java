@@ -15,32 +15,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.set.ISetPropertyChangeListener;
-import org.eclipse.core.databinding.property.set.SimpleSetProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * @since 3.3
  * 
  */
-public class StructuredViewerFiltersProperty extends SimpleSetProperty {
+public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 	/**
 	 * 
 	 */
 	public StructuredViewerFiltersProperty() {
 		super(ViewerFilter.class);
-	}
-
-	public IObservableSet observeSet(Object source) {
-		Viewer viewer = (Viewer) source;
-		return observeSet(SWTObservables.getRealm(viewer.getControl()
-				.getDisplay()), viewer);
 	}
 
 	protected Set doGetSet(Object source) {
