@@ -18,12 +18,4 @@ package org.eclipse.core.databinding.property;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProperty {
-	/**
-	 * Returns a string description of this property, suitable for debugging
-	 * purposes
-	 * 
-	 * @return a string description of this property, suitable for debugging
-	 *         purposes
-	 */
-	String toString();
 }

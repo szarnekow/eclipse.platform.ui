@@ -17,12 +17,4 @@ package org.eclipse.core.databinding.property;
  * @since 1.2
  */
 public abstract class Property implements IProperty {
-	/**
-	 * Returns a string description of this property, suitable for debugging
-	 * purposes
-	 * 
-	 * @return a string description of this property, suitable for debugging
-	 *         purposes
-	 */
-	public abstract String toString();
 }
