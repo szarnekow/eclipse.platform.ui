@@ -374,18 +374,30 @@ class ObservableListSimpleValuePropertyObservableList extends
 				if (!haveIterated)
 					throw new IllegalStateException();
 
+				Object oldValue = cachedValues.get(new IdentityWrapper(
+						lastMasterElement));
+
 				boolean wasUpdating = updating;
+				boolean changed;
 				updating = true;
 				try {
-					detailProperty.setValue(lastElement, o);
+					changed = detailProperty.setValue(lastElement, o);
 				} finally {
 					updating = wasUpdating;
 				}
 
-				cachedValues.put(new IdentityWrapper(lastMasterElement), o);
-				fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-						lastIndex, false, lastElement), Diffs
-						.createListDiffEntry(lastIndex, true, o)));
+				if (changed) {
+					Object newValue = detailProperty.getValue(lastElement);
+
+					if (!Util.equals(oldValue, newValue)) {
+						cachedValues.put(
+								new IdentityWrapper(lastMasterElement), o);
+						fireListChange(Diffs.createListDiff(Diffs
+								.createListDiffEntry(lastIndex, false,
+										lastElement), Diffs
+								.createListDiffEntry(lastIndex, true, o)));
+					}
+				}
 
 				lastElement = o;
 			}
@@ -402,16 +414,24 @@ class ObservableListSimpleValuePropertyObservableList extends
 		Object oldValue = detailProperty.getValue(masterElement);
 
 		boolean wasUpdating = updating;
+		boolean changed;
 		updating = true;
 		try {
-			detailProperty.setValue(masterElement, o);
+			changed = detailProperty.setValue(masterElement, o);
 		} finally {
 			updating = wasUpdating;
 		}
 
-		cachedValues.put(new IdentityWrapper(masterElement), o);
-		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
-				false, oldValue), Diffs.createListDiffEntry(index, true, o)));
+		if (changed) {
+			Object newValue = detailProperty.getValue(masterElement);
+
+			if (!Util.equals(oldValue, newValue)) {
+				cachedValues.put(new IdentityWrapper(masterElement), o);
+				fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
+						index, false, oldValue), Diffs.createListDiffEntry(
+						index, true, o)));
+			}
+		}
 
 		return oldValue;
 	}

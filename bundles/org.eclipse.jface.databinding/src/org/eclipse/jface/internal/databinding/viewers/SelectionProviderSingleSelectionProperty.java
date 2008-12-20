@@ -27,11 +27,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class SelectionProviderSingleSelectionProperty extends
 		ViewerValueProperty {
-	/**
-	 * 
-	 */
-	public SelectionProviderSingleSelectionProperty() {
-		super(null);
+	protected Object getValueType() {
+		return null;
 	}
 
 	public Object getValue(Object source) {
@@ -42,10 +39,13 @@ public class SelectionProviderSingleSelectionProperty extends
 		return null;
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		((ISelectionProvider) source)
 				.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
+		return true;
 	}
 
 	public INativePropertyListener adaptListener(

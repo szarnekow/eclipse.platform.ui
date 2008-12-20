@@ -26,11 +26,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * 
  */
 public class StructuredViewerFiltersProperty extends ViewerSetProperty {
-	/**
-	 * 
-	 */
-	public StructuredViewerFiltersProperty() {
-		super(ViewerFilter.class);
+	protected Object getElementType() {
+		return ViewerFilter.class;
 	}
 
 	protected Set doGetSet(Object source) {
@@ -38,7 +35,9 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 				.getFilters()));
 	}
 
-	public void setSet(Object source, Set set, SetDiff diff) {
+	public boolean setSet(Object source, Set set, SetDiff diff) {
+		if (source == null)
+			return false;
 		StructuredViewer viewer = (StructuredViewer) source;
 		viewer.getControl().setRedraw(false);
 		try {
@@ -47,6 +46,7 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 		} finally {
 			viewer.getControl().setRedraw(true);
 		}
+		return true;
 	}
 
 	public INativePropertyListener adaptListener(

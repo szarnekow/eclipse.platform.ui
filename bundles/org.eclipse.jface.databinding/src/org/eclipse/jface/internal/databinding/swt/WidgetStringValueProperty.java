@@ -16,20 +16,27 @@ package org.eclipse.jface.internal.databinding.swt;
  * 
  */
 public abstract class WidgetStringValueProperty extends WidgetValueProperty {
-	WidgetStringValueProperty(int event) {
-		super(event, String.class);
+	WidgetStringValueProperty() {
+		super();
 	}
 
-	WidgetStringValueProperty() {
-		super(String.class);
+	WidgetStringValueProperty(int event) {
+		super(event);
+	}
+
+	protected Object getValueType() {
+		return String.class;
 	}
 
 	public Object getValue(Object source) {
 		return doGetStringValue(source);
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		doSetStringValue(source, (String) value);
+		return true;
 	}
 
 	abstract String doGetStringValue(Object source);

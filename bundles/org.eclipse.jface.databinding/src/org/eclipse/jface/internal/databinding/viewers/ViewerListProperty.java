@@ -21,10 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class ViewerListProperty extends SimpleListProperty {
-	protected ViewerListProperty(Object elementType) {
-		super(elementType);
-	}
-
 	protected Realm getPreferredRealm(Object source) {
 		if (source instanceof Viewer) {
 			return SWTObservables.getRealm(((Viewer) source).getControl()

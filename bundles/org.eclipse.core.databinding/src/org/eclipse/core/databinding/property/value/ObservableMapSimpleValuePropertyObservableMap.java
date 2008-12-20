@@ -283,18 +283,21 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 
 			Object oldValue = detailProperty.getValue(source);
 
+			boolean changed;
 			updating = true;
 			try {
-				detailProperty.setValue(source, value);
+				changed = detailProperty.setValue(source, value);
 			} finally {
 				updating = false;
 			}
 
-			Object newValue = detailProperty.getValue(source);
-
-			if (!Util.equals(oldValue, newValue)) {
-				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
-						newValue));
+			if (changed) {
+				Object newValue = detailProperty.getValue(source);
+				
+				if (!Util.equals(oldValue, newValue)) {
+					fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
+							newValue));
+				}
 			}
 
 			return oldValue;

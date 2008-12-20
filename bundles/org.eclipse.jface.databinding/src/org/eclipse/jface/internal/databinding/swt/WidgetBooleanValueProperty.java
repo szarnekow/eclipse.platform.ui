@@ -16,26 +16,33 @@ package org.eclipse.jface.internal.databinding.swt;
  * 
  */
 public abstract class WidgetBooleanValueProperty extends WidgetValueProperty {
-	WidgetBooleanValueProperty(int[] events) {
-		super(events, Boolean.TYPE);
+	WidgetBooleanValueProperty() {
+		super();
 	}
 
 	WidgetBooleanValueProperty(int event) {
-		super(event, Boolean.TYPE);
+		super(event);
 	}
 
-	WidgetBooleanValueProperty() {
-		super(Boolean.TYPE);
+	WidgetBooleanValueProperty(int[] events) {
+		super(events);
+	}
+
+	protected Object getValueType() {
+		return Boolean.TYPE;
 	}
 
 	public Object getValue(Object source) {
 		return doGetBooleanValue(source) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		if (value == null)
 			value = Boolean.FALSE;
 		doSetBooleanValue(source, ((Boolean) value).booleanValue());
+		return true;
 	}
 
 	abstract boolean doGetBooleanValue(Object source);

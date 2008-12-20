@@ -33,7 +33,8 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * 
  */
 public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty {
-	private PropertyDescriptor propertyDescriptor;
+	private final PropertyDescriptor propertyDescriptor;
+	private final Class elementType;
 
 	/**
 	 * @param propertyDescriptor
@@ -41,10 +42,14 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 	 */
 	public BeanSetProperty(PropertyDescriptor propertyDescriptor,
 			Class elementType) {
-		super(elementType == null ? BeanPropertyHelper
-				.getCollectionPropertyElementType(propertyDescriptor)
-				: elementType);
 		this.propertyDescriptor = propertyDescriptor;
+		this.elementType = elementType == null ? BeanPropertyHelper
+				.getCollectionPropertyElementType(propertyDescriptor)
+				: elementType;
+	}
+
+	protected Object getElementType() {
+		return elementType;
 	}
 
 	protected Set doGetSet(Object source) {
@@ -63,11 +68,12 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 		return (Set) propertyValue;
 	}
 
-	protected void setSet(Object source, Set set, SetDiff diff) {
-		if (source != null) {
-			BeanPropertyHelper.writeProperty(source, propertyDescriptor,
-					convertSetToBeanPropertyType(set));
-		}
+	protected boolean setSet(Object source, Set set, SetDiff diff) {
+		if (source == null)
+			return false;
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
+				convertSetToBeanPropertyType(set));
+		return true;
 	}
 
 	private Object convertSetToBeanPropertyType(Set set) {
@@ -139,7 +145,6 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 		String propertyName = propertyDescriptor.getName();
 		String s = beanClass.getName() + "." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		Class elementType = (Class) getElementType();
 		if (elementType != null)
 			s += " <" + elementType.getName() + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;

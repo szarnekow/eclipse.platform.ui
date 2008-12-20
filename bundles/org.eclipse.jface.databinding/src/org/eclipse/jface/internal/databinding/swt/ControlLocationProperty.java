@@ -25,15 +25,22 @@ public class ControlLocationProperty extends WidgetValueProperty {
 	 * 
 	 */
 	public ControlLocationProperty() {
-		super(SWT.Move, Point.class);
+		super(SWT.Move);
+	}
+
+	protected Object getValueType() {
+		return Point.class;
 	}
 
 	public Object getValue(Object source) {
 		return ((Control) source).getLocation();
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		((Control) source).setLocation((Point) value);
+		return true;
 	}
 
 	public String toString() {

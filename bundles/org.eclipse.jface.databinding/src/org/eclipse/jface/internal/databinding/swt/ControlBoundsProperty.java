@@ -25,15 +25,22 @@ public class ControlBoundsProperty extends WidgetValueProperty {
 	 * 
 	 */
 	public ControlBoundsProperty() {
-		super(new int[] { SWT.Resize, SWT.Move }, Rectangle.class);
+		super(new int[] { SWT.Resize, SWT.Move });
+	}
+
+	protected Object getValueType() {
+		return Rectangle.class;
 	}
 
 	public Object getValue(Object source) {
 		return ((Control) source).getBounds();
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		((Control) source).setBounds((Rectangle) value);
+		return true;
 	}
 
 	public String toString() {

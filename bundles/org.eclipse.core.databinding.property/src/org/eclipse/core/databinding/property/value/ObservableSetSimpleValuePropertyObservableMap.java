@@ -106,19 +106,24 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 	protected Object doPut(Object key, Object value) {
 		Object oldValue = detailProperty.getValue(key);
 
+		boolean changed;
 		updating = true;
 		try {
-			detailProperty.setValue(key, value);
+			changed = detailProperty.setValue(key, value);
 		} finally {
 			updating = false;
 		}
-		Object newValue = detailProperty.getValue(key);
-		cachedValues.put(key, newValue);
-
-		if (oldValue != newValue) {
-			fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
-					newValue));
+		
+		if (changed) {
+			Object newValue = detailProperty.getValue(key);
+			cachedValues.put(key, newValue);
+			
+			if (oldValue != newValue) {
+				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
+						newValue));
+			}
 		}
+
 		return oldValue;
 	}
 

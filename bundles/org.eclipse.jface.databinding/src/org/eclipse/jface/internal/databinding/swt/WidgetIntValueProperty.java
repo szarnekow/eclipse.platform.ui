@@ -17,23 +17,30 @@ package org.eclipse.jface.internal.databinding.swt;
  */
 public abstract class WidgetIntValueProperty extends WidgetValueProperty {
 	WidgetIntValueProperty() {
-		super(Integer.TYPE);
+		super();
 	}
 
 	WidgetIntValueProperty(int event) {
-		super(event, Integer.TYPE);
+		super(event);
 	}
 
 	WidgetIntValueProperty(int[] events) {
-		super(events, Integer.TYPE);
+		super(events);
+	}
+
+	protected Object getValueType() {
+		return Integer.TYPE;
 	}
 
 	public Object getValue(Object source) {
 		return new Integer(doGetIntValue(source));
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		doSetIntValue(source, ((Integer) value).intValue());
+		return true;
 	}
 
 	abstract int doGetIntValue(Object source);

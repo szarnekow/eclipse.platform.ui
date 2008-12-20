@@ -21,10 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class ViewerValueProperty extends SimpleValueProperty {
-	protected ViewerValueProperty(Object valueType) {
-		super(valueType);
-	}
-
 	protected Realm getPreferredRealm(Object source) {
 		if (source instanceof Viewer) {
 			return SWTObservables.getRealm(((Viewer) source).getControl()

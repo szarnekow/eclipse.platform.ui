@@ -35,6 +35,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
 public class BeanListProperty extends SimpleListProperty implements
 		IBeanProperty {
 	private final PropertyDescriptor propertyDescriptor;
+	private final Class elementType;
 
 	/**
 	 * @param propertyDescriptor
@@ -42,10 +43,14 @@ public class BeanListProperty extends SimpleListProperty implements
 	 */
 	public BeanListProperty(PropertyDescriptor propertyDescriptor,
 			Class elementType) {
-		super(elementType == null ? BeanPropertyHelper
-				.getCollectionPropertyElementType(propertyDescriptor)
-				: elementType);
 		this.propertyDescriptor = propertyDescriptor;
+		this.elementType = elementType == null ? BeanPropertyHelper
+				.getCollectionPropertyElementType(propertyDescriptor)
+				: elementType;
+	}
+
+	protected Object getElementType() {
+		return elementType;
 	}
 
 	protected List doGetList(Object source) {
@@ -64,11 +69,12 @@ public class BeanListProperty extends SimpleListProperty implements
 		return (List) propertyValue;
 	}
 
-	protected void setList(Object source, List list, ListDiff diff) {
-		if (source != null) {
-			BeanPropertyHelper.writeProperty(source, propertyDescriptor,
-					convertListToBeanPropertyType(list));
-		}
+	protected boolean setList(Object source, List list, ListDiff diff) {
+		if (source == null)
+			return false;
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
+				convertListToBeanPropertyType(list));
+		return true;
 	}
 
 	private Object convertListToBeanPropertyType(List list) {
@@ -141,7 +147,6 @@ public class BeanListProperty extends SimpleListProperty implements
 		String propertyName = propertyDescriptor.getName();
 		String s = beanClass.getName() + "." + propertyName + "[]"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		Class elementType = (Class) getElementType();
 		if (elementType != null)
 			s += " <" + elementType.getName() + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;

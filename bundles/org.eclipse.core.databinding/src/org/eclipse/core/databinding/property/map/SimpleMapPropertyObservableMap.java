@@ -11,8 +11,11 @@
 
 package org.eclipse.core.databinding.property.map;
 
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,8 +26,8 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
-import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 
 /**
@@ -53,6 +56,14 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 		super(realm);
 		this.source = source;
 		this.property = property;
+	}
+
+	public Object getKeyType() {
+		return property.getKeyType();
+	}
+
+	public Object getValueType() {
+		return property.getValueType();
 	}
 
 	private void getterCalled() {
@@ -99,141 +110,175 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 		cachedMap = null;
 	}
 
-	public boolean containsKey(Object key) {
-		getterCalled();
-		return property.containsKey(source, key);
+	// Queries
+
+	private Map getMap() {
+		return property.getMap(source);
 	}
 
-	public boolean containsValue(Object value) {
-		getterCalled();
-		return property.containsValue(source, value);
-	}
+	// Single change operations
+
+	private EntrySet es = new EntrySet();
 
 	public Set entrySet() {
 		getterCalled();
-		// unmodifiable for now
-		return Collections.unmodifiableSet(property.getMap(source).entrySet());
+		return es;
 	}
 
-	public Object get(Object key) {
-		getterCalled();
-		return property.get(source, key);
+	private class EntrySet extends AbstractSet {
+		public Iterator iterator() {
+			return new EntrySetIterator();
+		}
+
+		public int size() {
+			return getMap().size();
+		}
 	}
 
-	public boolean isEmpty() {
-		getterCalled();
-		return property.isEmpty(source);
+	private class EntrySetIterator implements Iterator {
+		private volatile int expectedModCount = modCount;
+		Map map = new HashMap(getMap());
+		Iterator iterator = map.entrySet().iterator();
+		Map.Entry last = null;
+
+		public boolean hasNext() {
+			getterCalled();
+			checkForComodification();
+			return iterator.hasNext();
+		}
+
+		public Object next() {
+			getterCalled();
+			checkForComodification();
+			last = (Map.Entry) iterator.next();
+			return last;
+		}
+
+		public void remove() {
+			getterCalled();
+			checkForComodification();
+
+			iterator.remove(); // stay in sync
+			MapDiff diff = Diffs.createMapDiffSingleRemove(last.getKey(), last
+					.getValue());
+
+			boolean wasUpdating = updating;
+			boolean changed;
+			updating = true;
+			try {
+				changed = property.setMap(source, map, diff);
+			} finally {
+				updating = wasUpdating;
+			}
+
+			if (changed) {
+				cachedMap = getMap();
+				fireMapChange(diff);
+
+				last = null;
+				expectedModCount = modCount;
+			}
+		}
+
+		private void checkForComodification() {
+			if (expectedModCount != modCount)
+				throw new ConcurrentModificationException();
+		}
 	}
 
 	public Set keySet() {
 		getterCalled();
-		return Collections.unmodifiableSet(property.getMap(source).keySet());
+		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
+		// getterCalled() and comodification checks will still be handled
+		return super.keySet();
 	}
 
 	public Object put(Object key, Object value) {
 		checkRealm();
 
-		boolean add;
-		Object oldValue;
+		Map map = new HashMap(getMap());
 
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			add = !property.containsKey(source, key);
-			oldValue = property.put(source, key, value);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
+		boolean add = !map.containsKey(key);
 
-		cachedMap = property.getMap(source);
+		Object oldValue = map.put(key, value);
+
 		MapDiff diff;
 		if (add)
 			diff = Diffs.createMapDiffSingleAdd(key, value);
 		else
 			diff = Diffs.createMapDiffSingleChange(key, oldValue, value);
-		fireMapChange(diff);
 
-		return property.put(source, key, value);
+		boolean wasUpdating = updating;
+		boolean changed;
+		updating = true;
+		try {
+			changed = property.setMap(source, map, diff);
+			modCount++;
+		} finally {
+			updating = wasUpdating;
+		}
+
+		if (changed) {
+			cachedMap = property.getMap(source);
+			fireMapChange(diff);
+		}
+
+		return oldValue;
 	}
 
 	public void putAll(Map m) {
 		checkRealm();
 
-		Map oldValues = cachedMap;
+		Map map = new HashMap(getMap());
+
+		Map oldValues = new HashMap();
+		Map newValues = new HashMap();
 		Set changedKeys = new HashSet();
 		Set addedKeys = new HashSet();
 		for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Entry) it.next();
 			Object key = entry.getKey();
-			if (property.containsKey(source, key)) {
+			Object newValue = entry.getValue();
+			if (map.containsKey(key)) {
 				changedKeys.add(key);
+				oldValues.put(key, map.get(key));
 			} else {
 				addedKeys.add(key);
 			}
+			map.put(key, newValue);
+
+			newValues.put(key, newValue);
 		}
 
+		MapDiff diff = Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET,
+				changedKeys, oldValues, newValues);
+
 		boolean wasUpdating = updating;
+		boolean changed;
 		updating = true;
 		try {
-			property.putAll(source, m);
+			changed = property.setMap(source, map, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		Map newValues = cachedMap = property.getMap(source);
-		fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET,
-				changedKeys, oldValues, newValues));
+		if (changed) {
+			cachedMap = getMap();
+			fireMapChange(diff);
+		}
 	}
 
 	public Object remove(Object key) {
 		checkRealm();
-
-		if (!property.containsKey(source, key))
-			return null;
-
-		Object oldValue;
-
-		boolean wasUpdating = updating;
-		updating = true;
-		try {
-			oldValue = property.remove(source, key);
-			modCount++;
-		} finally {
-			updating = wasUpdating;
-		}
-
-		cachedMap = property.getMap(source);
-		fireMapChange(Diffs.createMapDiffSingleRemove(key, oldValue));
-
-		return oldValue;
-	}
-
-	public int size() {
-		getterCalled();
-		return property.size(source);
+		return super.remove(key);
 	}
 
 	public Collection values() {
 		getterCalled();
-		return Collections.unmodifiableCollection(property.getMap(source)
-				.values());
-	}
-
-	public void clear() {
-		getterCalled();
-		property.clear(source);
-	}
-
-	public boolean equals(Object o) {
-		getterCalled();
-		return property.equals(source, o);
-	}
-
-	public int hashCode() {
-		getterCalled();
-		return property.hashCode(source);
+		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
+		// getterCalled() and comodification checks will still be handled
+		return super.values();
 	}
 
 	public Object getObserved() {

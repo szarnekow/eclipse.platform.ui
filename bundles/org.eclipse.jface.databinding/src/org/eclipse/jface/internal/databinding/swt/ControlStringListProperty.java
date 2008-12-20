@@ -24,13 +24,16 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public abstract class ControlStringListProperty extends WidgetListProperty {
-	protected ControlStringListProperty() {
-		super(String.class);
+	protected Object getElementType() {
+		return String.class;
 	}
 
-	protected void setList(Object source, List list, ListDiff diff) {
+	protected boolean setList(Object source, List list, ListDiff diff) {
+		if (source == null)
+			return false;
 		String[] strings = (String[]) list.toArray(new String[list.size()]);
 		doSetStringList((Control) source, strings);
+		return true;
 	}
 
 	abstract void doSetStringList(Control control, String[] list);

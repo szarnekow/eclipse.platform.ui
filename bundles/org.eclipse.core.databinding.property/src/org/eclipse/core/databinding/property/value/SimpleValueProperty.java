@@ -41,21 +41,13 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * @since 1.2
  */
 public abstract class SimpleValueProperty extends ValueProperty {
-	private final Object valueType;
-
-	protected SimpleValueProperty(Object valueType) {
-		this.valueType = valueType;
-	}
-
 	/**
 	 * Returns the value type of the property, or <code>null</code> if untyped.
 	 * 
 	 * @return the value type of the property, or <code>null</code> if untyped.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final Object getValueType() {
-		return valueType;
-	}
+	protected abstract Object getValueType();
 
 	/**
 	 * Returns the source's value property
@@ -74,9 +66,11 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            the property source
 	 * @param value
 	 *            the new value
+	 * @return true if the property was modified on the source object, false
+	 *         otherwise
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void setValue(Object source, Object value);
+	protected abstract boolean setValue(Object source, Object value);
 
 	/**
 	 * Returns a listener which implements the correct listener interface for
@@ -140,7 +134,8 @@ public abstract class SimpleValueProperty extends ValueProperty {
 				return SimpleValueProperty.this.observeValue(realm, target);
 			}
 		};
-		return MasterDetailObservables.detailValue(master, factory, valueType);
+		return MasterDetailObservables.detailValue(master, factory,
+				getValueType());
 	}
 
 	public IObservableList observeDetailValues(IObservableList master) {

@@ -20,19 +20,19 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public class ViewerInputProperty extends ViewerValueProperty {
-	/**
-	 * 
-	 */
-	public ViewerInputProperty() {
-		super(null);
+	protected Object getValueType() {
+		return null;
 	}
 
 	public Object getValue(Object source) {
 		return ((Viewer) source).getInput();
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		((Viewer) source).setInput(value);
+		return true;
 	}
 
 	public INativePropertyListener adaptListener(

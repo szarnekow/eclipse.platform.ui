@@ -25,16 +25,15 @@ import org.eclipse.swt.widgets.Widget;
 abstract class WidgetValueProperty extends SimpleValueProperty {
 	private int[] events;
 
-	WidgetValueProperty(Object valueType) {
-		this(null, valueType);
+	WidgetValueProperty() {
+		this(null);
 	}
 
-	WidgetValueProperty(int event, Object valueType) {
-		this(new int[] { event }, valueType);
+	WidgetValueProperty(int event) {
+		this(new int[] { event });
 	}
 
-	WidgetValueProperty(int[] events, Object valueType) {
-		super(valueType);
+	WidgetValueProperty(int[] events) {
 		this.events = events;
 	}
 

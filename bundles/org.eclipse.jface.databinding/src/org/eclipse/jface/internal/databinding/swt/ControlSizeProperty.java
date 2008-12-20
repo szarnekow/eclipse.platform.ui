@@ -25,15 +25,22 @@ public class ControlSizeProperty extends WidgetValueProperty {
 	 * 
 	 */
 	public ControlSizeProperty() {
-		super(SWT.Resize, Point.class);
+		super(SWT.Resize);
+	}
+
+	protected Object getValueType() {
+		return Point.class;
 	}
 
 	public Object getValue(Object source) {
 		return ((Control) source).getSize();
 	}
 
-	public void setValue(Object source, Object value) {
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
 		((Control) source).setSize((Point) value);
+		return true;
 	}
 
 	public String toString() {

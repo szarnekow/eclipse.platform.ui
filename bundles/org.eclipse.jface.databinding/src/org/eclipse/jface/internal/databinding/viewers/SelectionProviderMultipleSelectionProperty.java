@@ -31,10 +31,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class SelectionProviderMultipleSelectionProperty extends
 		ViewerListProperty {
-	/**
-	 */
-	public SelectionProviderMultipleSelectionProperty() {
-		super(Object.class);
+	protected Object getElementType() {
+		return Object.class;
 	}
 
 	protected List doGetList(Object source) {
@@ -45,9 +43,12 @@ public class SelectionProviderMultipleSelectionProperty extends
 		return Collections.EMPTY_LIST;
 	}
 
-	protected void setList(Object source, List list, ListDiff diff) {
+	protected boolean setList(Object source, List list, ListDiff diff) {
+		if (source == null)
+			return false;
 		((ISelectionProvider) source)
 				.setSelection(new StructuredSelection(list));
+		return true;
 	}
 
 	public INativePropertyListener adaptListener(

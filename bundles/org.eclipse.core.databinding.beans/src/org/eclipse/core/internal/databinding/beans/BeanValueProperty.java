@@ -29,7 +29,8 @@ import org.eclipse.core.databinding.property.value.ValuePropertyChangeEvent;
  */
 public class BeanValueProperty extends SimpleValueProperty implements
 		IBeanProperty {
-	private PropertyDescriptor propertyDescriptor;
+	private final PropertyDescriptor propertyDescriptor;
+	private final Class valueType;
 
 	/**
 	 * @param propertyDescriptor
@@ -37,9 +38,13 @@ public class BeanValueProperty extends SimpleValueProperty implements
 	 */
 	public BeanValueProperty(PropertyDescriptor propertyDescriptor,
 			Class valueType) {
-		super(valueType == null ? propertyDescriptor.getPropertyType()
-				: valueType);
 		this.propertyDescriptor = propertyDescriptor;
+		this.valueType = valueType == null ? propertyDescriptor
+				.getPropertyType() : valueType;
+	}
+
+	protected Object getValueType() {
+		return valueType;
 	}
 
 	public Object getValue(Object source) {
@@ -48,10 +53,11 @@ public class BeanValueProperty extends SimpleValueProperty implements
 		return BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
-	public void setValue(Object source, Object value) {
-		if (source != null) {
-			BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
-		}
+	public boolean setValue(Object source, Object value) {
+		if (source == null)
+			return false;
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
+		return true;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -111,7 +117,6 @@ public class BeanValueProperty extends SimpleValueProperty implements
 		String propertyName = propertyDescriptor.getName();
 		String s = beanClass.getName() + "." + propertyName + ""; //$NON-NLS-1$ //$NON-NLS-2$
 
-		Class valueType = (Class) getValueType();
 		if (valueType != null)
 			s += " <" + valueType.getName() + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;

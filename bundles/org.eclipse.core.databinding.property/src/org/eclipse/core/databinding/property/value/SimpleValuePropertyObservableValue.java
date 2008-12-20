@@ -105,16 +105,19 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 		if (hasListeners()) {
 			Object oldValue = cachedValue;
 
+			boolean changed;
 			updating = true;
 			try {
-				property.setValue(source, value);
+				changed = property.setValue(source, value);
 			} finally {
 				updating = false;
 			}
 
-			Object newValue = cachedValue = property.getValue(source);
-			if (hasListeners() && !Util.equals(oldValue, newValue)) {
-				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+			if (changed) {
+				Object newValue = cachedValue = property.getValue(source);
+				if (hasListeners() && !Util.equals(oldValue, newValue)) {
+					fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+				}
 			}
 		} else {
 			property.setValue(source, value);

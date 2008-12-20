@@ -21,10 +21,6 @@ import org.eclipse.swt.widgets.Widget;
  * 
  */
 public abstract class WidgetListProperty extends SimpleListProperty {
-	protected WidgetListProperty(Object elementType) {
-		super(elementType);
-	}
-
 	protected Realm getPreferredRealm(Object source) {
 		if (source instanceof Widget)
 			return SWTObservables.getRealm(((Widget) source).getDisplay());

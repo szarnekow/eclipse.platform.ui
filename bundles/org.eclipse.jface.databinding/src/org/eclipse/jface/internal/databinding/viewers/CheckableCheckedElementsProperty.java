@@ -30,11 +30,17 @@ import org.eclipse.jface.viewers.ICheckable;
  * 
  */
 public class CheckableCheckedElementsProperty extends ViewerSetProperty {
+	private final Object elementType;
+
 	/**
 	 * @param elementType
 	 */
 	public CheckableCheckedElementsProperty(Object elementType) {
-		super(elementType);
+		this.elementType = elementType;
+	}
+
+	protected Object getElementType() {
+		return elementType;
 	}
 
 	protected Set doGetSet(Object source) {
@@ -56,7 +62,9 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		return new HashSet();
 	}
 
-	protected void setSet(Object source, Set set, SetDiff diff) {
+	protected boolean setSet(Object source, Set set, SetDiff diff) {
+		if (source == null)
+			return false;
 		ICheckable checkable = (ICheckable) source;
 		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
 			checkable.setChecked(it.next(), true);
@@ -64,6 +72,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		for (Iterator it = diff.getRemovals().iterator(); it.hasNext();) {
 			checkable.setChecked(it.next(), false);
 		}
+		return true;
 	}
 
 	public INativePropertyListener adaptListener(
@@ -106,8 +115,8 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 
 	public String toString() {
 		String s = "ICheckable.checkedElements{}"; //$NON-NLS-1$
-		if (getElementType() != null)
-			s += " <" + getElementType() + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		if (elementType != null)
+			s += " <" + elementType + ">"; //$NON-NLS-1$//$NON-NLS-2$
 		return s;
 	}
 }

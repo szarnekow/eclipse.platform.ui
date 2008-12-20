@@ -27,7 +27,9 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
  * 
  */
 public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty {
-	private PropertyDescriptor propertyDescriptor;
+	private final PropertyDescriptor propertyDescriptor;
+	private final Class keyType;
+	private final Class valueType;
 
 	/**
 	 * @param propertyDescriptor
@@ -36,8 +38,17 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 	 */
 	public PojoMapProperty(PropertyDescriptor propertyDescriptor,
 			Class keyType, Class valueType) {
-		super(keyType, valueType);
 		this.propertyDescriptor = propertyDescriptor;
+		this.keyType = keyType;
+		this.valueType = valueType;
+	}
+
+	protected Object getKeyType() {
+		return keyType;
+	}
+
+	protected Object getValueType() {
+		return valueType;
 	}
 
 	protected Map doGetMap(Object source) {
@@ -54,10 +65,11 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 		return (Map) propertyValue;
 	}
 
-	protected void setMap(Object source, Map map, MapDiff diff) {
-		if (source != null) {
-			BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
-		}
+	protected boolean setMap(Object source, Map map, MapDiff diff) {
+		if (source == null)
+			return false;
+		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
+		return true;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -81,8 +93,6 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 		String propertyName = propertyDescriptor.getName();
 		String s = beanClass.getName() + "." + propertyName + "{:}"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		Class keyType = (Class) getKeyType();
-		Class valueType = (Class) getValueType();
 		if (keyType != null || valueType != null) {
 			s += " <" + keyType + ", " + valueType + ">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
