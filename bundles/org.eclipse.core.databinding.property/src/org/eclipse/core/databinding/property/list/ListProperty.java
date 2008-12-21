@@ -11,8 +11,10 @@
 
 package org.eclipse.core.databinding.property.list;
 
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.value.IValueProperty;
@@ -28,6 +30,18 @@ public abstract class ListProperty extends Property implements IListProperty {
 		if (realm == null)
 			realm = Realm.getDefault();
 		return observeList(realm, source);
+	}
+
+	public IObservableFactory listFactory() {
+		return listFactory(Realm.getDefault());
+	}
+
+	public IObservableFactory listFactory(final Realm realm) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeList(realm, target);
+			}
+		};
 	}
 
 	public final IListProperty chain(IValueProperty detailValue) {

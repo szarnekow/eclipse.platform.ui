@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.property.map;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
@@ -53,6 +54,27 @@ public interface IMapProperty extends IProperty {
 	 *         property source
 	 */
 	public IObservableMap observeMap(Realm realm, Object source);
+
+	/**
+	 * Returns a factory for creating observable maps in the current default
+	 * realm, tracking this property of a particular property source.
+	 * 
+	 * @return a factory for creating observable maps in current default realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory mapFactory();
+
+	/**
+	 * Returns a factory for creating observable maps in the given realm,
+	 * tracking this property of a particular property source.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * 
+	 * @return a factory for creating observable maps in the given realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory mapFactory(Realm realm);
 
 	/**
 	 * Returns an observable map on the master observable's realm which tracks

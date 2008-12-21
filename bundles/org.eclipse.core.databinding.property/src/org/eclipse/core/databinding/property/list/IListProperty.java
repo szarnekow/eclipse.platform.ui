@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.property.list;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
@@ -53,6 +54,27 @@ public interface IListProperty extends IProperty {
 	 *         property source
 	 */
 	public IObservableList observeList(Realm realm, Object source);
+
+	/**
+	 * Returns a factory for creating observable lists in the current default
+	 * realm, tracking this property of a particular property source.
+	 * 
+	 * @return a factory for creating observable lists in current default realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory listFactory();
+
+	/**
+	 * Returns a factory for creating observable lists in the given realm,
+	 * tracking this property of a particular property source.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * 
+	 * @return a factory for creating observable lists in the given realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory listFactory(Realm realm);
 
 	/**
 	 * Returns an observable list on the master observable's realm which tracks

@@ -11,7 +11,9 @@
 
 package org.eclipse.core.databinding.property.set;
 
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.Property;
@@ -29,6 +31,18 @@ public abstract class SetProperty extends Property implements ISetProperty {
 		if (realm == null)
 			realm = Realm.getDefault();
 		return observeSet(realm, source);
+	}
+
+	public IObservableFactory setFactory() {
+		return setFactory(Realm.getDefault());
+	}
+
+	public IObservableFactory setFactory(final Realm realm) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeSet(realm, target);
+			}
+		};
 	}
 
 	public final IMapProperty chain(IValueProperty detailValues) {

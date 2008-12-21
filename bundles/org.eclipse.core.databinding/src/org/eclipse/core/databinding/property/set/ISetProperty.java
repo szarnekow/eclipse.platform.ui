@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.property.set;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.IProperty;
@@ -55,6 +56,27 @@ public interface ISetProperty extends IProperty {
 	 *         property source
 	 */
 	public IObservableSet observeSet(Realm realm, Object source);
+
+	/**
+	 * Returns a factory for creating observable sets in the current default
+	 * realm, tracking this property of a particular property source.
+	 * 
+	 * @return a factory for creating observable sets in current default realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory setFactory();
+
+	/**
+	 * Returns a factory for creating observable sets in the given realm,
+	 * tracking this property of a particular property source.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * 
+	 * @return a factory for creating observable sets in the given realm,
+	 *         tracking this property of a particular property source.
+	 */
+	public IObservableFactory setFactory(Realm realm);
 
 	/**
 	 * Returns an observable set on the master observable's realm which tracks
