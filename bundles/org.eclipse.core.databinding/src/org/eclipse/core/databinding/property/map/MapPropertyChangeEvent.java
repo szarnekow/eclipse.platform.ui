@@ -27,7 +27,7 @@ public class MapPropertyChangeEvent extends PropertyChangeEvent {
 	/**
 	 * The map property that changed
 	 */
-	public final IMapProperty property;
+	public final SimpleMapProperty property;
 
 	/**
 	 * MapDiff enumerating the added, changed, and removed entries in the map,
@@ -45,7 +45,7 @@ public class MapPropertyChangeEvent extends PropertyChangeEvent {
 	 * @param diff
 	 *            a MapDiff describing the changes to the map property
 	 */
-	public MapPropertyChangeEvent(Object source, IMapProperty property,
+	public MapPropertyChangeEvent(Object source, SimpleMapProperty property,
 			MapDiff diff) {
 		super(source);
 		this.property = property;

@@ -27,7 +27,7 @@ public class ListPropertyChangeEvent extends PropertyChangeEvent {
 	/**
 	 * The list property that changed
 	 */
-	public final IListProperty property;
+	public final SimpleListProperty property;
 
 	/**
 	 * ListDiff enumerating the added and removed elements in the list, or null
@@ -45,7 +45,7 @@ public class ListPropertyChangeEvent extends PropertyChangeEvent {
 	 * @param diff
 	 *            a ListDiff describing the changes to the list property
 	 */
-	public ListPropertyChangeEvent(Object source, IListProperty property,
+	public ListPropertyChangeEvent(Object source, SimpleListProperty property,
 			ListDiff diff) {
 		super(source);
 		this.property = property;

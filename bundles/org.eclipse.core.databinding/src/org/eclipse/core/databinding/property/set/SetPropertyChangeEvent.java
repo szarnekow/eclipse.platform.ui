@@ -27,7 +27,7 @@ public class SetPropertyChangeEvent extends PropertyChangeEvent {
 	/**
 	 * The set property that changed
 	 */
-	public final ISetProperty property;
+	public final SimpleSetProperty property;
 
 	/**
 	 * SetDiff enumerating the added and removed elements in the set, or null if
@@ -45,7 +45,7 @@ public class SetPropertyChangeEvent extends PropertyChangeEvent {
 	 * @param diff
 	 *            a SetDiff describing the changes to the set property
 	 */
-	public SetPropertyChangeEvent(Object source, ISetProperty property,
+	public SetPropertyChangeEvent(Object source, SimpleSetProperty property,
 			SetDiff diff) {
 		super(source);
 		this.property = property;

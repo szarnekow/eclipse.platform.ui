@@ -27,7 +27,7 @@ public class ValuePropertyChangeEvent extends PropertyChangeEvent {
 	/**
 	 * The value property that changed
 	 */
-	public final IValueProperty property;
+	public final SimpleValueProperty property;
 
 	/**
 	 * ValueDiff with the old and new values of the property, or null if the
@@ -45,7 +45,7 @@ public class ValuePropertyChangeEvent extends PropertyChangeEvent {
 	 * @param diff
 	 *            a ValueDiff describing the changes to the value property
 	 */
-	public ValuePropertyChangeEvent(Object source, IValueProperty property,
+	public ValuePropertyChangeEvent(Object source, SimpleValueProperty property,
 			ValueDiff diff) {
 		super(source);
 		this.property = property;
