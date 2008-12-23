@@ -14,9 +14,8 @@ package org.eclipse.core.databinding.property.value;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
-import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.internal.databinding.Util;
 
@@ -57,20 +56,7 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											ValueDiff diff = event.diff;
-											if (diff == null) {
-												Object oldValue = cachedValue;
-												Object newValue = cachedValue = property
-														.getValue(source);
-												if (Util.equals(oldValue,
-														newValue))
-													return;
-
-												diff = Diffs.createValueDiff(
-														oldValue, newValue);
-											}
-
-											fireValueChange(diff);
+											notifyIfChanged();
 										}
 									});
 								}
@@ -89,38 +75,28 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 	}
 
 	protected Object doGetValue() {
-		if (hasListeners()) {
-			Object oldValue = cachedValue;
-			Object newValue = cachedValue = property.getValue(source);
-
-			if (hasListeners() && !Util.equals(oldValue, newValue)) {
-				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
-			}
-			return newValue;
-		}
+		notifyIfChanged();
 		return property.getValue(source);
 	}
 
 	protected void doSetValue(Object value) {
+		updating = true;
+		try {
+			property.setValue(source, value);
+		} finally {
+			updating = false;
+		}
+
+		notifyIfChanged();
+	}
+
+	private void notifyIfChanged() {
 		if (hasListeners()) {
 			Object oldValue = cachedValue;
-
-			boolean changed;
-			updating = true;
-			try {
-				changed = property.setValue(source, value);
-			} finally {
-				updating = false;
+			Object newValue = cachedValue = property.getValue(source);
+			if (hasListeners() && !Util.equals(oldValue, newValue)) {
+				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
 			}
-
-			if (changed) {
-				Object newValue = cachedValue = property.getValue(source);
-				if (hasListeners() && !Util.equals(oldValue, newValue)) {
-					fireValueChange(Diffs.createValueDiff(oldValue, newValue));
-				}
-			}
-		} else {
-			property.setValue(source, value);
 		}
 	}
 

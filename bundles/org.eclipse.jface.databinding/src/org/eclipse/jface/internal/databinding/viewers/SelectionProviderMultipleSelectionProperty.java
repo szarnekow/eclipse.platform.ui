@@ -43,12 +43,9 @@ public class SelectionProviderMultipleSelectionProperty extends
 		return Collections.EMPTY_LIST;
 	}
 
-	protected boolean setList(Object source, List list, ListDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetList(Object source, List list, ListDiff diff) {
 		((ISelectionProvider) source)
 				.setSelection(new StructuredSelection(list));
-		return true;
 	}
 
 	public INativePropertyListener adaptListener(
@@ -56,12 +53,12 @@ public class SelectionProviderMultipleSelectionProperty extends
 		return new SelectionChangedListener(listener);
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 		((ISelectionProvider) source)
 				.addSelectionChangedListener((ISelectionChangedListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 		((ISelectionProvider) source)
 				.removeSelectionChangedListener((ISelectionChangedListener) listener);
 
@@ -78,7 +75,7 @@ public class SelectionProviderMultipleSelectionProperty extends
 		public void selectionChanged(SelectionChangedEvent event) {
 			listener.handleListPropertyChange(new ListPropertyChangeEvent(event
 					.getSource(),
-					SelectionProviderMultipleSelectionProperty.this, null));
+					SelectionProviderMultipleSelectionProperty.this));
 		}
 	}
 

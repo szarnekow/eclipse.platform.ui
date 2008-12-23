@@ -35,9 +35,7 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 				.getFilters()));
 	}
 
-	public boolean setSet(Object source, Set set, SetDiff diff) {
-		if (source == null)
-			return false;
+	public void doSetSet(Object source, Set set, SetDiff diff) {
 		StructuredViewer viewer = (StructuredViewer) source;
 		viewer.getControl().setRedraw(false);
 		try {
@@ -46,7 +44,6 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 		} finally {
 			viewer.getControl().setRedraw(true);
 		}
-		return true;
 	}
 
 	public INativePropertyListener adaptListener(
@@ -54,10 +51,10 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {

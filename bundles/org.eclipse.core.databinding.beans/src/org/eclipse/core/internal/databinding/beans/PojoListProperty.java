@@ -15,7 +15,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.beans.IBeanProperty;
@@ -50,11 +49,8 @@ public class PojoListProperty extends SimpleListProperty implements
 	}
 
 	protected List doGetList(Object source) {
-		if (source == null)
-			return Collections.EMPTY_LIST;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asList(propertyValue);
+		return asList(BeanPropertyHelper.readProperty(source,
+				propertyDescriptor));
 	}
 
 	private List asList(Object propertyValue) {
@@ -65,12 +61,9 @@ public class PojoListProperty extends SimpleListProperty implements
 		return (List) propertyValue;
 	}
 
-	protected boolean setList(Object source, List list, ListDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetList(Object source, List list, ListDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertListToBeanPropertyType(list));
-		return true;
 	}
 
 	private Object convertListToBeanPropertyType(List list) {
@@ -95,10 +88,10 @@ public class PojoListProperty extends SimpleListProperty implements
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {

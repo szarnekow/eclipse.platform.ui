@@ -31,7 +31,7 @@ public class SelectionProviderSingleSelectionProperty extends
 		return null;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		ISelection selection = ((ISelectionProvider) source).getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return ((IStructuredSelection) selection).getFirstElement();
@@ -39,13 +39,10 @@ public class SelectionProviderSingleSelectionProperty extends
 		return null;
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		((ISelectionProvider) source)
 				.setSelection(value == null ? StructuredSelection.EMPTY
 						: new StructuredSelection(value));
-		return true;
 	}
 
 	public INativePropertyListener adaptListener(
@@ -53,12 +50,13 @@ public class SelectionProviderSingleSelectionProperty extends
 		return new SelectionChangedListener(listener);
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source, INativePropertyListener listener) {
 		((ISelectionProvider) source)
 				.addSelectionChangedListener((ISelectionChangedListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
 		((ISelectionProvider) source)
 				.removeSelectionChangedListener((ISelectionChangedListener) listener);
 
@@ -75,7 +73,7 @@ public class SelectionProviderSingleSelectionProperty extends
 		public void selectionChanged(SelectionChangedEvent event) {
 			listener.handleValuePropertyChange(new ValuePropertyChangeEvent(
 					event.getSource(),
-					SelectionProviderSingleSelectionProperty.this, null));
+					SelectionProviderSingleSelectionProperty.this));
 		}
 	}
 

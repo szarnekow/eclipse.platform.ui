@@ -30,11 +30,12 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <p>
  * Subclasses must implement these methods:
  * <ul>
+ * <li> {@link #getElementType()}
  * <li> {@link #doGetSet(Object)}
- * <li> {@link #setSet(Object, Set, SetDiff)}
+ * <li> {@link #doSetSet(Object, Set, SetDiff)}
  * <li> {@link #adaptListener(ISetPropertyChangeListener)}
- * <li> {@link #addListener(Object, INativePropertyListener)}
- * <li> {@link #removeListener(Object, INativePropertyListener)}
+ * <li> {@link #doAddListener(Object, INativePropertyListener)}
+ * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
@@ -79,6 +80,8 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final Set getSet(Object source) {
+		if (source == null)
+			return Collections.EMPTY_SET;
 		return Collections.unmodifiableSet(doGetSet(source));
 	}
 
@@ -105,11 +108,25 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 *            the new set
 	 * @param diff
 	 *            a diff describing the change
-	 * @return true if the property was modified on the source object, false
-	 *         otherwise
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract boolean setSet(Object source, Set set, SetDiff diff);
+	protected final void setSet(Object source, Set set, SetDiff diff) {
+		if (source != null && !diff.isEmpty())
+			doSetSet(source, set, diff);
+	}
+
+	/**
+	 * Updates the property on the source with the specified change.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param set
+	 *            the new set
+	 * @param diff
+	 *            a diff describing the change
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doSetSet(Object source, Set set, SetDiff diff);
 
 	// Listeners
 
@@ -146,7 +163,26 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 *            {@link #adaptListener(ISetPropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void addListener(Object source,
+	protected final void addListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doAddListener(source, listener);
+	}
+
+	/**
+	 * Adds the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(ISetPropertyChangeListener)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doAddListener(Object source,
 			INativePropertyListener listener);
 
 	/**
@@ -162,6 +198,25 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 *            {@link #adaptListener(ISetPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void removeListener(Object source,
+	protected final void removeListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doRemoveListener(source, listener);
+	}
+
+	/**
+	 * Removes the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(ISetPropertyChangeListener)} .
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doRemoveListener(Object source,
 			INativePropertyListener listener);
 }

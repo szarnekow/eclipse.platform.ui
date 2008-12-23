@@ -28,15 +28,12 @@ public abstract class WidgetStringValueProperty extends WidgetValueProperty {
 		return String.class;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return doGetStringValue(source);
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		doSetStringValue(source, (String) value);
-		return true;
 	}
 
 	abstract String doGetStringValue(Object source);

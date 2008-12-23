@@ -68,15 +68,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											Set oldSet = cachedSet;
-											Set newSet = cachedSet = property
-													.getSet(source);
-											SetDiff diff = event.diff;
-											if (diff == null) {
-												diff = Diffs.computeSetDiff(
-														oldSet, newSet);
-											}
-											fireSetChange(diff);
+											notifyIfChanged();
 										}
 									});
 								}
@@ -151,21 +143,17 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 				Collections.EMPTY_SET);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, set, diff);
+			property.setSet(source, set, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = getSet();
-			fireSetChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	public Iterator iterator() {
@@ -198,22 +186,18 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 						Collections.singleton(last));
 
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = property.setSet(source, set, diff);
+					property.setSet(source, set, diff);
 					modCount++;
 				} finally {
 					updating = wasUpdating;
 				}
 
-				if (changed) {
-					cachedSet = getSet();
-					fireSetChange(diff);
+				notifyIfChanged();
 
-					last = null;
-					expectedModCount = modCount;
-				}
+				last = null;
+				expectedModCount = modCount;
 			}
 
 			private void checkForComodification() {
@@ -234,21 +218,17 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 				.singleton(o));
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, set, diff);
+			property.setSet(source, set, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = property.getSet(source);
-			fireSetChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	// Bulk change operations
@@ -274,21 +254,17 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 		SetDiff diff = Diffs.createSetDiff(additions, Collections.EMPTY_SET);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, set, diff);
+			property.setSet(source, set, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = property.getSet(source);
-			fireSetChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	public boolean removeAll(Collection c) {
@@ -315,21 +291,17 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, removals);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, set, diff);
+			property.setSet(source, set, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = property.getSet(source);
-			fireSetChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	public boolean retainAll(Collection c) {
@@ -361,21 +333,17 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, removals);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, set, diff);
+			property.setSet(source, set, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = property.getSet(source);
-			fireSetChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	public void clear() {
@@ -388,18 +356,24 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, set);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setSet(source, Collections.EMPTY_SET, diff);
+			property.setSet(source, Collections.EMPTY_SET, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedSet = property.getSet(source);
-			fireSetChange(diff);
+		notifyIfChanged();
+	}
+
+	private void notifyIfChanged() {
+		if (hasListeners()) {
+			Set oldSet = cachedSet;
+			Set newSet = cachedSet = property.getSet(source);
+			SetDiff diff = Diffs.computeSetDiff(oldSet, newSet);
+			if (!diff.isEmpty())
+				fireSetChange(diff);
 		}
 	}
 

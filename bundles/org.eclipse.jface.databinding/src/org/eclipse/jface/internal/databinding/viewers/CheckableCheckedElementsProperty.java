@@ -11,12 +11,10 @@
 
 package org.eclipse.jface.internal.databinding.viewers;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.set.ISetPropertyChangeListener;
@@ -62,9 +60,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		return new HashSet();
 	}
 
-	protected boolean setSet(Object source, Set set, SetDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetSet(Object source, Set set, SetDiff diff) {
 		ICheckable checkable = (ICheckable) source;
 		for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
 			checkable.setChecked(it.next(), true);
@@ -72,7 +68,6 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		for (Iterator it = diff.getRemovals().iterator(); it.hasNext();) {
 			checkable.setChecked(it.next(), false);
 		}
-		return true;
 	}
 
 	public INativePropertyListener adaptListener(
@@ -80,12 +75,12 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		return new CheckStateListener(listener);
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 		((ICheckable) source)
 				.addCheckStateListener((ICheckStateListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 		((ICheckable) source)
 				.removeCheckStateListener((ICheckStateListener) listener);
 	}
@@ -99,17 +94,8 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		}
 
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			Object element = event.getElement();
-			SetDiff diff;
-			if (event.getChecked()) {
-				diff = Diffs.createSetDiff(Collections.singleton(element),
-						Collections.EMPTY_SET);
-			} else {
-				diff = Diffs.createSetDiff(Collections.EMPTY_SET, Collections
-						.singleton(element));
-			}
 			listener.handleSetPropertyChange(new SetPropertyChangeEvent(event
-					.getSource(), CheckableCheckedElementsProperty.this, diff));
+					.getSource(), CheckableCheckedElementsProperty.this));
 		}
 	}
 

@@ -42,17 +42,14 @@ public class PojoValueProperty extends SimpleValueProperty implements
 		return valueType;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		if (source == null)
 			return null;
 		return BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
-		return true;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -64,10 +61,11 @@ public class PojoValueProperty extends SimpleValueProperty implements
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
 	}
 
 	public String toString() {

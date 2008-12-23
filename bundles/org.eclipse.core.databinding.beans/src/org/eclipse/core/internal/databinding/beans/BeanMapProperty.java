@@ -14,12 +14,10 @@ package org.eclipse.core.internal.databinding.beans;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.beans.IBeanProperty;
-import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.map.IMapPropertyChangeListener;
@@ -56,11 +54,8 @@ public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty 
 	}
 
 	protected Map doGetMap(Object source) {
-		if (source == null)
-			return Collections.EMPTY_MAP;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asMap(propertyValue);
+		return asMap(BeanPropertyHelper
+				.readProperty(source, propertyDescriptor));
 	}
 
 	private Map asMap(Object propertyValue) {
@@ -69,11 +64,8 @@ public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty 
 		return (Map) propertyValue;
 	}
 
-	protected boolean setMap(Object source, Map map, MapDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
-		return true;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -95,36 +87,20 @@ public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty 
 
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				Object oldValue = evt.getOldValue();
-				Object newValue = evt.getNewValue();
-
-				MapDiff diff;
-				if (oldValue == null && newValue == null) {
-					diff = null; // unknown change
-				} else {
-					diff = Diffs.computeMapDiff(asMap(oldValue),
-							asMap(newValue));
-				}
-
 				listener.handleMapPropertyChange(new MapPropertyChangeEvent(evt
-						.getSource(), BeanMapProperty.this, diff));
+						.getSource(), BeanMapProperty.this));
 			}
 		}
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-					.getName(), (PropertyChangeListener) listener);
-		}
+	public void doAddListener(Object source, INativePropertyListener listener) {
+		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.unhookListener(source,
-					propertyDescriptor.getName(),
-					(PropertyChangeListener) listener);
-		}
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
+		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
 	public String toString() {

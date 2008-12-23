@@ -32,15 +32,12 @@ public class ControlBoundsProperty extends WidgetValueProperty {
 		return Rectangle.class;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return ((Control) source).getBounds();
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		((Control) source).setBounds((Rectangle) value);
-		return true;
 	}
 
 	public String toString() {

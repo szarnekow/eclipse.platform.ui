@@ -71,14 +71,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											List oldList = cachedList;
-											List newList = cachedList = getList();
-											ListDiff diff = event.diff;
-											if (diff == null) {
-												diff = Diffs.computeListDiff(
-														oldList, newList);
-											}
-											fireListChange(diff);
+											notifyIfChanged();
 										}
 									});
 								}
@@ -166,23 +159,19 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 	public void add(int index, Object o) {
 		checkRealm();
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		List list = new ArrayList(getList());
 		list.add(index, o);
 		ListDiff diff = Diffs.createListDiff(Diffs.createListDiffEntry(index,
 				true, o));
 		try {
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 	}
 
 	public Iterator iterator() {
@@ -220,24 +209,20 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 						lastIndex, false, lastElement));
 
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = property.setList(source, list, diff);
+					property.setList(source, list, diff);
 					modCount++;
 				} finally {
 					updating = wasUpdating;
 				}
 
-				if (changed) {
-					cachedList = getList();
-					fireListChange(diff);
+				notifyIfChanged();
 
-					lastElement = null;
-					lastIndex = -1;
+				lastElement = null;
+				lastIndex = -1;
 
-					expectedModCount = modCount;
-				}
+				expectedModCount = modCount;
 			}
 
 			private void checkForComodification() {
@@ -268,19 +253,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 				true, element));
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
 		return element;
 	}
@@ -363,23 +344,19 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 				ListDiff diff = Diffs.createListDiff(Diffs.createListDiffEntry(
 						index, true, o));
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = property.setList(source, list, diff);
+					property.setList(source, list, diff);
 					modCount++;
 				} finally {
 					updating = wasUpdating;
 				}
 
-				if (changed) {
-					cachedList = getList();
-					fireListChange(diff);
+				notifyIfChanged();
 
-					lastElement = null;
-					lastIndex = -1;
-					expectedModCount = modCount;
-				}
+				lastElement = null;
+				lastIndex = -1;
+				expectedModCount = modCount;
 			}
 
 			public void set(Object o) {
@@ -392,23 +369,18 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 						.createListDiffEntry(lastIndex, true, o));
 
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = property.setList(source, list, diff);
+					property.setList(source, list, diff);
 					modCount++;
 				} finally {
 					updating = wasUpdating;
 				}
 
-				if (changed) {
-					cachedList = getList();
-					fireListChange(diff);
+				notifyIfChanged();
 
-					lastElement = o;
-
-					expectedModCount = modCount;
-				}
+				lastElement = o;
+				expectedModCount = modCount;
 			}
 
 			public void remove() {
@@ -422,23 +394,19 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 						lastIndex, false, lastElement));
 
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = property.setList(source, list, diff);
+					property.setList(source, list, diff);
 					modCount++;
 				} finally {
 					updating = wasUpdating;
 				}
 
-				if (changed) {
-					cachedList = getList();
-					fireListChange(diff);
+				notifyIfChanged();
 
-					lastElement = null;
-					lastIndex = -1;
-					expectedModCount = modCount;
-				}
+				lastElement = null;
+				lastIndex = -1;
+				expectedModCount = modCount;
 			}
 
 			private void checkForComodification() {
@@ -457,19 +425,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 				false, element));
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
 		return element;
 	}
@@ -484,19 +448,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 				false, oldElement), Diffs.createListDiffEntry(index, true, o));
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
 		return oldElement;
 	}
@@ -534,23 +494,18 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 		}
 		ListDiff diff = Diffs.createListDiff(entries);
 
-		boolean changed;
-
 		boolean wasUpdating = updating;
 		updating = true;
 		try {
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return true;
 	}
 
 	public boolean removeAll(Collection c) {
@@ -568,7 +523,6 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 		ListDiff diff;
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
 			for (ListIterator it = list.listIterator(); it.hasNext();) {
@@ -585,18 +539,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 
 			diff = Diffs.createListDiff((ListDiffEntry[]) entries
 					.toArray(new ListDiffEntry[entries.size()]));
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return !diff.isEmpty();
 	}
 
 	public boolean retainAll(Collection c) {
@@ -616,7 +567,6 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 		ListDiff diff;
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
 			for (ListIterator it = list.listIterator(); it.hasNext();) {
@@ -633,18 +583,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 
 			diff = Diffs.createListDiff((ListDiffEntry[]) entries
 					.toArray(new ListDiffEntry[entries.size()]));
-			changed = property.setList(source, list, diff);
+			property.setList(source, list, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
-		}
+		notifyIfChanged();
 
-		return changed;
+		return !diff.isEmpty();
 	}
 
 	public void clear() {
@@ -663,18 +610,25 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 		ListDiff diff = Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()]));
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setList(source, Collections.EMPTY_LIST, diff);
+			property.setList(source, Collections.EMPTY_LIST, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedList = getList();
-			fireListChange(diff);
+		notifyIfChanged();
+	}
+
+	private void notifyIfChanged() {
+		if (hasListeners()) {
+			List oldList = cachedList;
+			List newList = cachedList = property.getList(source);
+			ListDiff diff = Diffs.computeListDiff(oldList, newList);
+			if (!diff.isEmpty()) {
+				fireListChange(diff);
+			}
 		}
 	}
 

@@ -24,26 +24,24 @@ public class ViewerInputProperty extends ViewerValueProperty {
 		return null;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return ((Viewer) source).getInput();
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		((Viewer) source).setInput(value);
-		return true;
 	}
 
-	public INativePropertyListener adaptListener(
+	protected INativePropertyListener adaptListener(
 			IValuePropertyChangeListener listener) {
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
 	}
 
 	public String toString() {

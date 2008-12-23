@@ -23,15 +23,12 @@ public class ControlForegroundProperty extends WidgetValueProperty {
 		return Color.class;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return ((Control) source).getForeground();
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		((Control) source).setForeground((Color) value);
-		return true;
 	}
 
 	public String toString() {

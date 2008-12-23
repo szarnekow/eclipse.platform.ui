@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.beans.IBeanProperty;
-import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.set.ISetPropertyChangeListener;
@@ -53,11 +52,8 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 	}
 
 	protected Set doGetSet(Object source) {
-		if (source == null)
-			return Collections.EMPTY_SET;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asSet(propertyValue);
+		return asSet(BeanPropertyHelper
+				.readProperty(source, propertyDescriptor));
 	}
 
 	private Set asSet(Object propertyValue) {
@@ -68,12 +64,9 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 		return (Set) propertyValue;
 	}
 
-	protected boolean setSet(Object source, Set set, SetDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetSet(Object source, Set set, SetDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertSetToBeanPropertyType(set));
-		return true;
 	}
 
 	private Object convertSetToBeanPropertyType(Set set) {
@@ -107,36 +100,20 @@ public class BeanSetProperty extends SimpleSetProperty implements IBeanProperty 
 
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				Object oldValue = evt.getOldValue();
-				Object newValue = evt.getNewValue();
-
-				SetDiff diff;
-				if (oldValue == null && newValue == null) {
-					diff = null; // unknown change
-				} else {
-					diff = Diffs.computeSetDiff(asSet(oldValue),
-							asSet(newValue));
-				}
-
 				listener.handleSetPropertyChange(new SetPropertyChangeEvent(evt
-						.getSource(), BeanSetProperty.this, diff));
+						.getSource(), BeanSetProperty.this));
 			}
 		}
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-					.getName(), (PropertyChangeListener) listener);
-		}
+	public void doAddListener(Object source, INativePropertyListener listener) {
+		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.unhookListener(source,
-					propertyDescriptor.getName(),
-					(PropertyChangeListener) listener);
-		}
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
+		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
 	public String toString() {

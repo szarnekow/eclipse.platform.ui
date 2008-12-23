@@ -12,7 +12,6 @@
 package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,11 +51,8 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 	}
 
 	protected Map doGetMap(Object source) {
-		if (source == null)
-			return Collections.EMPTY_MAP;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asMap(propertyValue);
+		return asMap(BeanPropertyHelper
+				.readProperty(source, propertyDescriptor));
 	}
 
 	private Map asMap(Object propertyValue) {
@@ -65,11 +61,8 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 		return (Map) propertyValue;
 	}
 
-	protected boolean setMap(Object source, Map map, MapDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
-		return true;
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -81,10 +74,10 @@ public class PojoMapProperty extends SimpleMapProperty implements IBeanProperty 
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {

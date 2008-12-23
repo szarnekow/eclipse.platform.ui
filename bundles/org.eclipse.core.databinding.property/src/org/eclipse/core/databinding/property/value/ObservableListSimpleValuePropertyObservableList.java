@@ -112,40 +112,8 @@ class ObservableListSimpleValuePropertyObservableList extends
 			public void handleValuePropertyChange(
 					final ValuePropertyChangeEvent event) {
 				if (!isDisposed() && !updating) {
-					Object masterElement = event.getSource();
-					int[] indices = indicesOf(masterElement);
-					Object oldValue = event.diff.getOldValue();
-					Object newValue = event.diff.getNewValue();
-					ListDiffEntry[] entries = new ListDiffEntry[indices.length * 2];
-					for (int i = 0; i < indices.length; i++) {
-						int index = indices[i];
-						entries[i * 2] = Diffs.createListDiffEntry(index,
-								false, oldValue);
-						entries[i * 2 + 1] = Diffs.createListDiffEntry(index,
-								true, newValue);
-					}
-
-					ListDiff diff = Diffs.createListDiff(entries);
-					cachedValues.put(new IdentityWrapper(masterElement),
-							newValue);
-					fireListChange(diff);
+					notifyIfChanged(event.getSource());
 				}
-			}
-
-			private int[] indicesOf(Object element) {
-				List indices = new ArrayList();
-
-				for (ListIterator it = ObservableListSimpleValuePropertyObservableList.this.masterList
-						.listIterator(); it.hasNext();) {
-					if (element == it.next())
-						indices.add(new Integer(it.previousIndex()));
-				}
-
-				int[] result = new int[indices.size()];
-				for (int i = 0; i < result.length; i++) {
-					result[i] = ((Integer) indices.get(i)).intValue();
-				}
-				return result;
 			}
 		};
 		this.detailListener = detailProperty.adaptListener(listener);
@@ -188,6 +156,7 @@ class ObservableListSimpleValuePropertyObservableList extends
 			knownMasterElements.dispose();
 			knownMasterElements = null;
 		}
+		cachedValues.clear();
 		cachedValues = null;
 	}
 
@@ -318,7 +287,6 @@ class ObservableListSimpleValuePropertyObservableList extends
 		getterCalled();
 		return new ListIterator() {
 			ListIterator it = masterList.listIterator(index);
-			int lastIndex = -1;
 			Object lastMasterElement;
 			Object lastElement;
 			boolean haveIterated = false;
@@ -341,7 +309,6 @@ class ObservableListSimpleValuePropertyObservableList extends
 				getterCalled();
 				lastMasterElement = it.next();
 				lastElement = detailProperty.getValue(lastMasterElement);
-				lastIndex = it.previousIndex();
 				haveIterated = true;
 				return lastElement;
 			}
@@ -355,7 +322,6 @@ class ObservableListSimpleValuePropertyObservableList extends
 				getterCalled();
 				lastMasterElement = it.previous();
 				lastElement = detailProperty.getValue(lastMasterElement);
-				lastIndex = it.nextIndex();
 				haveIterated = true;
 				return lastElement;
 			}
@@ -374,34 +340,58 @@ class ObservableListSimpleValuePropertyObservableList extends
 				if (!haveIterated)
 					throw new IllegalStateException();
 
-				Object oldValue = cachedValues.get(new IdentityWrapper(
-						lastMasterElement));
-
 				boolean wasUpdating = updating;
-				boolean changed;
 				updating = true;
 				try {
-					changed = detailProperty.setValue(lastElement, o);
+					detailProperty.setValue(lastElement, o);
 				} finally {
 					updating = wasUpdating;
 				}
-
-				if (changed) {
-					Object newValue = detailProperty.getValue(lastElement);
-
-					if (!Util.equals(oldValue, newValue)) {
-						cachedValues.put(
-								new IdentityWrapper(lastMasterElement), o);
-						fireListChange(Diffs.createListDiff(Diffs
-								.createListDiffEntry(lastIndex, false,
-										lastElement), Diffs
-								.createListDiffEntry(lastIndex, true, o)));
-					}
-				}
+				
+				notifyIfChanged(lastMasterElement);
 
 				lastElement = o;
 			}
 		};
+	}
+
+	private void notifyIfChanged(Object masterElement) {
+		if (cachedValues != null) {
+			Object oldValue = cachedValues.get(new IdentityWrapper(masterElement));
+			Object newValue = detailProperty.getValue(masterElement);
+			if (!Util.equals(oldValue, newValue)) {
+				cachedValues.put(new IdentityWrapper(masterElement), newValue);
+				fireListChange(indicesOf(masterElement), oldValue, newValue);
+			}
+		}
+	}
+
+	private int[] indicesOf(Object masterElement) {
+		List indices = new ArrayList();
+
+		for (ListIterator it = ObservableListSimpleValuePropertyObservableList.this.masterList
+				.listIterator(); it.hasNext();) {
+			if (masterElement == it.next())
+				indices.add(new Integer(it.previousIndex()));
+		}
+
+		int[] result = new int[indices.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = ((Integer) indices.get(i)).intValue();
+		}
+		return result;
+	}
+
+	private void fireListChange(int[] indices, Object oldValue, Object newValue) {
+		ListDiffEntry[] differences = new ListDiffEntry[indices.length * 2];
+		for (int i = 0; i < indices.length; i++) {
+			int index = indices[i];
+			differences[i * 2] = Diffs.createListDiffEntry(index, false,
+					oldValue);
+			differences[i * 2 + 1] = Diffs.createListDiffEntry(index, true,
+					newValue);
+		}
+		fireListChange(Diffs.createListDiff(differences));
 	}
 
 	public Object remove(int index) {
@@ -414,24 +404,14 @@ class ObservableListSimpleValuePropertyObservableList extends
 		Object oldValue = detailProperty.getValue(masterElement);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = detailProperty.setValue(masterElement, o);
+			detailProperty.setValue(masterElement, o);
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			Object newValue = detailProperty.getValue(masterElement);
-
-			if (!Util.equals(oldValue, newValue)) {
-				cachedValues.put(new IdentityWrapper(masterElement), o);
-				fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-						index, false, oldValue), Diffs.createListDiffEntry(
-						index, true, o)));
-			}
-		}
+		notifyIfChanged(masterElement);
 
 		return oldValue;
 	}

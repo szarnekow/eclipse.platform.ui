@@ -11,7 +11,6 @@
 
 package org.eclipse.core.databinding.property.value;
 
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
@@ -30,26 +29,16 @@ public class ValuePropertyChangeEvent extends PropertyChangeEvent {
 	public final SimpleValueProperty property;
 
 	/**
-	 * ValueDiff with the old and new values of the property, or null if the
-	 * change is unknown.
-	 */
-	public final ValueDiff diff;
-
-	/**
 	 * Constructs a ValuePropertyChangeEvent with the given attributes
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
-	 * @param diff
-	 *            a ValueDiff describing the changes to the value property
 	 */
-	public ValuePropertyChangeEvent(Object source, SimpleValueProperty property,
-			ValueDiff diff) {
+	public ValuePropertyChangeEvent(Object source, SimpleValueProperty property) {
 		super(source);
 		this.property = property;
-		this.diff = diff;
 	}
 
 	protected void dispatch(IPropertyChangeListener listener) {

@@ -11,7 +11,6 @@
 
 package org.eclipse.core.databinding.property.set;
 
-import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
@@ -30,26 +29,16 @@ public class SetPropertyChangeEvent extends PropertyChangeEvent {
 	public final SimpleSetProperty property;
 
 	/**
-	 * SetDiff enumerating the added and removed elements in the set, or null if
-	 * the change is unknown.
-	 */
-	public final SetDiff diff;
-
-	/**
 	 * Constructs a SetPropertyChangeEvent with the given attributes
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
-	 * @param diff
-	 *            a SetDiff describing the changes to the set property
 	 */
-	public SetPropertyChangeEvent(Object source, SimpleSetProperty property,
-			SetDiff diff) {
+	public SetPropertyChangeEvent(Object source, SimpleSetProperty property) {
 		super(source);
 		this.property = property;
-		this.diff = diff;
 	}
 
 	protected void dispatch(IPropertyChangeListener listener) {

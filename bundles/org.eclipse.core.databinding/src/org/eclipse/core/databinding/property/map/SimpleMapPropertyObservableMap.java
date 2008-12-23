@@ -72,7 +72,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedMap = property.getMap(source);
+			cachedMap = new HashMap(this);
 
 			if (listener == null) {
 				listener = property
@@ -83,15 +83,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											Map oldMap = cachedMap;
-											Map newMap = cachedMap = property
-													.getMap(source);
-											MapDiff diff = event.diff;
-											if (diff == null) {
-												diff = Diffs.computeMapDiff(
-														oldMap, newMap);
-											}
-											fireMapChange(diff);
+											notifyIfChanged();
 										}
 									});
 								}
@@ -107,6 +99,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 			property.removeListener(source, listener);
 		}
 
+		cachedMap.clear();
 		cachedMap = null;
 	}
 
@@ -163,21 +156,17 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 					.getValue());
 
 			boolean wasUpdating = updating;
-			boolean changed;
 			updating = true;
 			try {
-				changed = property.setMap(source, map, diff);
+				property.setMap(source, map, diff);
 			} finally {
 				updating = wasUpdating;
 			}
 
-			if (changed) {
-				cachedMap = getMap();
-				fireMapChange(diff);
+			notifyIfChanged();
 
-				last = null;
-				expectedModCount = modCount;
-			}
+			last = null;
+			expectedModCount = modCount;
 		}
 
 		private void checkForComodification() {
@@ -209,19 +198,15 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 			diff = Diffs.createMapDiffSingleChange(key, oldValue, value);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setMap(source, map, diff);
+			property.setMap(source, map, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedMap = property.getMap(source);
-			fireMapChange(diff);
-		}
+		notifyIfChanged();
 
 		return oldValue;
 	}
@@ -254,19 +239,15 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 				changedKeys, oldValues, newValues);
 
 		boolean wasUpdating = updating;
-		boolean changed;
 		updating = true;
 		try {
-			changed = property.setMap(source, map, diff);
+			property.setMap(source, map, diff);
 			modCount++;
 		} finally {
 			updating = wasUpdating;
 		}
 
-		if (changed) {
-			cachedMap = getMap();
-			fireMapChange(diff);
-		}
+		notifyIfChanged();
 	}
 
 	public Object remove(Object key) {
@@ -279,6 +260,16 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
 		// getterCalled() and comodification checks will still be handled
 		return super.values();
+	}
+
+	private void notifyIfChanged() {
+		if (hasListeners()) {
+			Map oldMap = cachedMap;
+			Map newMap = cachedMap = property.getMap(source);
+			MapDiff diff = Diffs.computeMapDiff(oldMap, newMap);
+			if (!diff.isEmpty())
+				fireMapChange(diff);
+		}
 	}
 
 	public Object getObserved() {

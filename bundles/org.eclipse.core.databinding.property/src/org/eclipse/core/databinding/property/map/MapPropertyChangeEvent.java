@@ -11,7 +11,6 @@
 
 package org.eclipse.core.databinding.property.map;
 
-import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
@@ -30,26 +29,16 @@ public class MapPropertyChangeEvent extends PropertyChangeEvent {
 	public final SimpleMapProperty property;
 
 	/**
-	 * MapDiff enumerating the added, changed, and removed entries in the map,
-	 * or null if the change is unknown.
-	 */
-	public final MapDiff diff;
-
-	/**
 	 * Constructs a MapPropertyChangeEvent with the given attributes
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
-	 * @param diff
-	 *            a MapDiff describing the changes to the map property
 	 */
-	public MapPropertyChangeEvent(Object source, SimpleMapProperty property,
-			MapDiff diff) {
+	public MapPropertyChangeEvent(Object source, SimpleMapProperty property) {
 		super(source);
 		this.property = property;
-		this.diff = diff;
 	}
 
 	protected void dispatch(IPropertyChangeListener listener) {

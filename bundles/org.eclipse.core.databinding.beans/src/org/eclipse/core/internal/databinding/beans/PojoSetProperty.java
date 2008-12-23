@@ -49,11 +49,8 @@ public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty 
 	}
 
 	protected Set doGetSet(Object source) {
-		if (source == null)
-			return Collections.EMPTY_SET;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asSet(propertyValue);
+		return asSet(BeanPropertyHelper
+				.readProperty(source, propertyDescriptor));
 	}
 
 	private Set asSet(Object propertyValue) {
@@ -64,12 +61,9 @@ public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty 
 		return (Set) propertyValue;
 	}
 
-	protected boolean setSet(Object source, Set set, SetDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetSet(Object source, Set set, SetDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertSetToBeanPropertyType(set));
-		return true;
 	}
 
 	private Object convertSetToBeanPropertyType(Set set) {
@@ -93,10 +87,10 @@ public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty 
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 
 	public String toString() {

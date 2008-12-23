@@ -32,17 +32,14 @@ public abstract class WidgetBooleanValueProperty extends WidgetValueProperty {
 		return Boolean.TYPE;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return doGetBooleanValue(source) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		if (value == null)
 			value = Boolean.FALSE;
 		doSetBooleanValue(source, ((Boolean) value).booleanValue());
-		return true;
 	}
 
 	abstract boolean doGetBooleanValue(Object source);

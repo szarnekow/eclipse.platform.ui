@@ -30,11 +30,12 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <p>
  * Subclasses must implement these methods:
  * <ul>
+ * <li> {@link #getElementType()}
  * <li> {@link #doGetList(Object)}
- * <li> {@link #setList(Object, List, ListDiff)}
+ * <li> {@link #doSetList(Object, List, ListDiff)}
  * <li> {@link #adaptListener(IListPropertyChangeListener)}
- * <li> {@link #addListener(Object, INativePropertyListener)}
- * <li> {@link #removeListener(Object, INativePropertyListener)}
+ * <li> {@link #doAddListener(Object, INativePropertyListener)}
+ * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
@@ -81,6 +82,8 @@ public abstract class SimpleListProperty extends ListProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final List getList(Object source) {
+		if (source == null)
+			return Collections.EMPTY_LIST;
 		return Collections.unmodifiableList(doGetList(source));
 	}
 
@@ -105,13 +108,25 @@ public abstract class SimpleListProperty extends ListProperty {
 	 *            the new list
 	 * @param diff
 	 *            a diff describing the change
-	 * @return true if the property was modified on the source object, false
-	 *         otherwise
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract boolean setList(Object source, List list, ListDiff diff);
+	protected final void setList(Object source, List list, ListDiff diff) {
+		if (source != null && !diff.isEmpty())
+			doSetList(source, list, diff);
+	}
 
-	// Listeners
+	/**
+	 * Updates the property on the source with the specified change.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param list
+	 *            the new list
+	 * @param diff
+	 *            a diff describing the change
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doSetList(Object source, List list, ListDiff diff);
 
 	/**
 	 * Returns a listener which implements the correct listener interface for
@@ -146,7 +161,26 @@ public abstract class SimpleListProperty extends ListProperty {
 	 *            {@link #adaptListener(IListPropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void addListener(Object source,
+	protected final void addListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doAddListener(source, listener);
+	}
+
+	/**
+	 * Adds the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(IListPropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(IListPropertyChangeListener)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doAddListener(Object source,
 			INativePropertyListener listener);
 
 	/**
@@ -162,7 +196,25 @@ public abstract class SimpleListProperty extends ListProperty {
 	 *            {@link #adaptListener(IListPropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void removeListener(Object source,
-			INativePropertyListener listener);
+	protected final void removeListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doRemoveListener(source, listener);
+	}
 
+	/**
+	 * Removes the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(IListPropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(IListPropertyChangeListener)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doRemoveListener(Object source,
+			INativePropertyListener listener);
 }

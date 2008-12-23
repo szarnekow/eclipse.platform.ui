@@ -23,15 +23,12 @@ public class ControlFontProperty extends WidgetValueProperty {
 		return Font.class;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return ((Control) source).getFont();
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		((Control) source).setFont((Font) value);
-		return true;
 	}
 
 	public String toString() {

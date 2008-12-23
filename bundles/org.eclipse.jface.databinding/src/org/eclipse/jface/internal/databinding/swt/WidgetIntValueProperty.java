@@ -32,15 +32,12 @@ public abstract class WidgetIntValueProperty extends WidgetValueProperty {
 		return Integer.TYPE;
 	}
 
-	public Object getValue(Object source) {
+	protected Object doGetValue(Object source) {
 		return new Integer(doGetIntValue(source));
 	}
 
-	public boolean setValue(Object source, Object value) {
-		if (source == null)
-			return false;
+	protected void doSetValue(Object source, Object value) {
 		doSetIntValue(source, ((Integer) value).intValue());
-		return true;
 	}
 
 	abstract int doGetIntValue(Object source);

@@ -17,11 +17,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.beans.IBeanProperty;
-import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.list.IListPropertyChangeListener;
@@ -54,11 +52,8 @@ public class BeanListProperty extends SimpleListProperty implements
 	}
 
 	protected List doGetList(Object source) {
-		if (source == null)
-			return Collections.EMPTY_LIST;
-		Object propertyValue = BeanPropertyHelper.readProperty(source,
-				propertyDescriptor);
-		return asList(propertyValue);
+		return asList(BeanPropertyHelper.readProperty(source,
+				propertyDescriptor));
 	}
 
 	private List asList(Object propertyValue) {
@@ -69,12 +64,9 @@ public class BeanListProperty extends SimpleListProperty implements
 		return (List) propertyValue;
 	}
 
-	protected boolean setList(Object source, List list, ListDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetList(Object source, List list, ListDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor,
 				convertListToBeanPropertyType(list));
-		return true;
 	}
 
 	private Object convertListToBeanPropertyType(List list) {
@@ -109,36 +101,21 @@ public class BeanListProperty extends SimpleListProperty implements
 
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				Object oldValue = evt.getOldValue();
-				Object newValue = evt.getNewValue();
-
-				ListDiff diff;
-				if (oldValue == null && newValue == null) {
-					diff = null; // unknown change
-				} else {
-					diff = Diffs.computeListDiff(asList(oldValue),
-							asList(newValue));
-				}
-
 				listener.handleListPropertyChange(new ListPropertyChangeEvent(
-						evt.getSource(), BeanListProperty.this, diff));
+						evt.getSource(), BeanListProperty.this));
 			}
 		}
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
-					.getName(), (PropertyChangeListener) listener);
-		}
+	protected void doAddListener(Object source, INativePropertyListener listener) {
+		BeanPropertyListenerSupport.hookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
-		if (source != null) {
-			BeanPropertyListenerSupport.unhookListener(source,
-					propertyDescriptor.getName(),
-					(PropertyChangeListener) listener);
-		}
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
+		BeanPropertyListenerSupport.unhookListener(source, propertyDescriptor
+				.getName(), (PropertyChangeListener) listener);
 	}
 
 	public String toString() {

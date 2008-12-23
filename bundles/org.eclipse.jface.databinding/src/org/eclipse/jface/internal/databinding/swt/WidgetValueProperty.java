@@ -44,12 +44,12 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 		return super.getPreferredRealm(source);
 	}
 
-	public INativePropertyListener adaptListener(
+	protected INativePropertyListener adaptListener(
 			IValuePropertyChangeListener listener) {
 		return new WidgetListener(listener);
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source, INativePropertyListener listener) {
 		if (events != null) {
 			for (int i = 0; i < events.length; i++) {
 				int event = events[i];
@@ -60,7 +60,8 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 		}
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
 		if (events != null) {
 			Widget widget = (Widget) source;
 			if (!widget.isDisposed()) {
@@ -82,7 +83,7 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 
 		public void handleEvent(Event event) {
 			listener.handleValuePropertyChange(new ValuePropertyChangeEvent(
-					event.widget, WidgetValueProperty.this, null));
+					event.widget, WidgetValueProperty.this));
 		}
 	}
 }

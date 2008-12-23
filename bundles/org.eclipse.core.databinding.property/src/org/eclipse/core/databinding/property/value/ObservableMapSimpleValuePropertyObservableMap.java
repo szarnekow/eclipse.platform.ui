@@ -133,49 +133,7 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 
 		IValuePropertyChangeListener listener = new IValuePropertyChangeListener() {
 			public void handleValuePropertyChange(ValuePropertyChangeEvent event) {
-				Object masterValue = event.getSource();
-				final Set keys = keysFor(masterValue);
-
-				final Object oldDetailValue = event.diff.getOldValue();
-				final Object newDetailValue = event.diff.getNewValue();
-
-				if (!Util.equals(oldDetailValue, newDetailValue)) {
-					fireMapChange(new MapDiff() {
-						public Set getAddedKeys() {
-							return Collections.EMPTY_SET;
-						}
-
-						public Set getChangedKeys() {
-							return keys;
-						}
-
-						public Set getRemovedKeys() {
-							return Collections.EMPTY_SET;
-						}
-
-						public Object getNewValue(Object key) {
-							return newDetailValue;
-						}
-
-						public Object getOldValue(Object key) {
-							return oldDetailValue;
-						}
-					});
-				}
-			}
-
-			private Set keysFor(Object value) {
-				Set keys = new HashSet();
-
-				for (Iterator it = masterMap.entrySet().iterator(); it
-						.hasNext();) {
-					Map.Entry entry = (Entry) it.next();
-					if (entry.getValue() == value) {
-						keys.add(entry.getKey());
-					}
-				}
-
-				return keys;
+				notifyIfChanged(event.getSource());
 			}
 		};
 		this.detailListener = detailProperty.adaptListener(listener);
@@ -218,6 +176,7 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 			knownMasterValues.dispose();
 			knownMasterValues = null;
 		}
+		cachedValues.clear();
 		cachedValues = null;
 	}
 
@@ -283,22 +242,14 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 
 			Object oldValue = detailProperty.getValue(source);
 
-			boolean changed;
 			updating = true;
 			try {
-				changed = detailProperty.setValue(source, value);
+				detailProperty.setValue(source, value);
 			} finally {
 				updating = false;
 			}
 
-			if (changed) {
-				Object newValue = detailProperty.getValue(source);
-				
-				if (!Util.equals(oldValue, newValue)) {
-					fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
-							newValue));
-				}
-			}
+			notifyIfChanged(source);
 
 			return oldValue;
 		}
@@ -322,6 +273,64 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 			return (key == null ? 0 : key.hashCode())
 					^ (value == null ? 0 : value.hashCode());
 		}
+	}
+
+	public Object put(Object key, Object value) {
+		if (!masterMap.containsKey(key))
+			return null;
+		Object masterValue = masterMap.get(key);
+		Object oldValue = detailProperty.getValue(key);
+		detailProperty.setValue(masterValue, value);
+		notifyIfChanged(masterValue);
+		return oldValue;
+	}
+
+	private void notifyIfChanged(Object masterValue) {
+		if (cachedValues != null) {
+			final Set keys = keysFor(masterValue);
+
+			final Object oldValue = cachedValues.get(new IdentityWrapper(
+					masterValue));
+			final Object newValue = detailProperty.getValue(masterValue);
+
+			if (!Util.equals(oldValue, newValue)) {
+				cachedValues.put(new IdentityWrapper(masterValue), newValue);
+				fireMapChange(new MapDiff() {
+					public Set getAddedKeys() {
+						return Collections.EMPTY_SET;
+					}
+
+					public Set getChangedKeys() {
+						return keys;
+					}
+
+					public Set getRemovedKeys() {
+						return Collections.EMPTY_SET;
+					}
+
+					public Object getNewValue(Object key) {
+						return newValue;
+					}
+
+					public Object getOldValue(Object key) {
+						return oldValue;
+					}
+				});
+			}
+		}
+	}
+
+	private Set keysFor(Object value) {
+		Set keys = new HashSet();
+
+		for (Iterator it = masterMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Entry) it.next();
+			if (entry.getValue() == value) {
+				keys.add(entry.getKey());
+			}
+		}
+
+		return keys;
 	}
 
 	public boolean isStale() {

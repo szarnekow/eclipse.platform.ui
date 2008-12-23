@@ -28,12 +28,9 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 		return String.class;
 	}
 
-	protected boolean setList(Object source, List list, ListDiff diff) {
-		if (source == null)
-			return false;
+	protected void doSetList(Object source, List list, ListDiff diff) {
 		String[] strings = (String[]) list.toArray(new String[list.size()]);
 		doSetStringList((Control) source, strings);
-		return true;
 	}
 
 	abstract void doSetStringList(Control control, String[] list);
@@ -50,9 +47,9 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 		return null;
 	}
 
-	public void addListener(Object source, INativePropertyListener listener) {
+	public void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	public void removeListener(Object source, INativePropertyListener listener) {
+	public void doRemoveListener(Object source, INativePropertyListener listener) {
 	}
 }

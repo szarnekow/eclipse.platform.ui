@@ -11,11 +11,9 @@
 
 package org.eclipse.core.databinding.property.value;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -28,11 +26,12 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <p>
  * Subclasses must implement these methods:
  * <ul>
- * <li> {@link #getValue(Object)}
- * <li> {@link #setValue(Object, Object)}
+ * <li> {@link #getValueType()}
+ * <li> {@link #doGetValue(Object)}
+ * <li> {@link #doSetValue(Object, Object)}
  * <li> {@link #adaptListener(IValuePropertyChangeListener)}
- * <li> {@link #addListener(Object, INativePropertyListener)}
- * <li> {@link #removeListener(Object, INativePropertyListener)}
+ * <li> {@link #doAddListener(Object, INativePropertyListener)}
+ * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
@@ -50,14 +49,26 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	protected abstract Object getValueType();
 
 	/**
-	 * Returns the source's value property
+	 * Returns the value of the property on the specified source object
 	 * 
 	 * @param source
-	 *            the property source
+	 *            the property source (may be null)
 	 * @return the current value of the source's value property
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract Object getValue(Object source);
+	protected final Object getValue(Object source) {
+		return source == null ? null : doGetValue(source);
+	}
+
+	/**
+	 * Returns the value of the property on the specified source object
+	 * 
+	 * @param source
+	 *            the property source (may not be null)
+	 * @return the current value of the source's value property
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract Object doGetValue(Object source);
 
 	/**
 	 * Sets the source's value property to the specified value
@@ -66,11 +77,14 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            the property source
 	 * @param value
 	 *            the new value
-	 * @return true if the property was modified on the source object, false
-	 *         otherwise
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract boolean setValue(Object source, Object value);
+	protected final void setValue(Object source, Object value) {
+		if (source != null)
+			doSetValue(source, value);
+	}
+
+	protected abstract void doSetValue(Object source, Object value);
 
 	/**
 	 * Returns a listener which implements the correct listener interface for
@@ -104,7 +118,26 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            {@link #adaptListener(IValuePropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void addListener(Object source,
+	protected final void addListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doAddListener(source, listener);
+	}
+
+	/**
+	 * Adds the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(IValuePropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(IValuePropertyChangeListener)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doAddListener(Object source,
 			INativePropertyListener listener);
 
 	/**
@@ -120,7 +153,26 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            {@link #adaptListener(IValuePropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract void removeListener(Object source,
+	protected final void removeListener(Object source,
+			INativePropertyListener listener) {
+		if (source != null)
+			doRemoveListener(source, listener);
+	}
+
+	/**
+	 * Removes the specified listener as a listener for this property on the
+	 * specified property source. If the source object has no listener API for
+	 * this property (i.e. {@link #adaptListener(IValuePropertyChangeListener)}
+	 * returns null), this method does nothing.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @param listener
+	 *            a listener obtained from calling
+	 *            {@link #adaptListener(IValuePropertyChangeListener)}.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected abstract void doRemoveListener(Object source,
 			INativePropertyListener listener);
 
 	public IObservableValue observeValue(Realm realm, Object source) {
@@ -128,14 +180,8 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	}
 
 	public IObservableValue observeDetailValue(IObservableValue master) {
-		final Realm realm = master.getRealm();
-		IObservableFactory factory = new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return SimpleValueProperty.this.observeValue(realm, target);
-			}
-		};
-		return MasterDetailObservables.detailValue(master, factory,
-				getValueType());
+		return MasterDetailObservables.detailValue(master, valueFactory(master
+				.getRealm()), getValueType());
 	}
 
 	public IObservableList observeDetailValues(IObservableList master) {

@@ -11,7 +11,6 @@
 
 package org.eclipse.core.databinding.property.list;
 
-import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
@@ -30,26 +29,16 @@ public class ListPropertyChangeEvent extends PropertyChangeEvent {
 	public final SimpleListProperty property;
 
 	/**
-	 * ListDiff enumerating the added and removed elements in the list, or null
-	 * if the change is unknown.
-	 */
-	public final ListDiff diff;
-
-	/**
 	 * Constructs a ListPropertyChangeEvent with the given attributes
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
-	 * @param diff
-	 *            a ListDiff describing the changes to the list property
 	 */
-	public ListPropertyChangeEvent(Object source, SimpleListProperty property,
-			ListDiff diff) {
+	public ListPropertyChangeEvent(Object source, SimpleListProperty property) {
 		super(source);
 		this.property = property;
-		this.diff = diff;
 	}
 
 	protected void dispatch(IPropertyChangeListener listener) {

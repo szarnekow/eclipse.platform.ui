@@ -19,8 +19,8 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
@@ -46,9 +46,8 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 	}
 
 	protected void firstListenerAdded() {
+		cachedValues = new HashMap(this);
 		if (listener == null) {
-			cachedValues = new HashMap(this);
-
 			listener = detailProperty
 					.adaptListener(new IValuePropertyChangeListener() {
 						public void handleValuePropertyChange(
@@ -56,24 +55,7 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 							if (!isDisposed() && !updating) {
 								getRealm().exec(new Runnable() {
 									public void run() {
-										Object key = event.getSource();
-										Object oldValue;
-										Object newValue;
-
-										ValueDiff diff = event.diff;
-										if (diff == null) {
-											oldValue = cachedValues.get(key);
-											newValue = detailProperty
-													.getValue(key);
-										} else {
-											oldValue = event.diff.getOldValue();
-											newValue = event.diff.getNewValue();
-										}
-
-										cachedValues.put(key, newValue);
-										fireMapChange(Diffs
-												.createMapDiffSingleChange(key,
-														oldValue, newValue));
+										notifyIfChanged(event.getSource());
 									}
 								});
 							}
@@ -85,10 +67,13 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 
 	protected void lastListenerRemoved() {
 		super.lastListenerRemoved();
+		cachedValues.clear();
+		cachedValues = null;
 	}
 
 	protected void hookListener(Object addedKey) {
 		if (listener != null) {
+			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
 			detailProperty.addListener(addedKey, listener);
 		}
 	}
@@ -96,35 +81,40 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 	protected void unhookListener(Object removedKey) {
 		if (listener != null) {
 			detailProperty.removeListener(removedKey, listener);
+			cachedValues.remove(removedKey);
 		}
 	}
 
 	protected Object doGet(Object key) {
+		notifyIfChanged(key);
 		return detailProperty.getValue(key);
 	}
 
 	protected Object doPut(Object key, Object value) {
 		Object oldValue = detailProperty.getValue(key);
 
-		boolean changed;
 		updating = true;
 		try {
-			changed = detailProperty.setValue(key, value);
+			detailProperty.setValue(key, value);
 		} finally {
 			updating = false;
 		}
-		
-		if (changed) {
+
+		notifyIfChanged(key);
+
+		return oldValue;
+	}
+
+	private void notifyIfChanged(Object key) {
+		if (cachedValues != null) {
+			Object oldValue = cachedValues.get(key);
 			Object newValue = detailProperty.getValue(key);
-			cachedValues.put(key, newValue);
-			
-			if (oldValue != newValue) {
+			if (!Util.equals(oldValue, newValue)) {
+				cachedValues.put(key, newValue);
 				fireMapChange(Diffs.createMapDiffSingleChange(key, oldValue,
 						newValue));
 			}
 		}
-
-		return oldValue;
 	}
 
 	public Object getObserved() {
