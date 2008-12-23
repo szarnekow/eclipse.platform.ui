@@ -28,7 +28,9 @@ import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
 /**
  * @since 1.2
@@ -76,9 +78,9 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IMapPropertyChangeListener() {
-							public void handleMapPropertyChange(
-									final MapPropertyChangeEvent event) {
+						.adaptListener(new IPropertyChangeListener() {
+							public void handlePropertyChange(
+									final PropertyChangeEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {

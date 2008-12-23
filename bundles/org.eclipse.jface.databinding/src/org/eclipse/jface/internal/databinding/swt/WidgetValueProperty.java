@@ -13,9 +13,9 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.value.IValuePropertyChangeListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.databinding.property.value.ValuePropertyChangeEvent;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -45,7 +45,7 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 	}
 
 	protected INativePropertyListener adaptListener(
-			IValuePropertyChangeListener listener) {
+			IPropertyChangeListener listener) {
 		return new WidgetListener(listener);
 	}
 
@@ -75,15 +75,15 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 	}
 
 	private class WidgetListener implements INativePropertyListener, Listener {
-		private final IValuePropertyChangeListener listener;
+		private final IPropertyChangeListener listener;
 
-		protected WidgetListener(IValuePropertyChangeListener listener) {
+		protected WidgetListener(IPropertyChangeListener listener) {
 			this.listener = listener;
 		}
 
 		public void handleEvent(Event event) {
-			listener.handleValuePropertyChange(new ValuePropertyChangeEvent(
-					event.widget, WidgetValueProperty.this));
+			listener.handlePropertyChange(new PropertyChangeEvent(event.widget,
+					WidgetValueProperty.this));
 		}
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 
 /**
  * Simplified abstract implementation of ISetProperty. This class takes care of
@@ -33,7 +34,7 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <li> {@link #getElementType()}
  * <li> {@link #doGetSet(Object)}
  * <li> {@link #doSetSet(Object, Set, SetDiff)}
- * <li> {@link #adaptListener(ISetPropertyChangeListener)}
+ * <li> {@link #adaptListener(IPropertyChangeListener)}
  * <li> {@link #doAddListener(Object, INativePropertyListener)}
  * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
@@ -148,19 +149,19 @@ public abstract class SimpleSetProperty extends SetProperty {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract INativePropertyListener adaptListener(
-			ISetPropertyChangeListener listener);
+			IPropertyChangeListener listener);
 
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISetPropertyChangeListener)}.
+	 *            {@link #adaptListener(IPropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final void addListener(Object source,
@@ -172,14 +173,14 @@ public abstract class SimpleSetProperty extends SetProperty {
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISetPropertyChangeListener)}.
+	 *            {@link #adaptListener(IPropertyChangeListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doAddListener(Object source,
@@ -188,14 +189,14 @@ public abstract class SimpleSetProperty extends SetProperty {
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISetPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final void removeListener(Object source,
@@ -207,14 +208,14 @@ public abstract class SimpleSetProperty extends SetProperty {
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(ISetPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(ISetPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doRemoveListener(Object source,

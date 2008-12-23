@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.list.IListPropertyChangeListener;
-import org.eclipse.core.databinding.property.list.ListPropertyChangeEvent;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -49,7 +49,7 @@ public class SelectionProviderMultipleSelectionProperty extends
 	}
 
 	public INativePropertyListener adaptListener(
-			IListPropertyChangeListener listener) {
+			IPropertyChangeListener listener) {
 		return new SelectionChangedListener(listener);
 	}
 
@@ -66,14 +66,14 @@ public class SelectionProviderMultipleSelectionProperty extends
 
 	private class SelectionChangedListener implements INativePropertyListener,
 			ISelectionChangedListener {
-		private IListPropertyChangeListener listener;
+		private IPropertyChangeListener listener;
 
-		private SelectionChangedListener(IListPropertyChangeListener listener) {
+		private SelectionChangedListener(IPropertyChangeListener listener) {
 			this.listener = listener;
 		}
 
 		public void selectionChanged(SelectionChangedEvent event) {
-			listener.handleListPropertyChange(new ListPropertyChangeEvent(event
+			listener.handlePropertyChange(new PropertyChangeEvent(event
 					.getSource(),
 					SelectionProviderMultipleSelectionProperty.this));
 		}

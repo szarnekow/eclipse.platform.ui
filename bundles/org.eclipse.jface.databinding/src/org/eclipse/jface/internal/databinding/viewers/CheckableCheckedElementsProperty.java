@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.set.ISetPropertyChangeListener;
-import org.eclipse.core.databinding.property.set.SetPropertyChangeEvent;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
@@ -71,7 +71,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			ISetPropertyChangeListener listener) {
+			IPropertyChangeListener listener) {
 		return new CheckStateListener(listener);
 	}
 
@@ -87,14 +87,14 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 
 	private class CheckStateListener implements INativePropertyListener,
 			ICheckStateListener {
-		private ISetPropertyChangeListener listener;
+		private IPropertyChangeListener listener;
 
-		private CheckStateListener(ISetPropertyChangeListener listener) {
+		private CheckStateListener(IPropertyChangeListener listener) {
 			this.listener = listener;
 		}
 
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			listener.handleSetPropertyChange(new SetPropertyChangeEvent(event
+			listener.handlePropertyChange(new PropertyChangeEvent(event
 					.getSource(), CheckableCheckedElementsProperty.this));
 		}
 	}

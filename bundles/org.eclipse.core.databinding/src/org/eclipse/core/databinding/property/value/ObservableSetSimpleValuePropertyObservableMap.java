@@ -20,6 +20,8 @@ import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -49,9 +51,9 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 		cachedValues = new HashMap(this);
 		if (listener == null) {
 			listener = detailProperty
-					.adaptListener(new IValuePropertyChangeListener() {
-						public void handleValuePropertyChange(
-								final ValuePropertyChangeEvent event) {
+					.adaptListener(new IPropertyChangeListener() {
+						public void handlePropertyChange(
+								final PropertyChangeEvent event) {
 							if (!isDisposed() && !updating) {
 								getRealm().exec(new Runnable() {
 									public void run() {

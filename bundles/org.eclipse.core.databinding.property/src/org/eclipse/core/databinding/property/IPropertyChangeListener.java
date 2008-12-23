@@ -13,11 +13,18 @@
 package org.eclipse.core.databinding.property;
 
 /**
- * Marker interface for all listener types in the properties framework.
+ * Listener for changes to properties on a particular source object
  * 
  * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 1.2
  */
 public interface IPropertyChangeListener {
+	/**
+	 * Handle the property change described in the event.
+	 * 
+	 * @param event
+	 *            an event describing the list change that occured.
+	 */
+	public void handlePropertyChange(PropertyChangeEvent event);
 }

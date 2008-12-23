@@ -11,7 +11,6 @@
 
 package org.eclipse.core.internal.databinding.beans;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -22,8 +21,8 @@ import java.util.List;
 import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.list.IListPropertyChangeListener;
-import org.eclipse.core.databinding.property.list.ListPropertyChangeEvent;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
@@ -86,23 +85,23 @@ public class BeanListProperty extends SimpleListProperty implements
 		return propertyDescriptor;
 	}
 
-	public INativePropertyListener adaptListener(
-			final IListPropertyChangeListener listener) {
+	protected INativePropertyListener adaptListener(
+			final IPropertyChangeListener listener) {
 		return new Listener(listener);
 	}
 
 	private class Listener implements INativePropertyListener,
 			PropertyChangeListener {
-		private final IListPropertyChangeListener listener;
+		private final IPropertyChangeListener listener;
 
-		private Listener(IListPropertyChangeListener listener) {
+		private Listener(IPropertyChangeListener listener) {
 			this.listener = listener;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(java.beans.PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				listener.handleListPropertyChange(new ListPropertyChangeEvent(
-						evt.getSource(), BeanListProperty.this));
+				listener.handlePropertyChange(new PropertyChangeEvent(evt
+						.getSource(), BeanListProperty.this));
 			}
 		}
 	}

@@ -27,7 +27,9 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
 /**
  * @since 1.2
@@ -64,9 +66,9 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IListPropertyChangeListener() {
-							public void handleListPropertyChange(
-									final ListPropertyChangeEvent event) {
+						.adaptListener(new IPropertyChangeListener() {
+							public void handlePropertyChange(
+									final PropertyChangeEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {

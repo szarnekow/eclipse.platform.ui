@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.value.IValuePropertyChangeListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -33,7 +33,7 @@ public class ViewerInputProperty extends ViewerValueProperty {
 	}
 
 	protected INativePropertyListener adaptListener(
-			IValuePropertyChangeListener listener) {
+			IPropertyChangeListener listener) {
 		return null;
 	}
 

@@ -38,6 +38,8 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.internal.databinding.IdentityWrapper;
 import org.eclipse.core.internal.databinding.Util;
 
@@ -108,9 +110,8 @@ class ObservableListSimpleValuePropertyObservableList extends
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;
 
-		IValuePropertyChangeListener listener = new IValuePropertyChangeListener() {
-			public void handleValuePropertyChange(
-					final ValuePropertyChangeEvent event) {
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			public void handlePropertyChange(PropertyChangeEvent event) {
 				if (!isDisposed() && !updating) {
 					notifyIfChanged(event.getSource());
 				}
@@ -347,7 +348,7 @@ class ObservableListSimpleValuePropertyObservableList extends
 				} finally {
 					updating = wasUpdating;
 				}
-				
+
 				notifyIfChanged(lastMasterElement);
 
 				lastElement = o;
@@ -357,7 +358,8 @@ class ObservableListSimpleValuePropertyObservableList extends
 
 	private void notifyIfChanged(Object masterElement) {
 		if (cachedValues != null) {
-			Object oldValue = cachedValues.get(new IdentityWrapper(masterElement));
+			Object oldValue = cachedValues.get(new IdentityWrapper(
+					masterElement));
 			Object newValue = detailProperty.getValue(masterElement);
 			if (!Util.equals(oldValue, newValue)) {
 				cachedValues.put(new IdentityWrapper(masterElement), newValue);

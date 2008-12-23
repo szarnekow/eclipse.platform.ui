@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 
 /**
  * Simplified abstract implementation of IMapProperty. This class takes care of
@@ -34,7 +35,7 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
  * <li> {@link #getValueType()}
  * <li> {@link #doGetMap(Object)}
  * <li> {@link #doSetMap(Object, Map, MapDiff)}
- * <li> {@link #adaptListener(IMapPropertyChangeListener)}
+ * <li> {@link #adaptListener(IPropertyChangeListener)}
  * <li> {@link #doAddListener(Object, INativePropertyListener)}
  * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
@@ -157,19 +158,19 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract INativePropertyListener adaptListener(
-			IMapPropertyChangeListener listener);
+			IPropertyChangeListener listener);
 
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IMapPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IMapPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final void addListener(Object source,
@@ -181,14 +182,14 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IMapPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IMapPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doAddListener(Object source,
@@ -197,14 +198,14 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IMapPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IMapPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected final void removeListener(Object source,
@@ -216,14 +217,14 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IMapPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IMapPropertyChangeListener)} .
+	 *            {@link #adaptListener(IPropertyChangeListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doRemoveListener(Object source,

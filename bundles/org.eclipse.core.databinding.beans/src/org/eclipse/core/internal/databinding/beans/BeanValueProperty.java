@@ -11,15 +11,14 @@
 
 package org.eclipse.core.internal.databinding.beans;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.value.IValuePropertyChangeListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
-import org.eclipse.core.databinding.property.value.ValuePropertyChangeEvent;
 
 /**
  * @since 3.3
@@ -58,23 +57,22 @@ public class BeanValueProperty extends SimpleValueProperty implements
 	}
 
 	public INativePropertyListener adaptListener(
-			final IValuePropertyChangeListener listener) {
+			final IPropertyChangeListener listener) {
 		return new Listener(listener);
 	}
 
 	private class Listener implements INativePropertyListener,
 			PropertyChangeListener {
-		private final IValuePropertyChangeListener listener;
+		private final IPropertyChangeListener listener;
 
-		private Listener(IValuePropertyChangeListener listener) {
+		private Listener(IPropertyChangeListener listener) {
 			this.listener = listener;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(java.beans.PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				listener
-						.handleValuePropertyChange(new ValuePropertyChangeEvent(
-								evt.getSource(), BeanValueProperty.this));
+				listener.handlePropertyChange(new PropertyChangeEvent(evt
+						.getSource(), BeanValueProperty.this));
 			}
 		}
 	}

@@ -24,7 +24,9 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 
 /**
  * @since 1.2
@@ -61,9 +63,9 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 
 			if (listener == null) {
 				listener = property
-						.adaptListener(new ISetPropertyChangeListener() {
-							public void handleSetPropertyChange(
-									final SetPropertyChangeEvent event) {
+						.adaptListener(new IPropertyChangeListener() {
+							public void handlePropertyChange(
+									final PropertyChangeEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {

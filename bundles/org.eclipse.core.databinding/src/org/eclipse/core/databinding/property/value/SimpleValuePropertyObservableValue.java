@@ -16,7 +16,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -50,9 +52,9 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 			cachedValue = property.getValue(source);
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IValuePropertyChangeListener() {
-							public void handleValuePropertyChange(
-									final ValuePropertyChangeEvent event) {
+						.adaptListener(new IPropertyChangeListener() {
+							public void handlePropertyChange(
+									PropertyChangeEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {

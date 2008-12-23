@@ -34,6 +34,8 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.PropertyChangeEvent;
 import org.eclipse.core.internal.databinding.IdentityWrapper;
 import org.eclipse.core.internal.databinding.Util;
 
@@ -131,8 +133,8 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 		this.masterMap = map;
 		this.detailProperty = valueProperty;
 
-		IValuePropertyChangeListener listener = new IValuePropertyChangeListener() {
-			public void handleValuePropertyChange(ValuePropertyChangeEvent event) {
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			public void handlePropertyChange(PropertyChangeEvent event) {
 				notifyIfChanged(event.getSource());
 			}
 		};
