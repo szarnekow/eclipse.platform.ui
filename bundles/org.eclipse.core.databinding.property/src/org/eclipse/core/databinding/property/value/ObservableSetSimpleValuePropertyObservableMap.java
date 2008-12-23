@@ -88,7 +88,6 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 	}
 
 	protected Object doGet(Object key) {
-		notifyIfChanged(key);
 		return detailProperty.getValue(key);
 	}
 
