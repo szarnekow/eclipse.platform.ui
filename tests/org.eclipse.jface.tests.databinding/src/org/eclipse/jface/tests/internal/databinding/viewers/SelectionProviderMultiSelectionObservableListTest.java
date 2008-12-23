@@ -134,7 +134,7 @@ public class SelectionProviderMultiSelectionObservableListTest extends TestCase 
 		// selection
 		// provider's notion of which element is at which index.
 		assertDiff(listener.event.diff, Collections.singletonList(model[1]),
-				Arrays.asList(new Object[] { model[2], model[1] }));
+				Arrays.asList(new Object[] { model[1], model[2] }));
 		assertEquals(observable, listener.event.getObservableList());
 		assertEquals(2, ((IStructuredSelection) viewer.getSelection()).size());
 
