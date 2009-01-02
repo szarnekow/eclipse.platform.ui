@@ -80,6 +80,12 @@ public abstract class AbstractObservableList extends AbstractList implements
 		this(Realm.getDefault());
 	}
 	
+	/**
+	 * Returns whether this observable list has any registered listeners.
+	 * 
+	 * @return whether this observable list has any registered listeners.
+	 * @since 1.2
+	 */
 	protected boolean hasListeners() {
 		return changeSupport.hasListeners();
 	}
