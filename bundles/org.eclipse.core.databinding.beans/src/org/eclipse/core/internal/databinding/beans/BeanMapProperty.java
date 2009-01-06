@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -16,7 +17,6 @@ import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.property.map.SimpleMapProperty;
  * @since 3.3
  * 
  */
-public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty {
+public class BeanMapProperty extends SimpleMapProperty {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class keyType;
 	private final Class valueType;
@@ -44,11 +44,11 @@ public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty 
 		this.valueType = valueType;
 	}
 
-	protected Object getKeyType() {
+	public Object getKeyType() {
 		return keyType;
 	}
 
-	protected Object getValueType() {
+	public Object getValueType() {
 		return valueType;
 	}
 
@@ -65,10 +65,6 @@ public class BeanMapProperty extends SimpleMapProperty implements IBeanProperty 
 
 	protected void doSetMap(Object source, Map map, MapDiff diff) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, map);
-	}
-
-	public PropertyDescriptor getPropertyDescriptor() {
-		return propertyDescriptor;
 	}
 
 	public INativePropertyListener adaptListener(

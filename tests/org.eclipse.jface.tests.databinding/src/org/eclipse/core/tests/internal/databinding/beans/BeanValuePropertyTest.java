@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -39,7 +40,7 @@ public class BeanValuePropertyTest extends AbstractDefaultRealmTestCase {
 		}
 		Listener listener = new Listener();
 
-		IObservableValue observable = property.observeValue(new CurrentRealm(true), bean);
+		IObservableValue observable = property.observe(new CurrentRealm(true), bean);
 		observable.addValueChangeListener(listener);
 
 		assertEquals(0, listener.count);

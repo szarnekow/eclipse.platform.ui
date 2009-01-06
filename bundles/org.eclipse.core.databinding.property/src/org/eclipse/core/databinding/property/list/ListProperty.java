@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -15,9 +16,9 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesList;
 
 /**
  * Abstract implementation of IListProperty.
@@ -25,11 +26,11 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  * @since 1.2
  */
 public abstract class ListProperty extends Property implements IListProperty {
-	public IObservableList observeList(Object source) {
+	public IObservableList observe(Object source) {
 		Realm realm = getPreferredRealm(source);
 		if (realm == null)
 			realm = Realm.getDefault();
-		return observeList(realm, source);
+		return observe(realm, source);
 	}
 
 	public IObservableFactory listFactory() {
@@ -39,12 +40,12 @@ public abstract class ListProperty extends Property implements IListProperty {
 	public IObservableFactory listFactory(final Realm realm) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return observeList(realm, target);
+				return observe(realm, target);
 			}
 		};
 	}
 
-	public final IListProperty chain(IValueProperty detailValue) {
-		return Properties.detailValues(this, detailValue);
+	public final IListProperty values(IValueProperty detailValue) {
+		return new ListPropertyDetailValuesList(this, detailValue);
 	}
 }

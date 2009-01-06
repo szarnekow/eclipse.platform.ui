@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -34,6 +35,15 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public interface ISetProperty extends IProperty {
 	/**
+	 * Returns the type of the elements in the collection or <code>null</code>
+	 * if untyped
+	 * 
+	 * @return the type of the elements in the collection or <code>null</code>
+	 *         if untyped
+	 */
+	public Object getElementType();
+
+	/**
 	 * Returns an observable set observing this set property on the given
 	 * property source
 	 * 
@@ -42,7 +52,7 @@ public interface ISetProperty extends IProperty {
 	 * @return an observable set observing this set property on the given
 	 *         property source
 	 */
-	public IObservableSet observeSet(Object source);
+	public IObservableSet observe(Object source);
 
 	/**
 	 * Returns an observable set observing this set property on the given
@@ -55,7 +65,7 @@ public interface ISetProperty extends IProperty {
 	 * @return an observable set observing this set property on the given
 	 *         property source
 	 */
-	public IObservableSet observeSet(Realm realm, Object source);
+	public IObservableSet observe(Realm realm, Object source);
 
 	/**
 	 * Returns a factory for creating observable sets in the current default
@@ -87,7 +97,7 @@ public interface ISetProperty extends IProperty {
 	 * @return an observable set on the given realm which tracks this property
 	 *         of the current value of <code>master</code>.
 	 */
-	public IObservableSet observeDetailSet(IObservableValue master);
+	public IObservableSet observeDetail(IObservableValue master);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -105,5 +115,5 @@ public interface ISetProperty extends IProperty {
 	 * @return the nested combination of the master set and detail value
 	 *         properties
 	 */
-	public IMapProperty chain(IValueProperty detailValues);
+	public IMapProperty values(IValueProperty detailValues);
 }

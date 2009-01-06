@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -36,6 +37,13 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
  */
 public interface IValueProperty extends IProperty {
 	/**
+	 * Returns the value type of the property, or <code>null</code> if untyped.
+	 * 
+	 * @return the value type of the property, or <code>null</code> if untyped.
+	 */
+	public Object getValueType();
+
+	/**
 	 * Returns an observable value observing this value property on the given
 	 * property source.
 	 * 
@@ -44,7 +52,7 @@ public interface IValueProperty extends IProperty {
 	 * @return an observable value observing this value property on the given
 	 *         property source
 	 */
-	public IObservableValue observeValue(Object source);
+	public IObservableValue observe(Object source);
 
 	/**
 	 * Returns an observable value observing this value property on the given
@@ -57,7 +65,7 @@ public interface IValueProperty extends IProperty {
 	 * @return an observable value observing this value property on the given
 	 *         property source
 	 */
-	public IObservableValue observeValue(Realm realm, Object source);
+	public IObservableValue observe(Realm realm, Object source);
 
 	/**
 	 * Returns a factory for creating observable values in the current default
@@ -89,7 +97,7 @@ public interface IValueProperty extends IProperty {
 	 * @return an observable value which tracks this property of the current
 	 *         value of <code>master</code>.
 	 */
-	public IObservableValue observeDetailValue(IObservableValue master);
+	public IObservableValue observeDetail(IObservableValue master);
 
 	/**
 	 * Returns an observable list on the master observable's realm which tracks
@@ -100,7 +108,7 @@ public interface IValueProperty extends IProperty {
 	 * @return an observable list which tracks this property on each element of
 	 *         the master observable.
 	 */
-	public IObservableList observeDetailValues(IObservableList master);
+	public IObservableList observeDetail(IObservableList master);
 
 	/**
 	 * Returns an observable map on the master observable's realm where the
@@ -112,7 +120,7 @@ public interface IValueProperty extends IProperty {
 	 * @return an observable map that tracks the current value of this property
 	 *         for the elements in the given set.
 	 */
-	public IObservableMap observeDetailValues(IObservableSet master);
+	public IObservableMap observeDetail(IObservableSet master);
 
 	/**
 	 * Returns an observable map on the master observable's realm where the
@@ -126,7 +134,7 @@ public interface IValueProperty extends IProperty {
 	 *         the current value of this property for the elements in the given
 	 *         map's values collection
 	 */
-	public IObservableMap observeDetailValues(IObservableMap master);
+	public IObservableMap observeDetail(IObservableMap master);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -138,7 +146,7 @@ public interface IValueProperty extends IProperty {
 	 *            the detail property
 	 * @return the nested combination of the master and detail properties
 	 */
-	public IValueProperty chain(IValueProperty detailValue);
+	public IValueProperty value(IValueProperty detailValue);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -151,7 +159,7 @@ public interface IValueProperty extends IProperty {
 	 * @return the nested combination of the master value and detail list
 	 *         properties
 	 */
-	public IListProperty chain(IListProperty detailList);
+	public IListProperty list(IListProperty detailList);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -164,7 +172,7 @@ public interface IValueProperty extends IProperty {
 	 * @return the nested combination of the master value and detail set
 	 *         properties
 	 */
-	public ISetProperty chain(ISetProperty detailSet);
+	public ISetProperty set(ISetProperty detailSet);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -177,5 +185,5 @@ public interface IValueProperty extends IProperty {
 	 * @return the nested combination of the master value and detial map
 	 *         properties
 	 */
-	public IMapProperty chain(IMapProperty detailMap);
+	public IMapProperty map(IMapProperty detailMap);
 }

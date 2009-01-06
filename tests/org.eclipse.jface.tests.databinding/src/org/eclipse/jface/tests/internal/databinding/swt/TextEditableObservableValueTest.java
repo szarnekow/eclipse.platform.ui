@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -102,7 +102,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return TextProperties.editable().observeValue(realm, text);
+			return TextProperties.editable().observe(realm, text);
 		}
 
 		public Object getValueType(IObservableValue observable) {

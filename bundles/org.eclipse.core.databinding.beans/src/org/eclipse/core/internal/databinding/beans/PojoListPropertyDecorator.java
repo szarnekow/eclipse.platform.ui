@@ -1,0 +1,102 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Matthew Hall and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthew Hall - initial API and implementation (bug 195222)
+ ******************************************************************************/
+
+package org.eclipse.core.internal.databinding.beans;
+
+import java.beans.PropertyDescriptor;
+
+import org.eclipse.core.databinding.beans.IBeanListProperty;
+import org.eclipse.core.databinding.beans.IBeanValueProperty;
+import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.list.ListProperty;
+
+/**
+ * @since 3.3
+ * 
+ */
+public class PojoListPropertyDecorator extends ListProperty implements
+		IBeanListProperty {
+	private final IListProperty delegate;
+	private final PropertyDescriptor propertyDescriptor;
+
+	/**
+	 * @param delegate
+	 * @param propertyDescriptor
+	 */
+	public PojoListPropertyDecorator(IListProperty delegate,
+			PropertyDescriptor propertyDescriptor) {
+		this.delegate = delegate;
+		this.propertyDescriptor = propertyDescriptor;
+	}
+
+	public Object getElementType() {
+		return delegate.getElementType();
+	}
+
+	private Class getInferredBeanClass() {
+		Class beanClass = (Class) delegate.getElementType();
+		if (beanClass == null)
+			throw new UnsupportedOperationException(
+					"Cannot infer bean class because getValueType() is null"); //$NON-NLS-1$
+		return beanClass;
+	}
+
+	public IBeanListProperty values(String propertyName) {
+		return values(getInferredBeanClass(), propertyName);
+	}
+
+	public IBeanListProperty values(String propertyName, Class valueType) {
+		return values(getInferredBeanClass(), propertyName, valueType);
+	}
+
+	public IBeanListProperty values(Class beanClass, String propertyName) {
+		return values(PojoProperties.value(beanClass, propertyName));
+	}
+
+	public IBeanListProperty values(Class beanClass, String propertyName,
+			Class valueType) {
+		return values(PojoProperties.value(beanClass, propertyName, valueType));
+	}
+
+	public IBeanListProperty values(IBeanValueProperty property) {
+		return new PojoListPropertyDecorator(super.values(property), property
+				.getPropertyDescriptor());
+	}
+
+	public PropertyDescriptor getPropertyDescriptor() {
+		return propertyDescriptor;
+	}
+
+	public IObservableList observe(Object source) {
+		return delegate.observe(source);
+	}
+
+	public IObservableList observe(Realm realm, Object source) {
+		return delegate.observe(realm, source);
+	}
+
+	public IObservableFactory listFactory() {
+		return delegate.listFactory();
+	}
+
+	public IObservableFactory listFactory(Realm realm) {
+		return delegate.listFactory(realm);
+	}
+
+	public IObservableList observeDetail(IObservableValue master) {
+		return delegate.observeDetail(master);
+	}
+}

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -14,7 +15,6 @@ package org.eclipse.core.internal.databinding.beans;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 
-import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
@@ -24,8 +24,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @since 3.3
  * 
  */
-public class BeanValueProperty extends SimpleValueProperty implements
-		IBeanProperty {
+public class BeanValueProperty extends SimpleValueProperty {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class valueType;
 
@@ -40,7 +39,7 @@ public class BeanValueProperty extends SimpleValueProperty implements
 				.getPropertyType() : valueType;
 	}
 
-	protected Object getValueType() {
+	public Object getValueType() {
 		return valueType;
 	}
 
@@ -50,10 +49,6 @@ public class BeanValueProperty extends SimpleValueProperty implements
 
 	protected void doSetValue(Object source, Object value) {
 		BeanPropertyHelper.writeProperty(source, propertyDescriptor, value);
-	}
-
-	public PropertyDescriptor getPropertyDescriptor() {
-		return propertyDescriptor;
 	}
 
 	public INativePropertyListener adaptListener(

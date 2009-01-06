@@ -7,17 +7,21 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.map.IMapProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.beans.BeanListPropertyDecorator;
+import org.eclipse.core.internal.databinding.beans.BeanMapPropertyDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
+import org.eclipse.core.internal.databinding.beans.BeanSetPropertyDecorator;
+import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
 import org.eclipse.core.internal.databinding.beans.PojoListProperty;
 import org.eclipse.core.internal.databinding.beans.PojoMapProperty;
 import org.eclipse.core.internal.databinding.beans.PojoSetProperty;
@@ -43,7 +47,7 @@ public class PojoProperties {
 	 * @return a value property for the given property name of the given bean
 	 *         class.
 	 */
-	public static IValueProperty value(Class beanClass, String propertyName) {
+	public static IBeanValueProperty value(Class beanClass, String propertyName) {
 		return value(beanClass, propertyName, null);
 	}
 
@@ -60,10 +64,52 @@ public class PojoProperties {
 	 * @return a value property for the given property name of the given bean
 	 *         class.
 	 */
-	public static IValueProperty value(Class beanClass, String propertyName,
-			Class valueType) {
-		return new PojoValueProperty(BeanPropertyHelper.getPropertyDescriptor(
-				beanClass, propertyName), valueType);
+	public static IBeanValueProperty value(Class beanClass,
+			String propertyName, Class valueType) {
+		String[] propertyNames = split(propertyName);
+		if (propertyNames.length > 1)
+			valueType = null;
+
+		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
+				.getPropertyDescriptor(beanClass, propertyNames[0]);
+		IBeanValueProperty property = new BeanValuePropertyDecorator(
+				new PojoValueProperty(propertyDescriptor, valueType),
+				propertyDescriptor);
+		for (int i = 1; i < propertyNames.length; i++) {
+			property = property.value(propertyNames[i]);
+		}
+		return property;
+	}
+
+	private static String[] split(String propertyName) {
+		if (propertyName.indexOf('.') == -1)
+			return new String[] { propertyName };
+		List propertyNames = new ArrayList();
+		int index;
+		while ((index = propertyName.indexOf('.')) != -1) {
+			propertyNames.add(propertyName.substring(0, index));
+			propertyName = propertyName.substring(index + 1);
+		}
+		propertyNames.add(propertyName);
+		return (String[]) propertyNames
+				.toArray(new String[propertyNames.size()]);
+	}
+
+	/**
+	 * Returns a value property array for the given property names of the given
+	 * bean class.
+	 * 
+	 * @param beanClass
+	 * @param propertyNames
+	 * @return a value property array for the given property names of the given
+	 *         bean class.
+	 */
+	public static IBeanValueProperty[] values(Class beanClass,
+			String[] propertyNames) {
+		IBeanValueProperty[] properties = new IBeanValueProperty[propertyNames.length];
+		for (int i = 0; i < properties.length; i++)
+			properties[i] = value(beanClass, propertyNames[i]);
+		return properties;
 	}
 
 	/**
@@ -77,7 +123,7 @@ public class PojoProperties {
 	 * @return a set property for the given property name of the given bean
 	 *         class.
 	 */
-	public static ISetProperty set(Class beanClass, String propertyName) {
+	public static IBeanSetProperty set(Class beanClass, String propertyName) {
 		return set(beanClass, propertyName, null);
 	}
 
@@ -94,10 +140,13 @@ public class PojoProperties {
 	 * @return a set property for the given property name of the given bean
 	 *         class.
 	 */
-	public static ISetProperty set(Class beanClass, String propertyName,
+	public static IBeanSetProperty set(Class beanClass, String propertyName,
 			Class elementType) {
-		return new PojoSetProperty(BeanPropertyHelper.getPropertyDescriptor(
-				beanClass, propertyName), elementType);
+		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
+				.getPropertyDescriptor(beanClass, propertyName);
+		PojoSetProperty property = new PojoSetProperty(propertyDescriptor,
+				elementType);
+		return new BeanSetPropertyDecorator(property, propertyDescriptor);
 	}
 
 	/**
@@ -111,7 +160,7 @@ public class PojoProperties {
 	 * @return a list property for the given property name of the given bean
 	 *         class.
 	 */
-	public static IListProperty list(Class beanClass, String propertyName) {
+	public static IBeanListProperty list(Class beanClass, String propertyName) {
 		return list(beanClass, propertyName, null);
 	}
 
@@ -128,10 +177,28 @@ public class PojoProperties {
 	 * @return a list property for the given property name of the given bean
 	 *         class.
 	 */
-	public static IListProperty list(Class beanClass, String propertyName,
+	public static IBeanListProperty list(Class beanClass, String propertyName,
 			Class elementType) {
-		return new PojoListProperty(BeanPropertyHelper.getPropertyDescriptor(
-				beanClass, propertyName), elementType);
+		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
+				.getPropertyDescriptor(beanClass, propertyName);
+		PojoListProperty property = new PojoListProperty(propertyDescriptor,
+				elementType);
+		return new BeanListPropertyDecorator(property, propertyDescriptor);
+	}
+
+	/**
+	 * Returns a map property for the given property name of the given bean
+	 * class.
+	 * 
+	 * @param beanClass
+	 *            the bean class
+	 * @param propertyName
+	 *            the property name
+	 * @return a map property for the given property name of the given bean
+	 *         class.
+	 */
+	public static IBeanMapProperty map(Class beanClass, String propertyName) {
+		return map(beanClass, propertyName, null, null);
 	}
 
 	/**
@@ -149,9 +216,12 @@ public class PojoProperties {
 	 * @return a map property for the given property name of the given bean
 	 *         class.
 	 */
-	public static IMapProperty map(Class beanClass, String propertyName,
+	public static IBeanMapProperty map(Class beanClass, String propertyName,
 			Class keyType, Class valueType) {
-		return new PojoMapProperty(BeanPropertyHelper.getPropertyDescriptor(
-				beanClass, propertyName), keyType, valueType);
+		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
+				.getPropertyDescriptor(beanClass, propertyName);
+		PojoMapProperty property = new PojoMapProperty(propertyDescriptor,
+				keyType, valueType);
+		return new BeanMapPropertyDecorator(property, propertyDescriptor);
 	}
 }

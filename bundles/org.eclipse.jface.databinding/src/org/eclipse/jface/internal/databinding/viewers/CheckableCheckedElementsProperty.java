@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -37,7 +38,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		this.elementType = elementType;
 	}
 
-	protected Object getElementType() {
+	public Object getElementType() {
 		return elementType;
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -26,7 +27,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * 
  */
 public class StructuredViewerFiltersProperty extends ViewerSetProperty {
-	protected Object getElementType() {
+	public Object getElementType() {
 		return ViewerFilter.class;
 	}
 

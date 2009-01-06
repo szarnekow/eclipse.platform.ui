@@ -7,195 +7,65 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.map.IMapProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesList;
-import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap;
-import org.eclipse.core.internal.databinding.property.SetPropertyDetailValuesMap;
-import org.eclipse.core.internal.databinding.property.ValuePropertyDetailList;
-import org.eclipse.core.internal.databinding.property.ValuePropertyDetailMap;
-import org.eclipse.core.internal.databinding.property.ValuePropertyDetailSet;
-import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
 
 /**
- * A factory for chaining properties together to create nested properties.
- * <p>
- * Example: Suppose class <code>A</code> has a property <code>b</code> of type
- * <code>B</code>, and that class <code>B</code> has a property <code>c</code>
- * of type <code>C</code>:
- * 
- * <pre>
- * A a = new A();
- * B b = a.getB();
- * IValueProperty ab = BeanProperties.valueProperty(A.class, &quot;b&quot;);
- * assertTrue(ab.getValue(a) == b);
- * 
- * IValueProperty bc = BeanProperties.valueProperty(B.class, &quot;c&quot;);
- * C c = b.getC();
- * assertTrue(bc.getValue(b) == c);
- * </pre>
- * 
- * Using Properties, the <code>ab</code> and <code>bc</code> properties may be
- * combined to form a nested <code>abc</code> property:
- * 
- * <pre>
- * IValueProperty abc = Properties.detailValue(ab, bc)
- * assertTrue(abc.getValue(a) == c);
- * </pre>
+ * Contains static methods to operate on or return IProperty objects.
  * 
  * @since 1.2
  */
 public class Properties {
-	// Properties of IValueProperty properties
-
 	/**
-	 * Returns the nested combination of the master value and detail value
-	 * properties. Value modifications made through the returned property are
-	 * delegated to the detail property, using the value of the master property
-	 * as the source.
+	 * Returns an array of observable maps where each map observes the
+	 * corresponding value property on all elements in the given domain set, for
+	 * each property in the given array.
 	 * 
-	 * @param masterValue
-	 *            the master property
-	 * @param detailValue
-	 *            the detail property
-	 * @return the nested combination of the master and detail properties
+	 * @param domainSet
+	 *            the set of elements whose properties will be observed
+	 * @param properties
+	 *            array of value properties to observe on each element in the
+	 *            domain set.
+	 * @return an array of observable maps where each map observes the
+	 *         corresponding value property of the given domain set.
 	 */
-	public static IValueProperty detailValue(IValueProperty masterValue,
-			IValueProperty detailValue) {
-		return new ValuePropertyDetailValue(masterValue, detailValue);
+	public static IObservableMap[] observeEach(IObservableSet domainSet,
+			IValueProperty[] properties) {
+		IObservableMap[] maps = new IObservableMap[properties.length];
+		for (int i = 0; i < maps.length; i++)
+			maps[i] = properties[i].observeDetail(domainSet);
+		return maps;
 	}
 
 	/**
-	 * Returns the nested combination of the master value and detail list
-	 * properties. List modifications made through the returned property are
-	 * delegated to the detail property, using the value of the master property
-	 * as the source.
+	 * Returns an array of observable maps where each maps observes the
+	 * corresponding value property on all elements in the given domain map's
+	 * {@link Map#values() values} collection, for each property in the given
+	 * array.
 	 * 
-	 * @param masterValue
-	 *            the master property
-	 * @param detailList
-	 *            the detail property
-	 * @return the nested combination of the master value and detail list
-	 *         properties
+	 * @param domainMap
+	 *            the map of elements whose properties will be observed
+	 * @param properties
+	 *            array of value properties to observe on each element in the
+	 *            domain map's {@link Map#values() values} collection.
+	 * @return an array of observable maps where each maps observes the
+	 *         corresponding value property on all elements in the given domain
+	 *         map's {@link Map#values() values} collection, for each property
+	 *         in the given array.
 	 */
-	public static IListProperty detailList(IValueProperty masterValue,
-			IListProperty detailList) {
-		return new ValuePropertyDetailList(masterValue, detailList);
-	}
-
-	/**
-	 * Returns the nested combination of the master value and detail set
-	 * properties. Set modifications made through the returned property are
-	 * delegated to the detail property, using the value of the master property
-	 * as the source.
-	 * 
-	 * @param masterValue
-	 *            the master property
-	 * @param detailSet
-	 *            the detail property
-	 * @return the nested combination of the master value and detail set
-	 *         properties
-	 */
-	public static ISetProperty detailSet(IValueProperty masterValue,
-			ISetProperty detailSet) {
-		return new ValuePropertyDetailSet(masterValue, detailSet);
-	}
-
-	/**
-	 * Returns the nested combination of the master value and detail map
-	 * properties. Map modifications made through the returned property are
-	 * delegated to the detail property, using the value of the master property
-	 * as the source.
-	 * 
-	 * @param masterValue
-	 *            the master property
-	 * @param detailMap
-	 *            the detail property
-	 * @return the nested combination of the master value and detial map
-	 *         properties
-	 */
-	public static IMapProperty detailMap(IValueProperty masterValue,
-			IMapProperty detailMap) {
-		return new ValuePropertyDetailMap(masterValue, detailMap);
-	}
-
-	// Properties of IListProperty master properties
-
-	/**
-	 * Returns the nested combination of the master list and detail value
-	 * properties. Note that because this property is a projection of value
-	 * properties over a list, the only modification supported is through the
-	 * {@link IObservableList#set(int, Object)} method. Modifications made
-	 * through the returned property are delegated to the detail property, using
-	 * the corresponding list element from the master property as the source.
-	 * 
-	 * @param masterList
-	 *            the master property
-	 * @param detailValue
-	 *            the detail property
-	 * @return the nested combination of the master list and detail value
-	 *         properties
-	 */
-	public static IListProperty detailValues(IListProperty masterList,
-			IValueProperty detailValue) {
-		return new ListPropertyDetailValuesList(masterList, detailValue);
-	}
-
-	// Properties of ISetProperty master properties
-
-	/**
-	 * Returns the nested combination of the master set and detail value
-	 * properties. Note that because this property is a projection of value
-	 * properties over a set, the only modifications supported are through the
-	 * {@link IObservableMap#put(Object, Object)} and
-	 * {@link IObservableMap#putAll(java.util.Map)} methods. In the latter case,
-	 * this property does not put entries for keys not already in the master key
-	 * set. Modifications made through the returned property are delegated to
-	 * the detail property, using the corresponding set element from the master
-	 * property as the source.
-	 * 
-	 * @param masterKeySet
-	 *            the master property
-	 * @param detailValues
-	 *            the detail property
-	 * @return the nested combination of the master set and detail value
-	 *         properties
-	 */
-	public static IMapProperty detailValues(ISetProperty masterKeySet,
-			IValueProperty detailValues) {
-		return new SetPropertyDetailValuesMap(masterKeySet, detailValues);
-	}
-
-	// Properties of IMapProperty master properties
-
-	/**
-	 * Returns the nested combination of the master map and detail value
-	 * properties. Note that because this property is a projection of value
-	 * properties over a values collection, the only modifications supported are
-	 * through the {@link IObservableMap#put(Object, Object)} and
-	 * {@link IObservableMap#putAll(java.util.Map)} methods. In the latter case,
-	 * this property does not entries for keys not already contained in the
-	 * master map's key set. Modifications made through the returned property
-	 * are delegated to the detail property, using the corresponding entry value
-	 * from the master property as the source.
-	 * 
-	 * @param masterMap
-	 *            the master property
-	 * @param detailValues
-	 *            the detail property
-	 * @return the nested combination of the master map and detail value
-	 *         properties.
-	 */
-	public static IMapProperty detailValues(IMapProperty masterMap,
-			IValueProperty detailValues) {
-		return new MapPropertyDetailValuesMap(masterMap, detailValues);
+	public static IObservableMap[] observeEach(IObservableMap domainMap,
+			IValueProperty[] properties) {
+		IObservableMap[] maps = new IObservableMap[properties.length];
+		for (int i = 0; i < maps.length; i++)
+			maps[i] = properties[i].observeDetail(domainMap);
+		return maps;
 	}
 }

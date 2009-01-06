@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 118516, 213145, 194734
+ *     Matthew Hall - bugs 118516, 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -109,8 +109,7 @@ public class TableSingleSelectionObservableValueTest extends
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return TableProperties.singleSelectionIndex().observeValue(realm,
-					table);
+			return TableProperties.singleSelectionIndex().observe(realm, table);
 		}
 
 		public Object getValueType(IObservableValue observable) {

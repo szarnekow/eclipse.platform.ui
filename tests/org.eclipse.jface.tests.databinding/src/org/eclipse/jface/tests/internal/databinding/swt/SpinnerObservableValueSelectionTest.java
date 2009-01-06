@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -97,7 +97,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return SpinnerProperties.selection().observeValue(realm, spinner);
+			return SpinnerProperties.selection().observe(realm, spinner);
 		}
 
 		public void change(IObservable observable) {

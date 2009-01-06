@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -47,39 +48,19 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  */
 public abstract class SimpleMapProperty extends MapProperty implements
 		IMapProperty {
-	public IObservableMap observeMap(Realm realm, Object source) {
+	public IObservableMap observe(Realm realm, Object source) {
 		return new SimpleMapPropertyObservableMap(realm, source, this);
 	}
 
-	public IObservableMap observeDetailMap(IObservableValue master) {
+	public IObservableMap observeDetail(IObservableValue master) {
 		final Realm realm = master.getRealm();
 		IObservableFactory factory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return SimpleMapProperty.this.observeMap(realm, target);
+				return SimpleMapProperty.this.observe(realm, target);
 			}
 		};
 		return MasterDetailObservables.detailMap(master, factory);
 	}
-
-	/**
-	 * Returns the element type of the map's key set or <code>null</code> if the
-	 * key set is untyped.
-	 * 
-	 * @return the element type of the map's key set or <code>null</code> if the
-	 *         key set is untyped.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract Object getKeyType();
-
-	/**
-	 * Returns the element type of the map's values collection or
-	 * <code>null</code> if the collection is untyped.
-	 * 
-	 * @return the element type of the map's values collection or
-	 *         <code>null</code> if the collection is untyped.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract Object getValueType();
 
 	// Accessors
 

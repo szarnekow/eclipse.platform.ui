@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
@@ -38,30 +39,34 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 		this.detailProperty = detailProperty;
 	}
 
-	public IObservableValue observeValue(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observeValue(realm, source);
-		return detailProperty.observeDetailValue(master);
+	public Object getValueType() {
+		return detailProperty.getValueType();
 	}
 
-	public IObservableValue observeDetailValue(IObservableValue master) {
+	public IObservableValue observe(Realm realm, Object source) {
+		IObservableValue master = masterProperty.observe(realm, source);
+		return detailProperty.observeDetail(master);
+	}
+
+	public IObservableValue observeDetail(IObservableValue master) {
 		IObservableValue masterValue = masterProperty
-				.observeDetailValue(master);
-		return detailProperty.observeDetailValue(masterValue);
+				.observeDetail(master);
+		return detailProperty.observeDetail(masterValue);
 	}
 
-	public IObservableList observeDetailValues(IObservableList master) {
-		master = masterProperty.observeDetailValues(master);
-		return detailProperty.observeDetailValues(master);
+	public IObservableList observeDetail(IObservableList master) {
+		master = masterProperty.observeDetail(master);
+		return detailProperty.observeDetail(master);
 	}
 
-	public IObservableMap observeDetailValues(IObservableSet master) {
-		IObservableMap masterMap = masterProperty.observeDetailValues(master);
-		return detailProperty.observeDetailValues(masterMap);
+	public IObservableMap observeDetail(IObservableSet master) {
+		IObservableMap masterMap = masterProperty.observeDetail(master);
+		return detailProperty.observeDetail(masterMap);
 	}
 
-	public IObservableMap observeDetailValues(IObservableMap master) {
-		master = masterProperty.observeDetailValues(master);
-		return detailProperty.observeDetailValues(master);
+	public IObservableMap observeDetail(IObservableMap master) {
+		master = masterProperty.observeDetail(master);
+		return detailProperty.observeDetail(master);
 	}
 
 	public String toString() {

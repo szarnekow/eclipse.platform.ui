@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -27,8 +27,7 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
  * @since 3.3
  * 
  */
-public class PojoListProperty extends SimpleListProperty implements
-		IBeanProperty {
+public class PojoListProperty extends SimpleListProperty {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class elementType;
 
@@ -44,7 +43,7 @@ public class PojoListProperty extends SimpleListProperty implements
 				: elementType;
 	}
 
-	protected Object getElementType() {
+	public Object getElementType() {
 		return elementType;
 	}
 
@@ -77,10 +76,6 @@ public class PojoListProperty extends SimpleListProperty implements
 			propertyValue = array;
 		}
 		return propertyValue;
-	}
-
-	public PropertyDescriptor getPropertyDescriptor() {
-		return propertyDescriptor;
 	}
 
 	public INativePropertyListener adaptListener(

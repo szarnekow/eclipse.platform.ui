@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public abstract class ControlStringListProperty extends WidgetListProperty {
-	protected Object getElementType() {
+	public Object getElementType() {
 		return String.class;
 	}
 

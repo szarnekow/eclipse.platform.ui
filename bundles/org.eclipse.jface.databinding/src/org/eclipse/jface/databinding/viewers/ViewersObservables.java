@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 206839, 124684, 239302, 245647, 194734
+ *     Matthew Hall - bug 206839, 124684, 239302, 245647, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -59,13 +59,13 @@ public class ViewersObservables {
 		if (source instanceof Viewer) {
 			return observeViewerProperty((Viewer) source, property);
 		}
-		return property.observeValue(getDefaultRealm(), source);
+		return property.observe(getDefaultRealm(), source);
 	}
 
 	private static IViewerObservableValue observeViewerProperty(Viewer viewer,
 			IValueProperty property) {
 		checkNull(viewer);
-		return new ViewerObservableValueDecorator(property.observeValue(
+		return new ViewerObservableValueDecorator(property.observe(
 				getRealm(viewer), viewer), viewer);
 	}
 
@@ -75,13 +75,13 @@ public class ViewersObservables {
 		if (source instanceof Viewer) {
 			return observeViewerProperty((Viewer) source, property);
 		}
-		return property.observeSet(getDefaultRealm(), source);
+		return property.observe(getDefaultRealm(), source);
 	}
 
 	private static IViewerObservableSet observeViewerProperty(Viewer viewer,
 			ISetProperty property) {
 		checkNull(viewer);
-		return new ViewerObservableSetDecorator(property.observeSet(
+		return new ViewerObservableSetDecorator(property.observe(
 				getRealm(viewer), viewer), viewer);
 	}
 
@@ -92,15 +92,15 @@ public class ViewersObservables {
 			return observeViewerProperty((Viewer) source, property);
 		}
 		Realm realm = getDefaultRealm();
-		return property.observeList(realm, source);
+		return property.observe(realm, source);
 	}
 
 	private static IViewerObservableList observeViewerProperty(Viewer viewer,
 			IListProperty property) {
 		checkNull(viewer);
 		Realm realm = getRealm(viewer);
-		return new ViewerObservableListDecorator(property.observeList(realm,
-				viewer), viewer);
+		return new ViewerObservableListDecorator(property
+				.observe(realm, viewer), viewer);
 	}
 
 	/**

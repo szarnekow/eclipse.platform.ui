@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -15,9 +16,9 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap;
 
 /**
  * Abstract implementation of IMapProperty
@@ -25,11 +26,11 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  * @since 1.2
  */
 public abstract class MapProperty extends Property implements IMapProperty {
-	public IObservableMap observeMap(Object source) {
+	public IObservableMap observe(Object source) {
 		Realm realm = getPreferredRealm(source);
 		if (realm == null)
 			realm = Realm.getDefault();
-		return observeMap(realm, source);
+		return observe(realm, source);
 	}
 
 	public IObservableFactory mapFactory() {
@@ -39,12 +40,12 @@ public abstract class MapProperty extends Property implements IMapProperty {
 	public IObservableFactory mapFactory(final Realm realm) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return observeMap(realm, target);
+				return observe(realm, target);
 			}
 		};
 	}
 
-	public final IMapProperty chain(IValueProperty detailValues) {
-		return Properties.detailValues(this, detailValues);
+	public final IMapProperty values(IValueProperty detailValues) {
+		return new MapPropertyDetailValuesMap(this, detailValues);
 	}
 }

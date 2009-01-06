@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198903
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -78,8 +78,8 @@ public class CComboSingleSelectionObservableValueTest extends
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return CComboProperties.singleSelectionIndex().observeValue(realm,
-					combo);
+			return CComboProperties.singleSelectionIndex()
+					.observe(realm, combo);
 		}
 
 		public void change(IObservable observable) {

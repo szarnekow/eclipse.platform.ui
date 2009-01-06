@@ -36,15 +36,23 @@ public class ValuePropertyDetailMap extends MapProperty {
 		this.detailProperty = detailProperty;
 	}
 
-	public IObservableMap observeMap(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observeValue(realm, source);
-		return detailProperty.observeDetailMap(master);
+	public Object getKeyType() {
+		return detailProperty.getKeyType();
 	}
 
-	public IObservableMap observeDetailMap(IObservableValue master) {
+	public Object getValueType() {
+		return detailProperty.getValueType();
+	}
+
+	public IObservableMap observe(Realm realm, Object source) {
+		IObservableValue master = masterProperty.observe(realm, source);
+		return detailProperty.observeDetail(master);
+	}
+
+	public IObservableMap observeDetail(IObservableValue master) {
 		IObservableValue masterValue = masterProperty
-				.observeDetailValue(master);
-		return detailProperty.observeDetailMap(masterValue);
+				.observeDetail(master);
+		return detailProperty.observeDetail(masterValue);
 	}
 
 	public String toString() {

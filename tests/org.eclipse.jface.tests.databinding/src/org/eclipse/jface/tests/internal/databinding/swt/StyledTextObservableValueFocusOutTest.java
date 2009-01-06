@@ -8,7 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bug 194734
+ *     Matthew Hall - bug 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -55,8 +55,7 @@ public class StyledTextObservableValueFocusOutTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return StyledTextProperties.text(SWT.FocusOut).observeValue(realm,
-					text);
+			return StyledTextProperties.text(SWT.FocusOut).observe(realm, text);
 		}
 
 		public Object getValueType(IObservableValue observable) {

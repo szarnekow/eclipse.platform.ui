@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -54,7 +54,7 @@ public class TextObservableValueFocusOutTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return TextProperties.text(SWT.FocusOut).observeValue(realm, text);
+			return TextProperties.text(SWT.FocusOut).observe(realm, text);
 		}
 
 		public Object getValueType(IObservableValue observable) {

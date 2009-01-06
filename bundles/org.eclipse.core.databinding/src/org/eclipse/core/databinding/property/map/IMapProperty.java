@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -32,6 +33,24 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public interface IMapProperty extends IProperty {
 	/**
+	 * Returns the element type of the map's key set or <code>null</code> if the
+	 * key set is untyped.
+	 * 
+	 * @return the element type of the map's key set or <code>null</code> if the
+	 *         key set is untyped.
+	 */
+	public Object getKeyType();
+
+	/**
+	 * Returns the element type of the map's values collection or
+	 * <code>null</code> if the collection is untyped.
+	 * 
+	 * @return the element type of the map's values collection or
+	 *         <code>null</code> if the collection is untyped.
+	 */
+	public Object getValueType();
+
+	/**
 	 * Returns an observable map observing this map property on the given
 	 * property source
 	 * 
@@ -40,7 +59,7 @@ public interface IMapProperty extends IProperty {
 	 * @return an observable map observing this map-typed property on the given
 	 *         property source
 	 */
-	public IObservableMap observeMap(Object source);
+	public IObservableMap observe(Object source);
 
 	/**
 	 * Returns an observable map observing this map property on the given
@@ -53,7 +72,7 @@ public interface IMapProperty extends IProperty {
 	 * @return an observable map observing this map-typed property on the given
 	 *         property source
 	 */
-	public IObservableMap observeMap(Realm realm, Object source);
+	public IObservableMap observe(Realm realm, Object source);
 
 	/**
 	 * Returns a factory for creating observable maps in the current default
@@ -86,7 +105,7 @@ public interface IMapProperty extends IProperty {
 	 *         this property of the values in the entry set of
 	 *         <code>master</code>.
 	 */
-	public IObservableMap observeDetailMap(IObservableValue master);
+	public IObservableMap observeDetail(IObservableValue master);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -104,5 +123,5 @@ public interface IMapProperty extends IProperty {
 	 * @return the nested combination of the master map and detail value
 	 *         properties.
 	 */
-	public IMapProperty chain(IValueProperty detailValues);
+	public IMapProperty values(IValueProperty detailValues);
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
@@ -36,15 +37,19 @@ public class ValuePropertyDetailSet extends SetProperty {
 		this.detailProperty = detailProperty;
 	}
 
-	public IObservableSet observeSet(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observeValue(realm, source);
-		return detailProperty.observeDetailSet(master);
+	public Object getElementType() {
+		return detailProperty.getElementType();
 	}
 
-	public IObservableSet observeDetailSet(IObservableValue master) {
+	public IObservableSet observe(Realm realm, Object source) {
+		IObservableValue master = masterProperty.observe(realm, source);
+		return detailProperty.observeDetail(master);
+	}
+
+	public IObservableSet observeDetail(IObservableValue master) {
 		IObservableValue masterValue = masterProperty
-				.observeDetailValue(master);
-		return detailProperty.observeDetailSet(masterValue);
+				.observeDetail(master);
+		return detailProperty.observeDetail(masterValue);
 	}
 
 	public String toString() {

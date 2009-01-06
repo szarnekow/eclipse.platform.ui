@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -91,7 +91,7 @@ public class ComboObservableValueTextTest extends TestCase {
 
 		public IObservableValue createObservableValue(Realm realm) {
 			return new SWTObservableValueDecorator(ComboProperties.text()
-					.observeValue(realm, combo), combo);
+					.observe(realm, combo), combo);
 		}
 
 		public void change(IObservable observable) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -45,30 +46,20 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  * @since 1.2
  */
 public abstract class SimpleSetProperty extends SetProperty {
-	public IObservableSet observeSet(Realm realm, Object source) {
+	public IObservableSet observe(Realm realm, Object source) {
 		return new SimpleSetPropertyObservableSet(realm, source, this);
 	}
 
-	public IObservableSet observeDetailSet(IObservableValue master) {
+	public IObservableSet observeDetail(IObservableValue master) {
 		final Realm realm = master.getRealm();
 		IObservableFactory factory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return SimpleSetProperty.this.observeSet(realm, target);
+				return SimpleSetProperty.this.observe(realm, target);
 			}
 		};
 		return MasterDetailObservables.detailSet(master, factory,
 				getElementType());
 	}
-
-	/**
-	 * Returns the type of the elements in the collection or <code>null</code>
-	 * if untyped
-	 * 
-	 * @return the type of the elements in the collection or <code>null</code>
-	 *         if untyped
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract Object getElementType();
 
 	// Accessors
 

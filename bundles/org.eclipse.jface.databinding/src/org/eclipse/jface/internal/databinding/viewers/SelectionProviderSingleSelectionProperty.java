@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -27,7 +28,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class SelectionProviderSingleSelectionProperty extends
 		ViewerValueProperty {
-	protected Object getValueType() {
+	public Object getValueType() {
 		return null;
 	}
 

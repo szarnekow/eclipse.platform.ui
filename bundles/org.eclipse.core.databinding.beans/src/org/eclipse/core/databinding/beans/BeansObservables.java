@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782, 194734
+ *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782, 194734, 195222
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -87,8 +87,8 @@ final public class BeansObservables {
 				propertyName);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableValueDecorator(property.observeValue(realm,
-				bean), propertyDescriptor);
+		return new BeanObservableValueDecorator(property.observe(realm, bean),
+				propertyDescriptor);
 	}
 
 	/**
@@ -106,12 +106,11 @@ final public class BeansObservables {
 	 */
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class beanClass, String propertyName) {
-		IValueProperty property = BeanProperties.value(beanClass,
-				propertyName);
+		IValueProperty property = BeanProperties.value(beanClass, propertyName);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property
-				.observeDetailValues(domain), propertyDescriptor);
+		return new BeanObservableMapDecorator(property.observeDetail(domain),
+				propertyDescriptor);
 	}
 
 	/**
@@ -159,7 +158,7 @@ final public class BeansObservables {
 				propertyName, keyType, valueType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property.observeMap(realm, bean),
+		return new BeanObservableMapDecorator(property.observe(realm, bean),
 				propertyDescriptor);
 	}
 
@@ -292,8 +291,8 @@ final public class BeansObservables {
 				propertyName, elementType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableListDecorator(property
-				.observeList(realm, bean), propertyDescriptor);
+		return new BeanObservableListDecorator(property.observe(realm, bean),
+				propertyDescriptor);
 	}
 
 	/**
@@ -749,7 +748,7 @@ final public class BeansObservables {
 				propertyName, elementType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableSetDecorator(property.observeSet(realm, bean),
+		return new BeanObservableSetDecorator(property.observe(realm, bean),
 				propertyDescriptor);
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -45,30 +46,20 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  * @since 1.2
  */
 public abstract class SimpleListProperty extends ListProperty {
-	public IObservableList observeList(Realm realm, Object source) {
+	public IObservableList observe(Realm realm, Object source) {
 		return new SimpleListPropertyObservableList(realm, source, this);
 	}
 
-	public IObservableList observeDetailList(IObservableValue master) {
+	public IObservableList observeDetail(IObservableValue master) {
 		final Realm realm = master.getRealm();
 		IObservableFactory factory = new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return SimpleListProperty.this.observeList(realm, target);
+				return SimpleListProperty.this.observe(realm, target);
 			}
 		};
 		return MasterDetailObservables.detailList(master, factory,
 				getElementType());
 	}
-
-	/**
-	 * Returns the type of the elements in the collection or <code>null</code>
-	 * if untyped
-	 * 
-	 * @return the type of the elements in the collection or <code>null</code>
-	 *         if untyped
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	protected abstract Object getElementType();
 
 	// Accessors
 

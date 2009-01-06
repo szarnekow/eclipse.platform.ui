@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212235)
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -112,7 +112,7 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ShellProperties.text().observeValue(realm, shell);
+			return ShellProperties.text().observe(realm, shell);
 		}
 
 		public Object getValueType(IObservableValue observable) {

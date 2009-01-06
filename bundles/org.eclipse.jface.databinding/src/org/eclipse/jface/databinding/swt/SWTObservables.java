@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734
+ *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
+ *                    195222
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -125,8 +126,8 @@ public class SWTObservables {
 
 	private static ISWTObservableValue observeWidgetProperty(Widget widget,
 			IValueProperty property) {
-		return new SWTObservableValueDecorator(property.observeValue(
-				getRealm(widget.getDisplay()), widget), widget);
+		return new SWTObservableValueDecorator(property.observe(getRealm(widget
+				.getDisplay()), widget), widget);
 	}
 
 	/**
@@ -331,8 +332,8 @@ public class SWTObservables {
 					"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		return new SWTVetoableValueDecorator(property.observeValue(
-				getRealm(control.getDisplay()), control), control);
+		return new SWTVetoableValueDecorator(property.observe(getRealm(control
+				.getDisplay()), control), control);
 	}
 
 	/**
@@ -439,8 +440,8 @@ public class SWTObservables {
 					"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		return new SWTObservableListDecorator(property.observeList(
-				getRealm(control.getDisplay()), control), control);
+		return new SWTObservableListDecorator(property.observe(getRealm(control
+				.getDisplay()), control), control);
 	}
 
 	/**

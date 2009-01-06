@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -15,11 +16,14 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.internal.databinding.property.ValuePropertyDetailList;
+import org.eclipse.core.internal.databinding.property.ValuePropertyDetailMap;
+import org.eclipse.core.internal.databinding.property.ValuePropertyDetailSet;
+import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
 
 /**
  * Abstract implementation of IValueProperty
@@ -27,11 +31,11 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
  * @since 1.2
  */
 public abstract class ValueProperty extends Property implements IValueProperty {
-	public IObservableValue observeValue(Object source) {
+	public IObservableValue observe(Object source) {
 		Realm realm = getPreferredRealm(source);
 		if (realm == null)
 			realm = Realm.getDefault();
-		return observeValue(realm, source);
+		return observe(realm, source);
 	}
 
 	public IObservableFactory valueFactory() {
@@ -41,24 +45,24 @@ public abstract class ValueProperty extends Property implements IValueProperty {
 	public IObservableFactory valueFactory(final Realm realm) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return observeValue(realm, target);
+				return observe(realm, target);
 			}
 		};
 	}
 
-	public final IValueProperty chain(IValueProperty detailValue) {
-		return Properties.detailValue(this, detailValue);
+	public final IValueProperty value(IValueProperty detailValue) {
+		return new ValuePropertyDetailValue(this, detailValue);
 	}
 
-	public final IListProperty chain(IListProperty detailList) {
-		return Properties.detailList(this, detailList);
+	public final IListProperty list(IListProperty detailList) {
+		return new ValuePropertyDetailList(this, detailList);
 	}
 
-	public final ISetProperty chain(ISetProperty detailSet) {
-		return Properties.detailSet(this, detailSet);
+	public final ISetProperty set(ISetProperty detailSet) {
+		return new ValuePropertyDetailSet(this, detailSet);
 	}
 
-	public final IMapProperty chain(IMapProperty detailMap) {
-		return Properties.detailMap(this, detailMap);
+	public final IMapProperty map(IMapProperty detailMap) {
+		return new ValuePropertyDetailMap(this, detailMap);
 	}
 }

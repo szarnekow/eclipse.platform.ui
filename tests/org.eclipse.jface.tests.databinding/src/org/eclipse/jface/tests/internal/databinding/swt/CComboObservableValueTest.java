@@ -9,7 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
  *     Eric Rizzo - bug 134884
- *     Matthew Hall - bug 194734
+ *     Matthew Hall - bug 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -63,7 +63,7 @@ public class CComboObservableValueTest extends AbstractSWTTestCase {
 	protected void testSetValueWithNull(IValueProperty property) {
 		CCombo combo = new CCombo(getShell(), SWT.NONE);
 		combo.setItems(new String[] { "one", "two", "three" });
-		IObservableValue observable = property.observeValue(Realm.getDefault(),
+		IObservableValue observable = property.observe(Realm.getDefault(),
 				combo);
 
 		observable.setValue("two");

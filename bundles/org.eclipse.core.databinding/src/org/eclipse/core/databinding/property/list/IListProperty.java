@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -32,6 +33,15 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  */
 public interface IListProperty extends IProperty {
 	/**
+	 * Returns the type of the elements in the collection or <code>null</code>
+	 * if untyped
+	 * 
+	 * @return the type of the elements in the collection or <code>null</code>
+	 *         if untyped
+	 */
+	public Object getElementType();
+
+	/**
 	 * Returns an observable list observing this list property on the given
 	 * property source
 	 * 
@@ -40,7 +50,7 @@ public interface IListProperty extends IProperty {
 	 * @return an observable list observing this list property on the given
 	 *         property source
 	 */
-	public IObservableList observeList(Object source);
+	public IObservableList observe(Object source);
 
 	/**
 	 * Returns an observable list observing this list property on the given
@@ -53,7 +63,7 @@ public interface IListProperty extends IProperty {
 	 * @return an observable list observing this list property on the given
 	 *         property source
 	 */
-	public IObservableList observeList(Realm realm, Object source);
+	public IObservableList observe(Realm realm, Object source);
 
 	/**
 	 * Returns a factory for creating observable lists in the current default
@@ -85,7 +95,7 @@ public interface IListProperty extends IProperty {
 	 * @return an observable list on the given realm which tracks this property
 	 *         of the current value of <code>master</code>.
 	 */
-	public IObservableList observeDetailList(IObservableValue master);
+	public IObservableList observeDetail(IObservableValue master);
 
 	/**
 	 * Returns the nested combination of this property and the specified detail
@@ -100,5 +110,5 @@ public interface IListProperty extends IProperty {
 	 * @return the nested combination of the master list and detail value
 	 *         properties
 	 */
-	public IListProperty chain(IValueProperty detailValue);
+	public IListProperty values(IValueProperty detailValue);
 }

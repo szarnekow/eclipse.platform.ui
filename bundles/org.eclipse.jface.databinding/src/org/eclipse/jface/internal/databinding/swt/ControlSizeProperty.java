@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation
  *     Tom Schindl - initial API and implementation
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -28,7 +29,7 @@ public class ControlSizeProperty extends WidgetValueProperty {
 		super(SWT.Resize);
 	}
 
-	protected Object getValueType() {
+	public Object getValueType() {
 		return Point.class;
 	}
 

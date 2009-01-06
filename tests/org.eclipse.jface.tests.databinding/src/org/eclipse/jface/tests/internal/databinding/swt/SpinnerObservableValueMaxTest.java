@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -97,7 +97,7 @@ public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return SpinnerProperties.maximum().observeValue(realm, spinner);
+			return SpinnerProperties.maximum().observe(realm, spinner);
 		}
 
 		public void change(IObservable observable) {

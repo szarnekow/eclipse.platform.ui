@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 221704, 234686, 246625, 226289, 246782, 194734
+ *     Matthew Hall - bugs 221704, 234686, 246625, 226289, 246782, 194734,
+ *                    195222
  *******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -77,8 +78,8 @@ final public class PojoObservables {
 				propertyName);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableValueDecorator(property.observeValue(realm,
-				pojo), propertyDescriptor);
+		return new BeanObservableValueDecorator(property.observe(realm, pojo),
+				propertyDescriptor);
 	}
 
 	/**
@@ -96,12 +97,11 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class pojoClass, String propertyName) {
-		IValueProperty property = PojoProperties.value(pojoClass,
-				propertyName);
+		IValueProperty property = PojoProperties.value(pojoClass, propertyName);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property
-				.observeDetailValues(domain), propertyDescriptor);
+		return new BeanObservableMapDecorator(property.observeDetail(domain),
+				propertyDescriptor);
 	}
 
 	/**
@@ -170,7 +170,7 @@ final public class PojoObservables {
 				propertyName, keyType, valueType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property.observeMap(realm, pojo),
+		return new BeanObservableMapDecorator(property.observe(realm, pojo),
 				propertyDescriptor);
 	}
 
@@ -281,8 +281,8 @@ final public class PojoObservables {
 				propertyName, elementType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableListDecorator(property
-				.observeList(realm, pojo), propertyDescriptor);
+		return new BeanObservableListDecorator(property.observe(realm, pojo),
+				propertyDescriptor);
 	}
 
 	/**
@@ -370,7 +370,7 @@ final public class PojoObservables {
 				propertyName, elementType);
 		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
 				.getPropertyDescriptor();
-		return new BeanObservableSetDecorator(property.observeSet(realm, pojo),
+		return new BeanObservableSetDecorator(property.observe(realm, pojo),
 				propertyDescriptor);
 	}
 

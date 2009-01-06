@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -19,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  */
 public class ControlFontProperty extends WidgetValueProperty {
-	protected Object getValueType() {
+	public Object getValueType() {
 		return Font.class;
 	}
 

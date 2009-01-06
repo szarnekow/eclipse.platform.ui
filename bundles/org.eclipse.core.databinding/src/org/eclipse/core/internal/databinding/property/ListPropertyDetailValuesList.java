@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
@@ -36,14 +37,18 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		this.detailProperty = detailProperty;
 	}
 
-	public IObservableList observeList(Realm realm, Object source) {
-		IObservableList master = masterProperty.observeList(realm, source);
-		return detailProperty.observeDetailValues(master);
+	public Object getElementType() {
+		return detailProperty.getValueType();
 	}
 
-	public IObservableList observeDetailList(IObservableValue master) {
-		IObservableList masterList = masterProperty.observeDetailList(master);
-		return detailProperty.observeDetailValues(masterList);
+	public IObservableList observe(Realm realm, Object source) {
+		IObservableList master = masterProperty.observe(realm, source);
+		return detailProperty.observeDetail(master);
+	}
+
+	public IObservableList observeDetail(IObservableValue master) {
+		IObservableList masterList = masterProperty.observeDetail(master);
+		return detailProperty.observeDetail(masterList);
 	}
 
 	public String toString() {

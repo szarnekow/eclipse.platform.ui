@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -97,7 +97,7 @@ public class ScaleObservableValueMinTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ScaleProperties.minimum().observeValue(realm, scale);
+			return ScaleProperties.minimum().observe(realm, scale);
 		}
 
 		public void change(IObservable observable) {

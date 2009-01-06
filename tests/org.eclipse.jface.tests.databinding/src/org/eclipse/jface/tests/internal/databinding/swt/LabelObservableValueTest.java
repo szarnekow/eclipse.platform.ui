@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - bug 213145, 194734, 195222
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -93,7 +93,7 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return LabelProperties.text().observeValue(realm, label);
+			return LabelProperties.text().observe(realm, label);
 		}
 
 		public void change(IObservable observable) {

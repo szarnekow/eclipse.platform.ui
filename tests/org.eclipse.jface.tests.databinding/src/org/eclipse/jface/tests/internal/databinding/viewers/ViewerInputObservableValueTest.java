@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Matthew Hall - initial API and implementation (bug 206839)
- *     Matthew Hall - bug 213145, 194734
+ *     Matthew Hall - initial API and implementation (bug 206839)
+ *     Matthew Hall - bug 213145, 194734, 195222
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
@@ -169,7 +169,7 @@ public class ViewerInputObservableValueTest extends
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ViewerProperties.input().observeValue(realm, viewer);
+			return ViewerProperties.input().observe(realm, viewer);
 		}
 
 		public void change(IObservable observable) {

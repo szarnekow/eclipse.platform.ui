@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -37,10 +38,10 @@ public abstract class Property implements IProperty {
 	 * @return the preferred realm to use when observing the specified property
 	 *         source, or null if the source object has no implicit preference.
 	 * 
-	 * @see IValueProperty#observeValue(Object)
-	 * @see IListProperty#observeList(Object)
-	 * @see ISetProperty#observeSet(Object)
-	 * @see IMapProperty#observeMap(Object)
+	 * @see IValueProperty#observe(Object)
+	 * @see IListProperty#observe(Object)
+	 * @see ISetProperty#observe(Object)
+	 * @see IMapProperty#observe(Object)
 	 */
 	protected Realm getPreferredRealm(Object source) {
 		return null;

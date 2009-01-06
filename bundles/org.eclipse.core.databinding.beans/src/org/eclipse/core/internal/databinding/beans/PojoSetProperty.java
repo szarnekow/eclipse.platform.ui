@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -18,7 +19,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -28,7 +28,7 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * @since 3.3
  * 
  */
-public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty {
+public class PojoSetProperty extends SimpleSetProperty {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class elementType;
 
@@ -44,7 +44,7 @@ public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty 
 				: elementType;
 	}
 
-	protected Object getElementType() {
+	public Object getElementType() {
 		return elementType;
 	}
 
@@ -76,10 +76,6 @@ public class PojoSetProperty extends SimpleSetProperty implements IBeanProperty 
 			propertyValue = set.toArray(array);
 		}
 		return propertyValue;
-	}
-
-	public PropertyDescriptor getPropertyDescriptor() {
-		return propertyDescriptor;
 	}
 
 	public INativePropertyListener adaptListener(

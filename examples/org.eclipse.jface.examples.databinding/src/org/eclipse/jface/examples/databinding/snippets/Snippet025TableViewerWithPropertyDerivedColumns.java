@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Coconut Palm Software, Inc. - Initial API and implementation
+ *     Matthew Hall - bug 195222
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -19,10 +20,8 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.TextProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -31,6 +30,7 @@ import org.eclipse.jface.databinding.viewers.SelectionProviderProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -158,14 +158,6 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			Person quackmore = new Person("Quackmore Duck", UNKNOWN, UNKNOWN);
 			Person della = new Person("Della Duck", hortense, quackmore);
 			Person donald = new Person("Donald Duck", hortense, quackmore);
-			donald.setFather(quackmore);
-			donald.setMother(hortense);
-			della.setFather(quackmore);
-			della.setMother(hortense);
-			hortense.setMother(downy);
-			hortense.setFather(fergus);
-			scrooge.setMother(downy);
-			scrooge.setFather(fergus);
 			people.add(UNKNOWN);
 			people.add(downy);
 			people.add(fergus);
@@ -250,78 +242,50 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 				}
 			});
 
-			// Create a standard content provider
-			ObservableListContentProvider peopleViewerContentProvider = new ObservableListContentProvider();
-			peopleViewer.setContentProvider(peopleViewerContentProvider);
+			bindViewer(peopleViewer, viewModel.getPeople(), Person.class,
+					new String[] { "name", "mother.name", "father.name",
+							"mother.mother.name", "mother.father.name",
+							"father.mother.name", "father.father.name" });
 
-			// And a standard label provider that maps columns
-			IObservableSet knownElements = peopleViewerContentProvider
-					.getKnownElements();
+			IObservableValue masterSelection = SelectionProviderProperties
+					.singleSelection().observe(peopleViewer);
 
-			IValueProperty name = BeanProperties.value(Person.class, "name");
-			IValueProperty mother = BeanProperties
-					.value(Person.class, "mother");
-			IValueProperty father = BeanProperties
-					.value(Person.class, "father");
-			IValueProperty viewerSelectionProperty = SelectionProviderProperties
-					.singleSelection();
-			IValueProperty textOfTextProperty = TextProperties.text(SWT.Modify);
-
-			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
-					new IObservableMap[] {
-					// name
-							name.observeDetailValues(knownElements),
-							// mother's name
-							mother.chain(name).observeDetailValues(
-									knownElements),
-							// father's name
-							father.chain(name).observeDetailValues(
-									knownElements),
-							// maternal grandmother's name
-							mother.chain(mother).chain(name)
-									.observeDetailValues(knownElements),
-							// maternal grandfather's name
-							mother.chain(father).chain(name)
-									.observeDetailValues(knownElements),
-							// paternal grandmother's name
-							father.chain(mother).chain(name)
-									.observeDetailValues(knownElements),
-							// paternal grandfather's name
-							father.chain(father).chain(name)
-									.observeDetailValues(knownElements) }));
-
-			// Now set the Viewer's input
-			peopleViewer.setInput(viewModel.getPeople());
-
-			IObservableValue masterSelection = viewerSelectionProperty
-					.observeValue(peopleViewer);
-
-			dbc.bindValue(textOfTextProperty.observeValue(nameText), name
-					.observeDetailValue(masterSelection), null, null);
+			dbc.bindValue(TextProperties.text(SWT.Modify).observe(nameText),
+					BeanProperties.value(Person.class, "name").observeDetail(
+							masterSelection), null, null);
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			ObservableListContentProvider motherComboContentProvider = new ObservableListContentProvider();
-			mothercomboViewer.setContentProvider(motherComboContentProvider);
-			mothercomboViewer.setLabelProvider(new ObservableMapLabelProvider(
-					name.observeDetailValues(motherComboContentProvider
-							.getKnownElements())));
-			mothercomboViewer.setInput(viewModel.getPeople());
+			bindViewer(mothercomboViewer, viewModel.getPeople(), Person.class,
+					"name");
 
-			dbc.bindValue(viewerSelectionProperty
-					.observeValue(mothercomboViewer), mother
-					.observeDetailValue(masterSelection), null, null);
+			dbc.bindValue(SelectionProviderProperties.singleSelection()
+					.observe(mothercomboViewer), BeanProperties.value(
+					Person.class, "mother").observeDetail(masterSelection),
+					null, null);
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
-			ObservableListContentProvider fatherComboContentProvider = new ObservableListContentProvider();
-			fatherComboViewer.setContentProvider(fatherComboContentProvider);
-			fatherComboViewer.setLabelProvider(new ObservableMapLabelProvider(
-					name.observeDetailValues(fatherComboContentProvider
-							.getKnownElements())));
-			fatherComboViewer.setInput(viewModel.getPeople());
+			bindViewer(fatherComboViewer, viewModel.getPeople(), Person.class,
+					"name");
 
-			dbc.bindValue(viewerSelectionProperty
-					.observeValue(fatherComboViewer), father
-					.observeDetailValue(masterSelection), null, null);
+			dbc.bindValue(SelectionProviderProperties.singleSelection()
+					.observe(fatherComboViewer), BeanProperties.value(
+					Person.class, "father").observeDetail(masterSelection),
+					null, null);
+		}
+
+		private void bindViewer(StructuredViewer viewer, IObservableList input,
+				Class beanClass, String propertyName) {
+			bindViewer(viewer, input, beanClass, new String[] { propertyName });
+		}
+
+		private void bindViewer(StructuredViewer viewer, IObservableList input,
+				Class beanClass, String[] propertyNames) {
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
+			viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
+					.observeEach(cp.getKnownElements(), BeanProperties.values(
+							beanClass, propertyNames))));
+			viewer.setInput(input);
 		}
 	}
 }

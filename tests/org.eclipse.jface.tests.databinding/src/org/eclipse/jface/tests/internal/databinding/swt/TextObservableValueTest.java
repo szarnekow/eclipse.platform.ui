@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 116920, 164653
  *     Ashley Cambrell - bug 198904
- *     Matthew Hall - bug 194734
+ *     Matthew Hall - bug 194734, 195222
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;
@@ -71,7 +70,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {
 		IObservableValue observableValue = TextProperties.text(SWT.FocusOut)
-				.observeValue(Realm.getDefault(), text);
+				.observe(Realm.getDefault(), text);
 		observableValue.addValueChangeListener(listener);
 
 		String a = "a";
@@ -98,7 +97,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	public void testDispose() throws Exception {
 		IObservableValue observableValue = TextProperties.text(SWT.Modify)
-				.observeValue(Realm.getDefault(), text);
+				.observe(Realm.getDefault(), text);
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
