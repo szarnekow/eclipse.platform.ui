@@ -27,8 +27,6 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 *            the value property to observe
 	 * @return a nested combination of this property and the specified value
 	 *         property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the element type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanListProperty values(String propertyName);
@@ -43,8 +41,6 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the element type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanListProperty values(String propertyName, Class valueType);

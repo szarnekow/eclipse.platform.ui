@@ -51,20 +51,18 @@ public class BeanSetPropertyDecorator extends SetProperty implements
 		return delegate.getElementType();
 	}
 
-	private Class getInferredBeanClass() {
-		Class beanClass = (Class) delegate.getElementType();
-		if (beanClass == null)
-			throw new UnsupportedOperationException(
-					"Cannot infer bean class because getValueType() is null"); //$NON-NLS-1$
-		return beanClass;
-	}
-
 	public IBeanMapProperty values(String propertyName) {
-		return values(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getElementType();
+		if (beanClass != null)
+			return values(beanClass, propertyName);
+		return values(BeanProperties.value(propertyName));
 	}
 
 	public IBeanMapProperty values(String propertyName, Class valueType) {
-		return values(getInferredBeanClass(), propertyName, valueType);
+		Class beanClass = (Class) delegate.getElementType();
+		if (beanClass != null)
+			return values(beanClass, propertyName, valueType);
+		return values(BeanProperties.value(propertyName, valueType));
 	}
 
 	public IBeanMapProperty values(Class beanClass, String propertyName) {

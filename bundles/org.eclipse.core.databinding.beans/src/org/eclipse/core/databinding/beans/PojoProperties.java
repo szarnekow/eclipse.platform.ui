@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 247997
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -17,6 +17,14 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.map.IMapProperty;
+import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousPojoListProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousPojoMapProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousPojoSetProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousPojoValueProperty;
 import org.eclipse.core.internal.databinding.beans.BeanListPropertyDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanMapPropertyDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
@@ -36,6 +44,38 @@ import org.eclipse.core.internal.databinding.beans.PojoValueProperty;
  * @since 1.2
  */
 public class PojoProperties {
+	/**
+	 * Returns a value property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains null.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a value property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanValueProperty value(String propertyName) {
+		return value(propertyName, null);
+	}
+
+	/**
+	 * Returns a value property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains null.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param valueType
+	 *            the value type of the returned value property
+	 * @return a value property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanValueProperty value(String propertyName, Class valueType) {
+		IValueProperty property = new AnonymousPojoValueProperty(propertyName,
+				valueType);
+		return new BeanValuePropertyDecorator(property, null);
+	}
+
 	/**
 	 * Returns a value property for the given property name of the given bean
 	 * class.
@@ -113,6 +153,38 @@ public class PojoProperties {
 	}
 
 	/**
+	 * Returns a set property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty set.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a set property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanSetProperty set(String propertyName) {
+		return set(propertyName, null);
+	}
+
+	/**
+	 * Returns a set property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty set.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param elementType
+	 *            the element type of the returned set property
+	 * @return a set property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanSetProperty set(String propertyName, Class elementType) {
+		AnonymousPojoSetProperty property = new AnonymousPojoSetProperty(
+				propertyName, elementType);
+		return new BeanSetPropertyDecorator(property, null);
+	}
+
+	/**
 	 * Returns a set property for the given property name of the given bean
 	 * class.
 	 * 
@@ -144,9 +216,41 @@ public class PojoProperties {
 			Class elementType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		PojoSetProperty property = new PojoSetProperty(propertyDescriptor,
+		ISetProperty property = new PojoSetProperty(propertyDescriptor,
 				elementType);
 		return new BeanSetPropertyDecorator(property, propertyDescriptor);
+	}
+
+	/**
+	 * Returns a list property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty list.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a list property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanListProperty list(String propertyName) {
+		return list(propertyName, null);
+	}
+
+	/**
+	 * Returns a list property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty list.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param elementType
+	 *            the element type of the returned list property
+	 * @return a list property for the given property name of the given bean
+	 *         class.
+	 */
+	public static IBeanListProperty list(String propertyName, Class elementType) {
+		IListProperty property = new AnonymousPojoListProperty(propertyName,
+				elementType);
+		return new BeanListPropertyDecorator(property, null);
 	}
 
 	/**
@@ -181,9 +285,44 @@ public class PojoProperties {
 			Class elementType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		PojoListProperty property = new PojoListProperty(propertyDescriptor,
+		IListProperty property = new PojoListProperty(propertyDescriptor,
 				elementType);
 		return new BeanListPropertyDecorator(property, propertyDescriptor);
+	}
+
+	/**
+	 * Returns a map property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty map.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a map property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanMapProperty map(String propertyName) {
+		return map(propertyName, null, null);
+	}
+
+	/**
+	 * Returns a map property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty map.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param keyType
+	 *            the key type for the returned map property
+	 * @param valueType
+	 *            the value type for the returned map property
+	 * @return a map property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanMapProperty map(String propertyName, Class keyType,
+			Class valueType) {
+		IMapProperty property = new AnonymousPojoMapProperty(propertyName,
+				keyType, valueType);
+		return new BeanMapPropertyDecorator(property, null);
 	}
 
 	/**
@@ -220,7 +359,7 @@ public class PojoProperties {
 			Class keyType, Class valueType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		PojoMapProperty property = new PojoMapProperty(propertyDescriptor,
+		IMapProperty property = new PojoMapProperty(propertyDescriptor,
 				keyType, valueType);
 		return new BeanMapPropertyDecorator(property, propertyDescriptor);
 	}

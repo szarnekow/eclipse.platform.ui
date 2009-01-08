@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 247997
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -15,13 +15,9 @@ package org.eclipse.core.databinding.property.map;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 
@@ -50,16 +46,6 @@ public abstract class SimpleMapProperty extends MapProperty implements
 		IMapProperty {
 	public IObservableMap observe(Realm realm, Object source) {
 		return new SimpleMapPropertyObservableMap(realm, source, this);
-	}
-
-	public IObservableMap observeDetail(IObservableValue master) {
-		final Realm realm = master.getRealm();
-		IObservableFactory factory = new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return SimpleMapProperty.this.observe(realm, target);
-			}
-		};
-		return MasterDetailObservables.detailMap(master, factory);
 	}
 
 	// Accessors

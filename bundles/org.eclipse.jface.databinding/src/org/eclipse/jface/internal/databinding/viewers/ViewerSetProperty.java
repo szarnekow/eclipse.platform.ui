@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class ViewerSetProperty extends SimpleSetProperty {
-	protected Realm getPreferredRealm(Object source) {
+	public Realm getPreferredRealm(Object source) {
 		if (source instanceof Viewer) {
 			return SWTObservables.getRealm(((Viewer) source).getControl()
 					.getDisplay());

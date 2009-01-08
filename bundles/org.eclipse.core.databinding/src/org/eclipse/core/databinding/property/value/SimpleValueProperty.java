@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 247997
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -15,7 +15,6 @@ package org.eclipse.core.databinding.property.value;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
@@ -171,11 +170,6 @@ public abstract class SimpleValueProperty extends ValueProperty {
 
 	public IObservableValue observe(Realm realm, Object source) {
 		return new SimpleValuePropertyObservableValue(realm, source, this);
-	}
-
-	public IObservableValue observeDetail(IObservableValue master) {
-		return MasterDetailObservables.detailValue(master, valueFactory(master
-				.getRealm()), getValueType());
 	}
 
 	public IObservableList observeDetail(IObservableList master) {

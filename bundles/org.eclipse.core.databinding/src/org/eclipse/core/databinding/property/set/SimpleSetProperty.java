@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 247997
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -15,13 +15,9 @@ package org.eclipse.core.databinding.property.set;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 
@@ -48,17 +44,6 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
 public abstract class SimpleSetProperty extends SetProperty {
 	public IObservableSet observe(Realm realm, Object source) {
 		return new SimpleSetPropertyObservableSet(realm, source, this);
-	}
-
-	public IObservableSet observeDetail(IObservableValue master) {
-		final Realm realm = master.getRealm();
-		IObservableFactory factory = new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return SimpleSetProperty.this.observe(realm, target);
-			}
-		};
-		return MasterDetailObservables.detailSet(master, factory,
-				getElementType());
 	}
 
 	// Accessors

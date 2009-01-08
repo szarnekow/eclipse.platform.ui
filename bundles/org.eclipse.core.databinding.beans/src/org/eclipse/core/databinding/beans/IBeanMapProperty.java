@@ -28,8 +28,6 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 *            the value property to observe.
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanMapProperty values(String propertyName);
@@ -44,8 +42,6 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanMapProperty values(String propertyName, Class valueType);

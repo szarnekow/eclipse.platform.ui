@@ -26,8 +26,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the value property to observe
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #value(IBeanValueProperty)
 	 */
 	public IBeanValueProperty value(String propertyName);
@@ -42,8 +40,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #value(IBeanValueProperty)
 	 */
 	public IBeanValueProperty value(String propertyName, Class valueType);
@@ -110,8 +106,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the list property to observe
 	 * @return a master-detail combination of this property and the specified
 	 *         list property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #list(IBeanListProperty)
 	 */
 	public IBeanListProperty list(String propertyName);
@@ -126,8 +120,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the element type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         list property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #list(IBeanListProperty)
 	 */
 	public IBeanListProperty list(String propertyName, Class elementType);
@@ -196,8 +188,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the set property to observe
 	 * @return a master-detail combination of this property and the specified
 	 *         set property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #set(IBeanSetProperty)
 	 */
 	public IBeanSetProperty set(String propertyName);
@@ -212,8 +202,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the element type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         set property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #set(IBeanSetProperty)
 	 */
 	public IBeanSetProperty set(String propertyName, Class elementType);
@@ -282,8 +270,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the map property to observe
 	 * @return a master-detail combination of this property and the specified
 	 *         map property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #map(IBeanMapProperty)
 	 */
 	public IBeanMapProperty map(String propertyName);
@@ -300,8 +286,6 @@ public interface IBeanValueProperty extends IBeanProperty, IValueProperty {
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         map property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the value type
 	 * @see #map(IBeanMapProperty)
 	 */
 	public IBeanMapProperty map(String propertyName, Class keyType,

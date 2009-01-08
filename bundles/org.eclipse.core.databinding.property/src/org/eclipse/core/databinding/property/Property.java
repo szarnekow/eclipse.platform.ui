@@ -43,7 +43,7 @@ public abstract class Property implements IProperty {
 	 * @see ISetProperty#observe(Object)
 	 * @see IMapProperty#observe(Object)
 	 */
-	protected Realm getPreferredRealm(Object source) {
+	public Realm getPreferredRealm(Object source) {
 		return null;
 	}
 }

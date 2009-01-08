@@ -37,7 +37,7 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 		this.events = events;
 	}
 
-	protected Realm getPreferredRealm(Object source) {
+	public Realm getPreferredRealm(Object source) {
 		if (source instanceof Widget) {
 			return SWTObservables.getRealm(((Widget) source).getDisplay());
 		}

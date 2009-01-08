@@ -46,20 +46,18 @@ public class PojoListPropertyDecorator extends ListProperty implements
 		return delegate.getElementType();
 	}
 
-	private Class getInferredBeanClass() {
-		Class beanClass = (Class) delegate.getElementType();
-		if (beanClass == null)
-			throw new UnsupportedOperationException(
-					"Cannot infer bean class because getValueType() is null"); //$NON-NLS-1$
-		return beanClass;
-	}
-
 	public IBeanListProperty values(String propertyName) {
-		return values(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getElementType();
+		if (beanClass != null)
+			return values(beanClass, propertyName);
+		return values(PojoProperties.value(propertyName));
 	}
 
 	public IBeanListProperty values(String propertyName, Class valueType) {
-		return values(getInferredBeanClass(), propertyName, valueType);
+		Class beanClass = (Class) delegate.getElementType();
+		if (beanClass != null)
+			return values(beanClass, propertyName, valueType);
+		return values(PojoProperties.value(propertyName, valueType));
 	}
 
 	public IBeanListProperty values(Class beanClass, String propertyName) {

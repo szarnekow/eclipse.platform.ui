@@ -26,8 +26,6 @@ public interface IBeanSetProperty extends IBeanProperty, ISetProperty {
 	 *            the value property to observe
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the element type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanMapProperty values(String propertyName);
@@ -42,8 +40,6 @@ public interface IBeanSetProperty extends IBeanProperty, ISetProperty {
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
-	 * @throws UnsupportedOperationException
-	 *             if the bean class cannot be inferred from the element type
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanMapProperty values(String propertyName, Class valueType);

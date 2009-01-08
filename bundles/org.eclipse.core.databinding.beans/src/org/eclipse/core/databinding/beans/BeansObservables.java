@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164268, 171616, 147515
- *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782, 194734, 195222
+ *     Matthew Hall - bug 221704, 234686, 246625, 226289, 246782, 194734,
+ *                    195222, 247997
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -92,8 +93,28 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * Returns an observable map in the default realm tracking the current
-	 * values of the named property for the beans in the given set.
+	 * Returns an observable map in the given observable set's realm tracking
+	 * the current values of the named property for the beans in the given set.
+	 * Elements in the set which do not have the named property will have null
+	 * values, and attempts to {@link IObservableMap#put(Object, Object) put}
+	 * values to these elements will be ignored.
+	 * 
+	 * @param domain
+	 *            the set of bean objects
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable map tracking the current values of the named
+	 *         property for the beans in the given domain set
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(IObservableSet domain,
+			String propertyName) {
+		return BeanProperties.value(propertyName).observeDetail(domain);
+	}
+
+	/**
+	 * Returns an observable map in the given observable set's realm tracking
+	 * the current values of the named property for the beans in the given set.
 	 * 
 	 * @param domain
 	 *            the set of bean objects
@@ -203,8 +224,34 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * Returns an array of observable maps in the default realm tracking the
-	 * current values of the named propertys for the beans in the given set.
+	 * Returns an array of observable maps in the given observable set's realm
+	 * tracking the current values of the named properties for the beans in the
+	 * given set. Elements in the set which do not have the named property will
+	 * have null values, and attempts to
+	 * {@link IObservableMap#put(Object, Object) put} values to these elements
+	 * will be ignored.
+	 * 
+	 * @param domain
+	 *            the set of objects
+	 * @param propertyNames
+	 *            the array of property names
+	 * @return an array of observable maps tracking the current values of the
+	 *         named propertys for the beans in the given domain set
+	 * @since 1.2
+	 */
+	public static IObservableMap[] observeMaps(IObservableSet domain,
+			String[] propertyNames) {
+		IObservableMap[] result = new IObservableMap[propertyNames.length];
+		for (int i = 0; i < propertyNames.length; i++) {
+			result[i] = observeMap(domain, propertyNames[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an array of observable maps in the given observable set's realm
+	 * tracking the current values of the named properties for the beans in the
+	 * given set.
 	 * 
 	 * @param domain
 	 *            the set of objects

@@ -15,6 +15,7 @@ package org.eclipse.core.databinding.property.value;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -48,6 +49,11 @@ public abstract class ValueProperty extends Property implements IValueProperty {
 				return observe(realm, target);
 			}
 		};
+	}
+
+	public IObservableValue observeDetail(IObservableValue master) {
+		return MasterDetailObservables.detailValue(master, valueFactory(master
+				.getRealm()), getValueType());
 	}
 
 	public final IValueProperty value(IValueProperty detailValue) {

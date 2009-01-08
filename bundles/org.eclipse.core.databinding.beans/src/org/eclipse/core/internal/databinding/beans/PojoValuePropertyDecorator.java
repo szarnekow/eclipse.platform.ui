@@ -54,20 +54,18 @@ public class PojoValuePropertyDecorator extends ValueProperty implements
 		return delegate.getValueType();
 	}
 
-	private Class getInferredBeanClass() {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass == null)
-			throw new UnsupportedOperationException(
-					"Cannot infer bean class because getValueType() is null"); //$NON-NLS-1$
-		return beanClass;
-	}
-
 	public IBeanValueProperty value(String propertyName) {
-		return value(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return value(beanClass, propertyName);
+		return value(PojoProperties.value(propertyName));
 	}
 
 	public IBeanValueProperty value(String propertyName, Class valueType) {
-		return value(getInferredBeanClass(), propertyName, valueType);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return value(beanClass, propertyName, valueType);
+		return value(PojoProperties.value(propertyName, valueType));
 	}
 
 	public IBeanValueProperty value(Class beanClass, String propertyName) {
@@ -85,11 +83,17 @@ public class PojoValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanListProperty list(String propertyName) {
-		return list(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return list(beanClass, propertyName);
+		return list(PojoProperties.list(propertyName));
 	}
 
 	public IBeanListProperty list(String propertyName, Class elementType) {
-		return list(getInferredBeanClass(), propertyName, elementType);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return list(beanClass, propertyName, elementType);
+		return list(PojoProperties.list(propertyName, elementType));
 	}
 
 	public IBeanListProperty list(Class beanClass, String propertyName) {
@@ -107,11 +111,17 @@ public class PojoValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanSetProperty set(String propertyName) {
-		return set(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return set(beanClass, propertyName);
+		return set(PojoProperties.set(propertyName));
 	}
 
 	public IBeanSetProperty set(String propertyName, Class elementType) {
-		return set(getInferredBeanClass(), propertyName, elementType);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return set(beanClass, propertyName, elementType);
+		return set(PojoProperties.set(propertyName, elementType));
 	}
 
 	public IBeanSetProperty set(Class beanClass, String propertyName) {
@@ -129,12 +139,18 @@ public class PojoValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanMapProperty map(String propertyName) {
-		return map(getInferredBeanClass(), propertyName);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return map(beanClass, propertyName);
+		return map(PojoProperties.map(propertyName));
 	}
 
 	public IBeanMapProperty map(String propertyName, Class keyType,
 			Class valueType) {
-		return map(getInferredBeanClass(), propertyName, keyType, valueType);
+		Class beanClass = (Class) delegate.getValueType();
+		if (beanClass != null)
+			return map(beanClass, propertyName, keyType, valueType);
+		return map(PojoProperties.map(propertyName, keyType, valueType));
 	}
 
 	public IBeanMapProperty map(Class beanClass, String propertyName) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bug 195222, 247997
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -16,6 +16,13 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.map.IMapProperty;
+import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousBeanListProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousBeanMapProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousBeanSetProperty;
+import org.eclipse.core.internal.databinding.beans.AnonymousBeanValueProperty;
 import org.eclipse.core.internal.databinding.beans.BeanListProperty;
 import org.eclipse.core.internal.databinding.beans.BeanListPropertyDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanMapProperty;
@@ -34,6 +41,45 @@ import org.eclipse.core.internal.databinding.beans.BeanValuePropertyDecorator;
  * @since 1.2
  */
 public class BeanProperties {
+	/**
+	 * Returns a value property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains null.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a value property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanValueProperty value(String propertyName) {
+		return value(propertyName, null);
+	}
+
+	/**
+	 * Returns a value property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains null.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param valueType
+	 *            the value type of the returned value property
+	 * @return a value property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanValueProperty value(String propertyName, Class valueType) {
+		String[] propertyNames = split(propertyName);
+		if (propertyNames.length > 1)
+			valueType = null;
+
+		IBeanValueProperty property = new BeanValuePropertyDecorator(
+				new AnonymousBeanValueProperty(propertyName, valueType), null);
+		for (int i = 1; i < propertyNames.length; i++) {
+			property = property.value(propertyNames[i]);
+		}
+		return property;
+	}
+
 	/**
 	 * Returns a value property for the given property name of the given bean
 	 * class.
@@ -111,6 +157,38 @@ public class BeanProperties {
 	}
 
 	/**
+	 * Returns a set property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty set.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a set property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanSetProperty set(String propertyName) {
+		return set(propertyName, null);
+	}
+
+	/**
+	 * Returns a set property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty set.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param elementType
+	 *            the element type of the returned set property
+	 * @return a set property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanSetProperty set(String propertyName, Class elementType) {
+		ISetProperty property = new AnonymousBeanSetProperty(propertyName,
+				elementType);
+		return new BeanSetPropertyDecorator(property, null);
+	}
+
+	/**
 	 * Returns a set property for the given property name of the given bean
 	 * class.
 	 * 
@@ -142,9 +220,41 @@ public class BeanProperties {
 			Class elementType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		BeanSetProperty property = new BeanSetProperty(propertyDescriptor,
+		ISetProperty property = new BeanSetProperty(propertyDescriptor,
 				elementType);
 		return new BeanSetPropertyDecorator(property, propertyDescriptor);
+	}
+
+	/**
+	 * Returns a list property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty list.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a list property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanListProperty list(String propertyName) {
+		return list(propertyName, null);
+	}
+
+	/**
+	 * Returns a list property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty list.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param elementType
+	 *            the element type of the returned list property
+	 * @return a list property for the given property name of the given bean
+	 *         class.
+	 */
+	public static IBeanListProperty list(String propertyName, Class elementType) {
+		IListProperty property = new AnonymousBeanListProperty(propertyName,
+				elementType);
+		return new BeanListPropertyDecorator(property, null);
 	}
 
 	/**
@@ -179,9 +289,44 @@ public class BeanProperties {
 			Class elementType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		BeanListProperty property = new BeanListProperty(propertyDescriptor,
+		IListProperty property = new BeanListProperty(propertyDescriptor,
 				elementType);
 		return new BeanListPropertyDecorator(property, propertyDescriptor);
+	}
+
+	/**
+	 * Returns a map property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty map.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return a map property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanMapProperty map(String propertyName) {
+		return map(propertyName, null, null);
+	}
+
+	/**
+	 * Returns a map property for the given property name of an arbitrary bean
+	 * class. Objects lacking the named property are treated the same as if the
+	 * property always contains an empty map.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param keyType
+	 *            the key type for the returned map property
+	 * @param valueType
+	 *            the value type for the returned map property
+	 * @return a map property for the given property name of an arbitrary bean
+	 *         class.
+	 */
+	public static IBeanMapProperty map(String propertyName, Class keyType,
+			Class valueType) {
+		IMapProperty property = new AnonymousBeanMapProperty(propertyName,
+				keyType, valueType);
+		return new BeanMapPropertyDecorator(property, null);
 	}
 
 	/**
@@ -218,7 +363,7 @@ public class BeanProperties {
 			Class keyType, Class valueType) {
 		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
 				.getPropertyDescriptor(beanClass, propertyName);
-		BeanMapProperty property = new BeanMapProperty(propertyDescriptor,
+		IMapProperty property = new BeanMapProperty(propertyDescriptor,
 				keyType, valueType);
 		return new BeanMapPropertyDecorator(property, propertyDescriptor);
 	}
