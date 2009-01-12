@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.set.ISetProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.beans.AnonymousBeanListProperty;
 import org.eclipse.core.internal.databinding.beans.AnonymousBeanMapProperty;
 import org.eclipse.core.internal.databinding.beans.AnonymousBeanSetProperty;
@@ -47,12 +48,12 @@ public class BeanProperties {
 	 * property always contains null.
 	 * 
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @return a value property for the given property name of an arbitrary bean
 	 *         class.
 	 */
 	public static IBeanValueProperty value(String propertyName) {
-		return value(propertyName, null);
+		return value(null, propertyName, null);
 	}
 
 	/**
@@ -61,23 +62,14 @@ public class BeanProperties {
 	 * property always contains null.
 	 * 
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param valueType
 	 *            the value type of the returned value property
 	 * @return a value property for the given property name of an arbitrary bean
 	 *         class.
 	 */
 	public static IBeanValueProperty value(String propertyName, Class valueType) {
-		String[] propertyNames = split(propertyName);
-		if (propertyNames.length > 1)
-			valueType = null;
-
-		IBeanValueProperty property = new BeanValuePropertyDecorator(
-				new AnonymousBeanValueProperty(propertyName, valueType), null);
-		for (int i = 1; i < propertyNames.length; i++) {
-			property = property.value(propertyNames[i]);
-		}
-		return property;
+		return value(null, propertyName, valueType);
 	}
 
 	/**
@@ -87,7 +79,7 @@ public class BeanProperties {
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @return a value property for the given property name of the given bean
 	 *         class.
 	 */
@@ -102,7 +94,7 @@ public class BeanProperties {
 	 * @param beanClass
 	 *            the bean class
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param valueType
 	 *            the value type of the returned value property
 	 * @return a value property for the given property name of the given bean
@@ -114,15 +106,23 @@ public class BeanProperties {
 		if (propertyNames.length > 1)
 			valueType = null;
 
-		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
-				.getPropertyDescriptor(beanClass, propertyNames[0]);
-		IBeanValueProperty property = new BeanValuePropertyDecorator(
-				new BeanValueProperty(propertyDescriptor, valueType),
-				propertyDescriptor);
-		for (int i = 1; i < propertyNames.length; i++) {
-			property = property.value(propertyNames[i]);
+		PropertyDescriptor propertyDescriptor;
+		IValueProperty property;
+		if (beanClass == null) {
+			propertyDescriptor = null;
+			property = new AnonymousBeanValueProperty(propertyName, valueType);
+		} else {
+			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(
+					beanClass, propertyNames[0]);
+			property = new BeanValueProperty(propertyDescriptor, valueType);
 		}
-		return property;
+
+		IBeanValueProperty beanProperty = new BeanValuePropertyDecorator(
+				property, propertyDescriptor);
+		for (int i = 1; i < propertyNames.length; i++) {
+			beanProperty = beanProperty.value(propertyNames[i]);
+		}
+		return beanProperty;
 	}
 
 	private static String[] split(String propertyName) {
@@ -144,7 +144,9 @@ public class BeanProperties {
 	 * bean class.
 	 * 
 	 * @param beanClass
+	 *            the bean class
 	 * @param propertyNames
+	 *            array of property names. May be nested e.g. "parent.name"
 	 * @return a value property array for the given property names of the given
 	 *         bean class.
 	 */
@@ -152,7 +154,7 @@ public class BeanProperties {
 			String[] propertyNames) {
 		IBeanValueProperty[] properties = new IBeanValueProperty[propertyNames.length];
 		for (int i = 0; i < properties.length; i++)
-			properties[i] = value(beanClass, propertyNames[i]);
+			properties[i] = value(beanClass, propertyNames[i], null);
 		return properties;
 	}
 
@@ -167,7 +169,7 @@ public class BeanProperties {
 	 *         class.
 	 */
 	public static IBeanSetProperty set(String propertyName) {
-		return set(propertyName, null);
+		return set(null, propertyName, null);
 	}
 
 	/**
@@ -183,9 +185,7 @@ public class BeanProperties {
 	 *         class.
 	 */
 	public static IBeanSetProperty set(String propertyName, Class elementType) {
-		ISetProperty property = new AnonymousBeanSetProperty(propertyName,
-				elementType);
-		return new BeanSetPropertyDecorator(property, null);
+		return set(null, propertyName, elementType);
 	}
 
 	/**
@@ -218,10 +218,16 @@ public class BeanProperties {
 	 */
 	public static IBeanSetProperty set(Class beanClass, String propertyName,
 			Class elementType) {
-		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
-				.getPropertyDescriptor(beanClass, propertyName);
-		ISetProperty property = new BeanSetProperty(propertyDescriptor,
-				elementType);
+		PropertyDescriptor propertyDescriptor;
+		ISetProperty property;
+		if (beanClass == null) {
+			propertyDescriptor = null;
+			property = new AnonymousBeanSetProperty(propertyName, elementType);
+		} else {
+			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(
+					beanClass, propertyName);
+			property = new BeanSetProperty(propertyDescriptor, elementType);
+		}
 		return new BeanSetPropertyDecorator(property, propertyDescriptor);
 	}
 
@@ -236,7 +242,7 @@ public class BeanProperties {
 	 *         class.
 	 */
 	public static IBeanListProperty list(String propertyName) {
-		return list(propertyName, null);
+		return list(null, propertyName, null);
 	}
 
 	/**
@@ -252,9 +258,7 @@ public class BeanProperties {
 	 *         class.
 	 */
 	public static IBeanListProperty list(String propertyName, Class elementType) {
-		IListProperty property = new AnonymousBeanListProperty(propertyName,
-				elementType);
-		return new BeanListPropertyDecorator(property, null);
+		return list(null, propertyName, elementType);
 	}
 
 	/**
@@ -287,10 +291,16 @@ public class BeanProperties {
 	 */
 	public static IBeanListProperty list(Class beanClass, String propertyName,
 			Class elementType) {
-		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
-				.getPropertyDescriptor(beanClass, propertyName);
-		IListProperty property = new BeanListProperty(propertyDescriptor,
-				elementType);
+		PropertyDescriptor propertyDescriptor;
+		IListProperty property;
+		if (beanClass == null) {
+			propertyDescriptor = null;
+			property = new AnonymousBeanListProperty(propertyName, elementType);
+		} else {
+			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(
+					beanClass, propertyName);
+			property = new BeanListProperty(propertyDescriptor, elementType);
+		}
 		return new BeanListPropertyDecorator(property, propertyDescriptor);
 	}
 
@@ -305,7 +315,7 @@ public class BeanProperties {
 	 *         class.
 	 */
 	public static IBeanMapProperty map(String propertyName) {
-		return map(propertyName, null, null);
+		return map(null, propertyName, null, null);
 	}
 
 	/**
@@ -324,9 +334,7 @@ public class BeanProperties {
 	 */
 	public static IBeanMapProperty map(String propertyName, Class keyType,
 			Class valueType) {
-		IMapProperty property = new AnonymousBeanMapProperty(propertyName,
-				keyType, valueType);
-		return new BeanMapPropertyDecorator(property, null);
+		return map(null, propertyName, keyType, valueType);
 	}
 
 	/**
@@ -361,10 +369,18 @@ public class BeanProperties {
 	 */
 	public static IBeanMapProperty map(Class beanClass, String propertyName,
 			Class keyType, Class valueType) {
-		PropertyDescriptor propertyDescriptor = BeanPropertyHelper
-				.getPropertyDescriptor(beanClass, propertyName);
-		IMapProperty property = new BeanMapProperty(propertyDescriptor,
-				keyType, valueType);
+		PropertyDescriptor propertyDescriptor;
+		IMapProperty property;
+		if (beanClass == null) {
+			propertyDescriptor = null;
+			property = new AnonymousBeanMapProperty(propertyName, keyType,
+					valueType);
+		} else {
+			propertyDescriptor = BeanPropertyHelper.getPropertyDescriptor(
+					beanClass, propertyName);
+			property = new BeanMapProperty(propertyDescriptor, keyType,
+					valueType);
+		}
 		return new BeanMapPropertyDecorator(property, propertyDescriptor);
 	}
 }

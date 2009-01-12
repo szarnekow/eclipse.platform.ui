@@ -61,7 +61,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given bean
 	 */
@@ -78,7 +78,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given bean
 	 */
@@ -102,7 +102,7 @@ final public class BeansObservables {
 	 * @param domain
 	 *            the set of bean objects
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the current values of the named
 	 *         property for the beans in the given domain set
 	 * @since 1.2
@@ -121,7 +121,7 @@ final public class BeansObservables {
 	 * @param beanClass
 	 *            the common base type of bean objects that may be in the set
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the current values of the named
 	 *         property for the beans in the given domain set
 	 */
@@ -143,7 +143,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the map-typed named property of the
 	 *         given bean object
 	 * @since 1.1
@@ -162,7 +162,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param keyType
 	 *            the element type of the observable map's key set, or
 	 *            <code>null</code> if untyped
@@ -190,7 +190,7 @@ final public class BeansObservables {
 	 * @param bean
 	 *            the bean object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the map-typed named property of the
 	 *         given bean object
 	 * @since 1.2
@@ -234,7 +234,7 @@ final public class BeansObservables {
 	 * @param domain
 	 *            the set of objects
 	 * @param propertyNames
-	 *            the array of property names
+	 *            the array of property names. May be nested e.g. "parent.name"
 	 * @return an array of observable maps tracking the current values of the
 	 *         named propertys for the beans in the given domain set
 	 * @since 1.2
@@ -258,7 +258,7 @@ final public class BeansObservables {
 	 * @param beanClass
 	 *            the common base type of objects that may be in the set
 	 * @param propertyNames
-	 *            the array of property names
+	 *            the array of property names. May be nested e.g. "parent.name"
 	 * @return an array of observable maps tracking the current values of the
 	 *         named propertys for the beans in the given domain set
 	 */
@@ -410,7 +410,7 @@ final public class BeansObservables {
 	 * @param realm
 	 *            the realm to use
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 */
 	public static IObservableFactory valueFactory(final Realm realm,
@@ -427,7 +427,7 @@ final public class BeansObservables {
 	 * realm, tracking the given property of a particular bean object
 	 * 
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 * @since 1.2
 	 */
@@ -510,6 +510,7 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param master
 	 * @param propertyName
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -550,6 +551,7 @@ final public class BeansObservables {
 	 * 
 	 * @param master
 	 * @param propertyName
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -579,7 +581,7 @@ final public class BeansObservables {
 	 * @param masterType
 	 *            the type of the master observable value
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -615,7 +617,7 @@ final public class BeansObservables {
 	 * @param masterType
 	 *            the type of the master observable value
 	 * @param propertyName
-	 *            the property name
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -881,7 +883,7 @@ final public class BeansObservables {
 	 * @param beanClass
 	 *            the common base type of bean objects that may be in the set
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return a factory for creating {@link IObservableMap} objects
 	 * 
 	 * @since 1.1

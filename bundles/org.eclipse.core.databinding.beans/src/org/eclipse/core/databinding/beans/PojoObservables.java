@@ -51,7 +51,7 @@ final public class PojoObservables {
 	 * @param pojo
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given pojo
 	 */
@@ -68,7 +68,7 @@ final public class PojoObservables {
 	 * @param pojo
 	 *            the object
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value tracking the current value of the named
 	 *         property of the given pojo
 	 */
@@ -92,7 +92,7 @@ final public class PojoObservables {
 	 * @param domain
 	 *            the set of bean objects
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the current values of the named
 	 *         property for the beans in the given domain set
 	 * @since 1.2
@@ -111,7 +111,7 @@ final public class PojoObservables {
 	 * @param pojoClass
 	 *            the common base type of pojo objects that may be in the set
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable map tracking the current values of the named
 	 *         property for the pojos in the given domain set
 	 */
@@ -135,7 +135,7 @@ final public class PojoObservables {
 	 * @param domain
 	 *            the set of objects
 	 * @param propertyNames
-	 *            the array of property names
+	 *            the array of property names. May be nested e.g. "parent.name"
 	 * @return an array of observable maps tracking the current values of the
 	 *         named propertys for the beans in the given domain set
 	 * @since 1.2
@@ -159,7 +159,7 @@ final public class PojoObservables {
 	 * @param pojoClass
 	 *            the common base type of objects that may be in the set
 	 * @param propertyNames
-	 *            the array of property names
+	 *            the array of property names. May be nested e.g. "parent.name"
 	 * @return an array of observable maps tracking the current values of the
 	 *         named propertys for the pojos in the given domain set
 	 */
@@ -449,7 +449,7 @@ final public class PojoObservables {
 	 * @param realm
 	 *            the realm to use
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 */
 	public static IObservableFactory valueFactory(final Realm realm,
@@ -466,7 +466,7 @@ final public class PojoObservables {
 	 * realm, tracking the given property of a particular pojo object
 	 * 
 	 * @param propertyName
-	 *            the name of the property
+	 *            the name of the property. May be nested e.g. "parent.name"
 	 * @return an observable value factory
 	 * @since 1.2
 	 */
@@ -629,6 +629,7 @@ final public class PojoObservables {
 	 * @param realm
 	 * @param master
 	 * @param propertyName
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named
@@ -655,6 +656,7 @@ final public class PojoObservables {
 	 * 
 	 * @param master
 	 * @param propertyName
+	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable value that tracks the current value of the named

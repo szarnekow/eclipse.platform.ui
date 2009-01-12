@@ -16,8 +16,12 @@ import java.util.Map;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 
 /**
- * @since 1.2
+ * An {@link IMapProperty} extension interface with convenience methods for
+ * creating nested bean properties.
  * 
+ * @since 1.2
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	/**
@@ -25,7 +29,8 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 * value property.
 	 * 
 	 * @param propertyName
-	 *            the value property to observe.
+	 *            the value property to observe. May be nested e.g.
+	 *            "parent.name"
 	 * @return a master-detail combination of this property and the specified
 	 *         value property.
 	 * @see #values(IBeanValueProperty)
@@ -37,7 +42,8 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 * value property.
 	 * 
 	 * @param propertyName
-	 *            the value property to observe.
+	 *            the value property to observe. May be nested e.g.
+	 *            "parent.name"
 	 * @param valueType
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
@@ -45,37 +51,6 @@ public interface IBeanMapProperty extends IBeanProperty, IMapProperty {
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanMapProperty values(String propertyName, Class valueType);
-
-	/**
-	 * Returns a master-detail combination of this property and the specified
-	 * value property.
-	 * 
-	 * @param beanClass
-	 *            the class of values in this map property
-	 * @param propertyName
-	 *            the value property to observe
-	 * @return a master-detail combination of this property and the specified
-	 *         value property.
-	 * @see #values(IBeanValueProperty)
-	 */
-	public IBeanMapProperty values(Class beanClass, String propertyName);
-
-	/**
-	 * Returns a master-detail combination of this property and the specified
-	 * value property.
-	 * 
-	 * @param beanClass
-	 *            the class of values in this map property
-	 * @param propertyName
-	 *            the value property to observe
-	 * @param valueType
-	 *            the value type of the named property
-	 * @return a master-detail combination of this property and the specified
-	 *         value property.
-	 * @see #values(IBeanValueProperty)
-	 */
-	public IBeanMapProperty values(Class beanClass, String propertyName,
-			Class valueType);
 
 	/**
 	 * Returns a master-detail combination of this property and the specified

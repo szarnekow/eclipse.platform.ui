@@ -56,25 +56,11 @@ public class PojoMapPropertyDecorator extends MapProperty implements
 	}
 
 	public IBeanMapProperty values(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return values(beanClass, propertyName);
-		return values(PojoProperties.value(propertyName));
+		return values(propertyName, null);
 	}
 
 	public IBeanMapProperty values(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return values(beanClass, propertyName, valueType);
-		return values(PojoProperties.value(propertyName, valueType));
-	}
-
-	public IBeanMapProperty values(Class beanClass, String propertyName) {
-		return values(PojoProperties.value(beanClass, propertyName));
-	}
-
-	public IBeanMapProperty values(Class beanClass, String propertyName,
-			Class valueType) {
 		return values(PojoProperties.value(beanClass, propertyName, valueType));
 	}
 

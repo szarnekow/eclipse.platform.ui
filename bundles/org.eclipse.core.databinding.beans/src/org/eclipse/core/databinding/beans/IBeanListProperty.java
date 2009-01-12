@@ -14,7 +14,8 @@ package org.eclipse.core.databinding.beans;
 import org.eclipse.core.databinding.property.list.IListProperty;
 
 /**
- * An interface for observing list-typed properties of bean/POJO objects
+ * An {@link IListProperty} extension interface with convenience methods for
+ * creating nested bean properties.
  * 
  * @since 1.2
  */
@@ -24,7 +25,8 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 * value property.
 	 * 
 	 * @param propertyName
-	 *            the value property to observe
+	 *            the value property to observe. May be nested e.g.
+	 *            "parent.name"
 	 * @return a nested combination of this property and the specified value
 	 *         property.
 	 * @see #values(IBeanValueProperty)
@@ -36,7 +38,8 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 * value property.
 	 * 
 	 * @param propertyName
-	 *            the value property to observe
+	 *            the value property to observe. May be nested e.g.
+	 *            "parent.name"
 	 * @param valueType
 	 *            the value type of the named property
 	 * @return a master-detail combination of this property and the specified
@@ -44,37 +47,6 @@ public interface IBeanListProperty extends IBeanProperty, IListProperty {
 	 * @see #values(IBeanValueProperty)
 	 */
 	public IBeanListProperty values(String propertyName, Class valueType);
-
-	/**
-	 * Returns a master-detail combination of this property and the specified
-	 * value property.
-	 * 
-	 * @param beanClass
-	 *            the class of elements in this list property
-	 * @param propertyName
-	 *            the value property to observe
-	 * @return a master-detail combination of this property and the specified
-	 *         value property.
-	 * @see #values(IBeanValueProperty)
-	 */
-	public IBeanListProperty values(Class beanClass, String propertyName);
-
-	/**
-	 * Returns a master-detail combination of this property and the specified
-	 * value property.
-	 * 
-	 * @param beanClass
-	 *            the class of elements in this list property
-	 * @param propertyName
-	 *            the value property to observe
-	 * @param valueType
-	 *            the value type of the named property
-	 * @return a master-detail combination of this property and the specified
-	 *         value property.
-	 * @see #values(IBeanValueProperty)
-	 */
-	public IBeanListProperty values(Class beanClass, String propertyName,
-			Class valueType);
 
 	/**
 	 * Returns a master-detail combination of this property and the specified

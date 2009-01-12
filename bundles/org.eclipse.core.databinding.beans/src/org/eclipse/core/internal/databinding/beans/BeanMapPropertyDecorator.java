@@ -56,25 +56,11 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 	}
 
 	public IBeanMapProperty values(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return values(beanClass, propertyName);
-		return values(BeanProperties.value(propertyName));
+		return values(propertyName, null);
 	}
 
 	public IBeanMapProperty values(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return values(beanClass, propertyName, valueType);
-		return values(BeanProperties.value(propertyName, valueType));
-	}
-
-	public IBeanMapProperty values(Class beanClass, String propertyName) {
-		return values(BeanProperties.value(beanClass, propertyName));
-	}
-
-	public IBeanMapProperty values(Class beanClass, String propertyName,
-			Class valueType) {
 		return values(BeanProperties.value(beanClass, propertyName, valueType));
 	}
 

@@ -47,25 +47,11 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	}
 
 	public IBeanListProperty values(String propertyName) {
-		Class beanClass = (Class) delegate.getElementType();
-		if (beanClass != null)
-			return values(beanClass, propertyName);
-		return values(PojoProperties.value(propertyName));
+		return values(propertyName, null);
 	}
 
 	public IBeanListProperty values(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getElementType();
-		if (beanClass != null)
-			return values(beanClass, propertyName, valueType);
-		return values(PojoProperties.value(propertyName, valueType));
-	}
-
-	public IBeanListProperty values(Class beanClass, String propertyName) {
-		return values(PojoProperties.value(beanClass, propertyName));
-	}
-
-	public IBeanListProperty values(Class beanClass, String propertyName,
-			Class valueType) {
 		return values(PojoProperties.value(beanClass, propertyName, valueType));
 	}
 

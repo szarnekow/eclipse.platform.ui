@@ -55,25 +55,11 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanValueProperty value(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return value(beanClass, propertyName);
-		return value(BeanProperties.value(propertyName));
+		return value(propertyName, null);
 	}
 
 	public IBeanValueProperty value(String propertyName, Class valueType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return value(beanClass, propertyName, valueType);
-		return value(BeanProperties.value(propertyName, valueType));
-	}
-
-	public IBeanValueProperty value(Class beanClass, String propertyName) {
-		return value(BeanProperties.value(beanClass, propertyName));
-	}
-
-	public IBeanValueProperty value(Class beanClass, String propertyName,
-			Class valueType) {
 		return value(BeanProperties.value(beanClass, propertyName, valueType));
 	}
 
@@ -83,25 +69,11 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanListProperty list(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return list(beanClass, propertyName);
-		return list(BeanProperties.list(propertyName));
+		return list(propertyName, null);
 	}
 
 	public IBeanListProperty list(String propertyName, Class elementType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return list(beanClass, propertyName, elementType);
-		return list(BeanProperties.list(propertyName, elementType));
-	}
-
-	public IBeanListProperty list(Class beanClass, String propertyName) {
-		return list(BeanProperties.list(beanClass, propertyName));
-	}
-
-	public IBeanListProperty list(Class beanClass, String propertyName,
-			Class elementType) {
 		return list(BeanProperties.list(beanClass, propertyName, elementType));
 	}
 
@@ -111,27 +83,11 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanSetProperty set(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return set(beanClass, propertyName);
-		return set(BeanProperties.set(propertyName));
+		return set(propertyName, null);
 	}
 
 	public IBeanSetProperty set(String propertyName, Class elementType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return set(beanClass, propertyName, elementType);
-		return set(BeanProperties.set(propertyName, elementType));
-	}
-
-	public IBeanSetProperty set(Class beanClass, String propertyName) {
-		IBeanSetProperty property = BeanProperties.set(beanClass, propertyName);
-		return new BeanSetPropertyDecorator(set(property), property
-				.getPropertyDescriptor());
-	}
-
-	public IBeanSetProperty set(Class beanClass, String propertyName,
-			Class elementType) {
 		return set(BeanProperties.set(beanClass, propertyName, elementType));
 	}
 
@@ -141,26 +97,12 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IBeanMapProperty map(String propertyName) {
-		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return map(beanClass, propertyName);
-		return map(BeanProperties.map(propertyName));
+		return map(propertyName, null, null);
 	}
 
 	public IBeanMapProperty map(String propertyName, Class keyType,
 			Class valueType) {
 		Class beanClass = (Class) delegate.getValueType();
-		if (beanClass != null)
-			return map(beanClass, propertyName, keyType, valueType);
-		return map(BeanProperties.map(propertyName, keyType, valueType));
-	}
-
-	public IBeanMapProperty map(Class beanClass, String propertyName) {
-		return map(BeanProperties.map(beanClass, propertyName));
-	}
-
-	public IBeanMapProperty map(Class beanClass, String propertyName,
-			Class keyType, Class valueType) {
 		return map(BeanProperties.map(beanClass, propertyName, keyType,
 				valueType));
 	}
