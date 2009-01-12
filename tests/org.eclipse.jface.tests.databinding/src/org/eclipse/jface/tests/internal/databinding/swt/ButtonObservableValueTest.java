@@ -22,9 +22,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.ButtonProperties;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -132,7 +132,7 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ButtonProperties.selection().observe(realm, button);
+			return WidgetProperties.selection().observe(realm, button);
 		}
 
 		public Object getValueType(IObservableValue observable) {

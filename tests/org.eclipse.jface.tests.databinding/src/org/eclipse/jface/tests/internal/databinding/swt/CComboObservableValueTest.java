@@ -18,9 +18,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.CComboProperties;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -56,8 +56,8 @@ public class CComboObservableValueTest extends AbstractSWTTestCase {
 	}
 
 	public void testSetValueWithNull() {
-		testSetValueWithNull(CComboProperties.text());
-		testSetValueWithNull(CComboProperties.selection());
+		testSetValueWithNull(WidgetProperties.text());
+		testSetValueWithNull(WidgetProperties.selection());
 	}
 
 	protected void testSetValueWithNull(IValueProperty property) {

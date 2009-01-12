@@ -23,10 +23,10 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.TextProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.SelectionProviderProperties;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -247,10 +247,10 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 							"mother.mother.name", "mother.father.name",
 							"father.mother.name", "father.father.name" });
 
-			IObservableValue masterSelection = SelectionProviderProperties
+			IObservableValue masterSelection = ViewerProperties
 					.singleSelection().observe(peopleViewer);
 
-			dbc.bindValue(TextProperties.text(SWT.Modify).observe(nameText),
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
 					BeanProperties.value(Person.class, "name").observeDetail(
 							masterSelection), null, null);
 
@@ -258,19 +258,17 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			bindViewer(mothercomboViewer, viewModel.getPeople(), Person.class,
 					"name");
 
-			dbc.bindValue(SelectionProviderProperties.singleSelection()
-					.observe(mothercomboViewer), BeanProperties.value(
-					Person.class, "mother").observeDetail(masterSelection),
-					null, null);
+			dbc.bindValue(ViewerProperties.singleSelection().observe(
+					mothercomboViewer), BeanProperties.value(Person.class,
+					"mother").observeDetail(masterSelection), null, null);
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
 			bindViewer(fatherComboViewer, viewModel.getPeople(), Person.class,
 					"name");
 
-			dbc.bindValue(SelectionProviderProperties.singleSelection()
-					.observe(fatherComboViewer), BeanProperties.value(
-					Person.class, "father").observeDetail(masterSelection),
-					null, null);
+			dbc.bindValue(ViewerProperties.singleSelection().observe(
+					fatherComboViewer), BeanProperties.value(Person.class,
+					"father").observeDetail(masterSelection), null, null);
 		}
 
 		private void bindViewer(StructuredViewer viewer, IObservableList input,

@@ -23,7 +23,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.TableProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -109,7 +109,8 @@ public class TableSingleSelectionObservableValueTest extends
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return TableProperties.singleSelectionIndex().observe(realm, table);
+			return WidgetProperties.singleSelectionIndex()
+					.observe(realm, table);
 		}
 
 		public Object getValueType(IObservableValue observable) {

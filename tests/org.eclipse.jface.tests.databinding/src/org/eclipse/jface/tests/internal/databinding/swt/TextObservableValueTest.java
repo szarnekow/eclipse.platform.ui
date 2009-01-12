@@ -17,7 +17,7 @@ package org.eclipse.jface.tests.internal.databinding.swt;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.TextProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -47,16 +47,16 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testConstructorUpdateEventTypes() {
 		try {
-			TextProperties.text(SWT.None);
-			TextProperties.text(SWT.FocusOut);
-			TextProperties.text(SWT.Modify);
+			WidgetProperties.text(SWT.None);
+			WidgetProperties.text(SWT.FocusOut);
+			WidgetProperties.text(SWT.Modify);
 			assertTrue(true);
 		} catch (IllegalArgumentException e) {
 			fail();
 		}
 
 		try {
-			TextProperties.text(SWT.Verify);
+			WidgetProperties.text(SWT.Verify);
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
@@ -69,7 +69,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {
-		IObservableValue observableValue = TextProperties.text(SWT.FocusOut)
+		IObservableValue observableValue = WidgetProperties.text(SWT.FocusOut)
 				.observe(Realm.getDefault(), text);
 		observableValue.addValueChangeListener(listener);
 
@@ -96,7 +96,7 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testDispose() throws Exception {
-		IObservableValue observableValue = TextProperties.text(SWT.Modify)
+		IObservableValue observableValue = WidgetProperties.text(SWT.Modify)
 				.observe(Realm.getDefault(), text);
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);

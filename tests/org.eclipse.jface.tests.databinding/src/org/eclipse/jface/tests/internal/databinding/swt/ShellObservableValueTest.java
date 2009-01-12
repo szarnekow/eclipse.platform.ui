@@ -22,7 +22,7 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValu
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.ShellProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Shell;
 
@@ -112,7 +112,7 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ShellProperties.text().observe(realm, shell);
+			return WidgetProperties.text().observe(realm, shell);
 		}
 
 		public Object getValueType(IObservableValue observable) {

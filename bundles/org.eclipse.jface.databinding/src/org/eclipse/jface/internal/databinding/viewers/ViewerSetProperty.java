@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.Viewer;
@@ -27,5 +28,12 @@ public abstract class ViewerSetProperty extends SimpleSetProperty {
 					.getDisplay());
 		}
 		return super.getPreferredRealm(source);
+	}
+
+	public IObservableSet observe(Realm realm, Object source) {
+		IObservableSet observable = super.observe(realm, source);
+		if (source instanceof Viewer)
+			return new ViewerObservableSetDecorator(observable, (Viewer) source);
+		return observable;
 	}
 }

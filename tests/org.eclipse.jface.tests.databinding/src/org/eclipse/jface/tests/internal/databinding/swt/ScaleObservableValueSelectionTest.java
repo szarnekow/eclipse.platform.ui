@@ -22,7 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.ScaleProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Scale;
@@ -97,7 +97,7 @@ public class ScaleObservableValueSelectionTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return ScaleProperties.selection().observe(realm, scale);
+			return WidgetProperties.selection().observe(realm, scale);
 		}
 
 		public void change(IObservable observable) {

@@ -11,8 +11,11 @@
 
 package org.eclipse.jface.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
@@ -48,5 +51,10 @@ public class TextTextProperty extends WidgetStringValueProperty {
 
 	public String toString() {
 		return "Text.text <String>"; //$NON-NLS-1$
+	}
+
+	protected ISWTObservableValue wrapObservable(IObservableValue observable,
+			Widget widget) {
+		return new SWTVetoableValueDecorator(observable, widget);
 	}
 }

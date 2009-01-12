@@ -22,9 +22,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.CComboProperties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Display;
@@ -89,8 +88,7 @@ public class CComboObservableValueTextTest extends TestCase {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new SWTObservableValueDecorator(CComboProperties.text()
-					.observe(realm, combo), combo);
+			return WidgetProperties.text().observe(realm, combo);
 		}
 
 		public void change(IObservable observable) {

@@ -37,10 +37,12 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 
 	private IObservableValue decorated;
 	private Widget widget;
+	private boolean updating;
 
 	private IValueChangeListener valueListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			fireValueChange(event.diff);
+			if (!updating)
+				fireValueChange(event.diff);
 		}
 	};
 
@@ -102,7 +104,12 @@ public class SWTVetoableValueDecorator extends AbstractVetoableValue implements
 
 	protected void doSetApprovedValue(Object value) {
 		checkRealm();
-		decorated.setValue(value);
+		updating = true;
+		try {
+			decorated.setValue(value);
+		} finally {
+			updating = false;
+		}
 	}
 
 	protected Object doGetValue() {

@@ -21,8 +21,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.swt.LabelProperties;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -93,7 +93,7 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return LabelProperties.text().observe(realm, label);
+			return WidgetProperties.text().observe(realm, label);
 		}
 
 		public void change(IObservable observable) {

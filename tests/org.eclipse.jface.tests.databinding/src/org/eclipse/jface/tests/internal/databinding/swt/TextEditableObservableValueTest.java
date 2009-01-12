@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.swt.TextProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -102,7 +102,7 @@ public class TextEditableObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return TextProperties.editable().observe(realm, text);
+			return WidgetProperties.editable().observe(realm, text);
 		}
 
 		public Object getValueType(IObservableValue observable) {

@@ -13,17 +13,9 @@
 package org.eclipse.jface.databinding.viewers;
 
 import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
-import org.eclipse.jface.internal.databinding.viewers.ViewerObservableListDecorator;
-import org.eclipse.jface.internal.databinding.viewers.ViewerObservableSetDecorator;
 import org.eclipse.jface.internal.databinding.viewers.ViewerObservableValueDecorator;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -32,7 +24,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Factory methods for creating observables for JFace viewers
@@ -40,67 +31,10 @@ import org.eclipse.swt.widgets.Display;
  * @since 1.1
  */
 public class ViewersObservables {
-	private static Realm getDefaultRealm() {
-		return SWTObservables.getRealm(Display.getDefault());
-	}
-
-	private static Realm getRealm(Viewer viewer) {
-		return SWTObservables.getRealm(viewer.getControl().getDisplay());
-	}
-
-	private static void checkNull(Object obj) {
+	private static Object checkNull(Object obj) {
 		if (obj == null)
 			throw new IllegalArgumentException();
-	}
-
-	private static IObservableValue observeProperty(Object source,
-			IValueProperty property) {
-		checkNull(source);
-		if (source instanceof Viewer) {
-			return observeViewerProperty((Viewer) source, property);
-		}
-		return property.observe(getDefaultRealm(), source);
-	}
-
-	private static IViewerObservableValue observeViewerProperty(Viewer viewer,
-			IValueProperty property) {
-		checkNull(viewer);
-		return new ViewerObservableValueDecorator(property.observe(
-				getRealm(viewer), viewer), viewer);
-	}
-
-	private static IObservableSet observeProperty(Object source,
-			ISetProperty property) {
-		checkNull(source);
-		if (source instanceof Viewer) {
-			return observeViewerProperty((Viewer) source, property);
-		}
-		return property.observe(getDefaultRealm(), source);
-	}
-
-	private static IViewerObservableSet observeViewerProperty(Viewer viewer,
-			ISetProperty property) {
-		checkNull(viewer);
-		return new ViewerObservableSetDecorator(property.observe(
-				getRealm(viewer), viewer), viewer);
-	}
-
-	private static IObservableList observeProperty(Object source,
-			IListProperty property) {
-		checkNull(source);
-		if (source instanceof Viewer) {
-			return observeViewerProperty((Viewer) source, property);
-		}
-		Realm realm = getDefaultRealm();
-		return property.observe(realm, source);
-	}
-
-	private static IViewerObservableList observeViewerProperty(Viewer viewer,
-			IListProperty property) {
-		checkNull(viewer);
-		Realm realm = getRealm(viewer);
-		return new ViewerObservableListDecorator(property
-				.observe(realm, viewer), viewer);
+		return obj;
 	}
 
 	/**
@@ -126,11 +60,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableValue observeDelayedValue(int delay,
 			IViewerObservableValue observable) {
-		Viewer viewer = observable.getViewer();
-		return new ViewerObservableValueDecorator(
-				new SWTDelayedObservableValueDecorator(Observables
-						.observeDelayedValue(delay, observable), viewer
-						.getControl()), viewer);
+		return new ViewerObservableValueDecorator(Observables
+				.observeDelayedValue(delay, observable), observable.getViewer());
 	}
 
 	/**
@@ -146,8 +77,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableValue observeSingleSelection(
 			ISelectionProvider selectionProvider) {
-		return observeProperty(selectionProvider, SelectionProviderProperties
-				.singleSelection());
+		return ViewerProperties.singleSelection().observe(
+				checkNull(selectionProvider));
 	}
 
 	/**
@@ -170,8 +101,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableList observeMultiSelection(
 			ISelectionProvider selectionProvider) {
-		return observeProperty(selectionProvider, SelectionProviderProperties
-				.multipleSelection());
+		return ViewerProperties.multipleSelection().observe(
+				checkNull(selectionProvider));
 	}
 
 	/**
@@ -188,8 +119,8 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
-		return observeViewerProperty(viewer, SelectionProviderProperties
-				.singleSelection());
+		return (IViewerObservableValue) ViewerProperties.singleSelection()
+				.observe(checkNull(viewer));
 	}
 
 	/**
@@ -210,8 +141,8 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IViewerObservableList observeMultiSelection(Viewer viewer) {
-		return observeViewerProperty(viewer, SelectionProviderProperties
-				.multipleSelection());
+		return (IViewerObservableList) ViewerProperties.multipleSelection()
+				.observe(checkNull(viewer));
 	}
 
 	/**
@@ -226,7 +157,7 @@ public class ViewersObservables {
 	 * @since 1.2
 	 */
 	public static IObservableValue observeInput(Viewer viewer) {
-		return observeViewerProperty(viewer, ViewerProperties.input());
+		return ViewerProperties.input().observe(checkNull(viewer));
 	}
 
 	/**
@@ -243,16 +174,8 @@ public class ViewersObservables {
 	 */
 	public static IObservableSet observeCheckedElements(ICheckable checkable,
 			Object elementType) {
-		if (checkable instanceof CheckboxTableViewer) {
-			return observeCheckedElements((CheckboxTableViewer) checkable,
-					elementType);
-		}
-		if (checkable instanceof CheckboxTreeViewer) {
-			return observeCheckedElements((CheckboxTreeViewer) checkable,
-					elementType);
-		}
-		return observeProperty(checkable, CheckableProperties
-				.checkedElements(elementType));
+		return ViewerProperties.checkedElements(elementType).observe(
+				checkNull(checkable));
 	}
 
 	/**
@@ -270,8 +193,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTableViewer viewer, Object elementType) {
-		return observeViewerProperty(viewer, CheckboxTableViewerProperties
-				.checkedElements(elementType));
+		return (IViewerObservableSet) ViewerProperties.checkedElements(
+				elementType).observe(checkNull(viewer));
 	}
 
 	/**
@@ -289,8 +212,8 @@ public class ViewersObservables {
 	 */
 	public static IViewerObservableSet observeCheckedElements(
 			CheckboxTreeViewer viewer, Object elementType) {
-		return observeViewerProperty(viewer, CheckboxTreeViewerProperties
-				.checkedElements(elementType));
+		return (IViewerObservableSet) ViewerProperties.checkedElements(
+				elementType).observe(checkNull(viewer));
 	}
 
 	/**
@@ -311,7 +234,7 @@ public class ViewersObservables {
 	 * @since 1.3
 	 */
 	public static IViewerObservableSet observeFilters(StructuredViewer viewer) {
-		return observeViewerProperty(viewer, StructuredViewerProperties
-				.filters());
+		return (IViewerObservableSet) ViewerProperties.filters().observe(
+				checkNull(viewer));
 	}
 }

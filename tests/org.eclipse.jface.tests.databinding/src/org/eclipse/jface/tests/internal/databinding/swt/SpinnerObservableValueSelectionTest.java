@@ -22,7 +22,7 @@ import org.eclipse.jface.databinding.conformance.ObservableDelegateTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.swt.SpinnerProperties;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -97,7 +97,7 @@ public class SpinnerObservableValueSelectionTest extends ObservableDelegateTest 
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return SpinnerProperties.selection().observe(realm, spinner);
+			return WidgetProperties.selection().observe(realm, spinner);
 		}
 
 		public void change(IObservable observable) {
