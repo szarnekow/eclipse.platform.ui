@@ -40,7 +40,6 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 			PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;
 		this.propertyDescriptor = propertyDescriptor;
-
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -70,11 +69,13 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 	}
 
 	public IObservableMap observe(Object source) {
-		return delegate.observe(source);
+		return new BeanObservableMapDecorator(delegate.observe(source),
+				propertyDescriptor);
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {
-		return delegate.observe(realm, source);
+		return new BeanObservableMapDecorator(delegate.observe(realm, source),
+				propertyDescriptor);
 	}
 
 	public IObservableFactory mapFactory() {
@@ -86,6 +87,7 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 	}
 
 	public IObservableMap observeDetail(IObservableValue master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableMapDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 }

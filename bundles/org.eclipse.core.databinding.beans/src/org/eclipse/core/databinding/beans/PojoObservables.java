@@ -14,9 +14,7 @@
 package org.eclipse.core.databinding.beans;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyDescriptor;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -24,10 +22,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.map.IMapProperty;
-import org.eclipse.core.databinding.property.set.ISetProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
@@ -74,12 +68,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableValue observeValue(Realm realm, Object pojo,
 			String propertyName) {
-		IValueProperty property = PojoProperties.value(pojo.getClass(),
-				propertyName);
-		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
-				.getPropertyDescriptor();
-		return new BeanObservableValueDecorator(property.observe(realm, pojo),
-				propertyDescriptor);
+		return PojoProperties.value(pojo.getClass(), propertyName).observe(
+				realm, pojo);
 	}
 
 	/**
@@ -117,11 +107,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class pojoClass, String propertyName) {
-		IValueProperty property = PojoProperties.value(pojoClass, propertyName);
-		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
-				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property.observeDetail(domain),
-				propertyDescriptor);
+		return PojoProperties.value(pojoClass, propertyName).observeDetail(
+				domain);
 	}
 
 	/**
@@ -212,12 +199,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeMap(Realm realm, Object pojo,
 			String propertyName, Class keyType, Class valueType) {
-		IMapProperty property = PojoProperties.map(pojo.getClass(),
-				propertyName, keyType, valueType);
-		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
-				.getPropertyDescriptor();
-		return new BeanObservableMapDecorator(property.observe(realm, pojo),
-				propertyDescriptor);
+		return PojoProperties.map(pojo.getClass(), propertyName, keyType,
+				valueType).observe(realm, pojo);
 	}
 
 	/**
@@ -323,12 +306,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableList observeList(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
-		IListProperty property = PojoProperties.list(pojo.getClass(),
-				propertyName, elementType);
-		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
-				.getPropertyDescriptor();
-		return new BeanObservableListDecorator(property.observe(realm, pojo),
-				propertyDescriptor);
+		return PojoProperties.list(pojo.getClass(), propertyName, elementType)
+				.observe(realm, pojo);
 	}
 
 	/**
@@ -412,12 +391,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableSet observeSet(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
-		ISetProperty property = PojoProperties.set(pojo.getClass(),
-				propertyName, elementType);
-		PropertyDescriptor propertyDescriptor = ((IBeanProperty) property)
-				.getPropertyDescriptor();
-		return new BeanObservableSetDecorator(property.observe(realm, pojo),
-				propertyDescriptor);
+		return PojoProperties.set(pojo.getClass(), propertyName, elementType)
+				.observe(realm, pojo);
 	}
 
 	/**
@@ -454,11 +429,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableFactory valueFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeValue(realm, target, propertyName);
-			}
-		};
+		return PojoProperties.value(propertyName).valueFactory(realm);
 	}
 
 	/**
@@ -487,11 +458,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableFactory listFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeList(realm, target, propertyName, elementType);
-			}
-		};
+		return PojoProperties.list(propertyName, elementType)
+				.listFactory(realm);
 	}
 
 	/**
@@ -521,11 +489,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeSet(realm, target, propertyName);
-			}
-		};
+		return PojoProperties.set(propertyName).setFactory(realm);
 	}
 
 	/**
@@ -558,11 +522,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeSet(realm, target, propertyName, elementType);
-			}
-		};
+		return PojoProperties.set(propertyName, elementType).setFactory(realm);
 	}
 
 	/**
@@ -599,11 +559,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableFactory mapPropertyFactory(final Realm realm,
 			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return observeMap(realm, target, propertyName);
-			}
-		};
+		return PojoProperties.map(propertyName).mapFactory(realm);
 	}
 
 	/**
@@ -645,7 +601,8 @@ final public class PojoObservables {
 		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableValue value = MasterDetailObservables.detailValue(master,
-				valueFactory(realm, propertyName), propertyType);
+				PojoProperties.value(propertyName, propertyType).valueFactory(
+						realm), propertyType);
 		return new BeanObservableValueDecorator(value, BeanPropertyHelper
 				.getValueTypePropertyDescriptor(master, propertyName));
 	}
@@ -667,8 +624,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailValue(master.getRealm(), master, propertyName,
-				propertyType);
+		return PojoProperties.value(propertyName, propertyType).observeDetail(
+				master);
 	}
 
 	/**
@@ -693,8 +650,8 @@ final public class PojoObservables {
 			IObservableValue master, String propertyName, Class propertyType) {
 		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 		IObservableList observableList = MasterDetailObservables.detailList(
-				master, listFactory(realm, propertyName, propertyType),
-				propertyType);
+				master, PojoProperties.list(propertyName, propertyType)
+						.listFactory(realm), propertyType);
 		return new BeanObservableListDecorator(observableList,
 				BeanPropertyHelper.getValueTypePropertyDescriptor(master,
 						propertyName));
@@ -716,8 +673,7 @@ final public class PojoObservables {
 	 */
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailList(master.getRealm(), master, propertyName,
-				propertyType);
+		return PojoProperties.list(propertyName).observeDetail(master);
 	}
 
 	/**
@@ -743,8 +699,8 @@ final public class PojoObservables {
 		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
-				master, setFactory(realm, propertyName, propertyType),
-				propertyType);
+				master, PojoProperties.set(propertyName, propertyType)
+						.setFactory(realm), propertyType);
 		return new BeanObservableSetDecorator(observableSet, BeanPropertyHelper
 				.getValueTypePropertyDescriptor(master, propertyName));
 	}
@@ -765,8 +721,8 @@ final public class PojoObservables {
 	 */
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
-		return observeDetailSet(master.getRealm(), master, propertyName,
-				propertyType);
+		return PojoProperties.set(propertyName, propertyType).observeDetail(
+				master);
 	}
 
 	/**
@@ -785,7 +741,7 @@ final public class PojoObservables {
 			IObservableValue master, String propertyName) {
 		BeansObservables.warnIfDifferentRealms(realm, master.getRealm());
 		IObservableMap observableMap = MasterDetailObservables.detailMap(
-				master, mapPropertyFactory(realm, propertyName));
+				master, PojoProperties.map(propertyName).mapFactory(realm));
 		return new BeanObservableMapDecorator(observableMap, BeanPropertyHelper
 				.getValueTypePropertyDescriptor(master, propertyName));
 	}
@@ -802,6 +758,6 @@ final public class PojoObservables {
 	 */
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
-		return observeDetailMap(master.getRealm(), master, propertyName);
+		return PojoProperties.map(propertyName).observeDetail(master);
 	}
 }

@@ -65,11 +65,13 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	}
 
 	public IObservableList observe(Object source) {
-		return delegate.observe(source);
+		return new BeanObservableListDecorator(delegate.observe(source),
+				propertyDescriptor);
 	}
 
 	public IObservableList observe(Realm realm, Object source) {
-		return delegate.observe(realm, source);
+		return new BeanObservableListDecorator(delegate.observe(realm, source),
+				propertyDescriptor);
 	}
 
 	public IObservableFactory listFactory() {
@@ -81,6 +83,7 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	}
 
 	public IObservableList observeDetail(IObservableValue master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableListDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 }

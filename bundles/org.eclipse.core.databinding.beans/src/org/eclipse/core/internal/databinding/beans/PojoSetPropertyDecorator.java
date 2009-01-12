@@ -66,11 +66,13 @@ public class PojoSetPropertyDecorator extends SetProperty implements
 	}
 
 	public IObservableSet observe(Object source) {
-		return delegate.observe(source);
+		return new BeanObservableSetDecorator(delegate.observe(source),
+				propertyDescriptor);
 	}
 
 	public IObservableSet observe(Realm realm, Object source) {
-		return delegate.observe(realm, source);
+		return new BeanObservableSetDecorator(delegate.observe(realm, source),
+				propertyDescriptor);
 	}
 
 	public IObservableFactory setFactory() {
@@ -82,6 +84,7 @@ public class PojoSetPropertyDecorator extends SetProperty implements
 	}
 
 	public IObservableSet observeDetail(IObservableValue master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableSetDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 }

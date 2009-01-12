@@ -113,11 +113,13 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IObservableValue observe(Object source) {
-		return delegate.observe(source);
+		return new BeanObservableValueDecorator(delegate.observe(source),
+				propertyDescriptor);
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {
-		return delegate.observe(realm, source);
+		return new BeanObservableValueDecorator(
+				delegate.observe(realm, source), propertyDescriptor);
 	}
 
 	public IObservableFactory valueFactory() {
@@ -129,18 +131,22 @@ public class BeanValuePropertyDecorator extends ValueProperty implements
 	}
 
 	public IObservableValue observeDetail(IObservableValue master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableValueDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableListDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableMapDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		return delegate.observeDetail(master);
+		return new BeanObservableMapDecorator(delegate.observeDetail(master),
+				propertyDescriptor);
 	}
 }
