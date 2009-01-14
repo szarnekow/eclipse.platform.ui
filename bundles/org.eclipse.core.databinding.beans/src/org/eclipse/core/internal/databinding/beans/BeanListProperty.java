@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -95,8 +96,17 @@ public class BeanListProperty extends SimpleListProperty {
 
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
+				ListDiff diff;
+				Object oldValue = evt.getOldValue();
+				Object newValue = evt.getNewValue();
+				if (oldValue != null && newValue != null) {
+					diff = Diffs.computeListDiff(asList(oldValue),
+							asList(newValue));
+				} else {
+					diff = null;
+				}
 				listener.handlePropertyChange(new PropertyChangeEvent(evt
-						.getSource(), BeanListProperty.this));
+						.getSource(), BeanListProperty.this, diff));
 			}
 		}
 	}

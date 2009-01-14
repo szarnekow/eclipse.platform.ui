@@ -68,11 +68,11 @@ public interface IValueProperty extends IProperty {
 	public IObservableValue observe(Realm realm, Object source);
 
 	/**
-	 * Returns a factory for creating observable values in the current default
-	 * realm, tracking this property of a particular property source.
+	 * Returns a factory for creating observable values tracking this property
+	 * of a particular property source.
 	 * 
-	 * @return a factory for creating observable values in current default
-	 *         realm, tracking this property of a particular property source.
+	 * @return a factory for creating observable values tracking this property
+	 *         of a particular property source.
 	 */
 	public IObservableFactory valueFactory();
 

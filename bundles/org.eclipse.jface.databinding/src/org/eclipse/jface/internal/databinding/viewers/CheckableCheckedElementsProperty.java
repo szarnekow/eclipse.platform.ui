@@ -12,10 +12,12 @@
 
 package org.eclipse.jface.internal.databinding.viewers;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -95,8 +97,14 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 		}
 
 		public void checkStateChanged(CheckStateChangedEvent event) {
+			Object element = event.getElement();
+			boolean checked = event.getChecked();
+			Set elementSet = Collections.singleton(element);
+			Set additions = checked ? elementSet : Collections.EMPTY_SET;
+			Set removals = checked ? Collections.EMPTY_SET : elementSet;
+			SetDiff diff = Diffs.createSetDiff(additions, removals);
 			listener.handlePropertyChange(new PropertyChangeEvent(event
-					.getSource(), CheckableCheckedElementsProperty.this));
+					.getSource(), CheckableCheckedElementsProperty.this, diff));
 		}
 	}
 

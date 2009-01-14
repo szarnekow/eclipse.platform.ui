@@ -85,7 +85,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											notifyIfChanged();
+											notifyIfChanged((MapDiff) event.diff);
 										}
 									});
 								}
@@ -165,7 +165,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 				updating = wasUpdating;
 			}
 
-			notifyIfChanged();
+			notifyIfChanged(null);
 
 			last = null;
 			expectedModCount = modCount;
@@ -208,7 +208,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return oldValue;
 	}
@@ -249,7 +249,7 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 	}
 
 	public Object remove(Object key) {
@@ -259,16 +259,17 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 
 	public Collection values() {
 		getterCalled();
-		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
+		// AbstractMap depends on entrySet() to fulfil values() API, so all
 		// getterCalled() and comodification checks will still be handled
 		return super.values();
 	}
 
-	private void notifyIfChanged() {
+	private void notifyIfChanged(MapDiff diff) {
 		if (hasListeners()) {
 			Map oldMap = cachedMap;
 			Map newMap = cachedMap = property.getMap(source);
-			MapDiff diff = Diffs.computeMapDiff(oldMap, newMap);
+			if (diff == null)
+				diff = Diffs.computeMapDiff(oldMap, newMap);
 			if (!diff.isEmpty())
 				fireMapChange(diff);
 		}

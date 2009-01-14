@@ -68,11 +68,11 @@ public interface ISetProperty extends IProperty {
 	public IObservableSet observe(Realm realm, Object source);
 
 	/**
-	 * Returns a factory for creating observable sets in the current default
-	 * realm, tracking this property of a particular property source.
+	 * Returns a factory for creating observable sets tracking this property of
+	 * a particular property source.
 	 * 
-	 * @return a factory for creating observable sets in current default realm,
-	 *         tracking this property of a particular property source.
+	 * @return a factory for creating observable sets tracking this property of
+	 *         a particular property source.
 	 */
 	public IObservableFactory setFactory();
 

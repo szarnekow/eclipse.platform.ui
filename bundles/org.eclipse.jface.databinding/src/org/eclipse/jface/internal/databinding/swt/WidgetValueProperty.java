@@ -39,13 +39,6 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 		this.events = events;
 	}
 
-	public Realm getPreferredRealm(Object source) {
-		if (source instanceof Widget) {
-			return SWTObservables.getRealm(((Widget) source).getDisplay());
-		}
-		return super.getPreferredRealm(source);
-	}
-
 	protected INativePropertyListener adaptListener(
 			IPropertyChangeListener listener) {
 		return new WidgetListener(listener);
@@ -85,16 +78,24 @@ abstract class WidgetValueProperty extends SimpleValueProperty {
 
 		public void handleEvent(Event event) {
 			listener.handlePropertyChange(new PropertyChangeEvent(event.widget,
-					WidgetValueProperty.this));
+					WidgetValueProperty.this, null));
 		}
+	}
+
+	public IObservableValue observe(Object source) {
+		if (source instanceof Widget) {
+			return observe(SWTObservables.getRealm(((Widget) source)
+					.getDisplay()), source);
+		}
+		return super.observe(source);
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {
 		return wrapObservable(super.observe(realm, source), (Widget) source);
 	}
 
-	protected ISWTObservableValue wrapObservable(
-			IObservableValue observable, Widget widget) {
+	protected ISWTObservableValue wrapObservable(IObservableValue observable,
+			Widget widget) {
 		return new SWTObservableValueDecorator(observable, widget);
 	}
 }

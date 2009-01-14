@@ -73,7 +73,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											notifyIfChanged();
+											notifyIfChanged((ListDiff) event.diff);
 										}
 									});
 								}
@@ -173,7 +173,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 	}
 
 	public Iterator iterator() {
@@ -219,7 +219,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 					updating = wasUpdating;
 				}
 
-				notifyIfChanged();
+				notifyIfChanged(null);
 
 				lastElement = null;
 				lastIndex = -1;
@@ -263,7 +263,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return element;
 	}
@@ -354,7 +354,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 					updating = wasUpdating;
 				}
 
-				notifyIfChanged();
+				notifyIfChanged(null);
 
 				lastElement = null;
 				lastIndex = -1;
@@ -379,7 +379,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 					updating = wasUpdating;
 				}
 
-				notifyIfChanged();
+				notifyIfChanged(null);
 
 				lastElement = o;
 				expectedModCount = modCount;
@@ -404,7 +404,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 					updating = wasUpdating;
 				}
 
-				notifyIfChanged();
+				notifyIfChanged(null);
 
 				lastElement = null;
 				lastIndex = -1;
@@ -435,7 +435,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return element;
 	}
@@ -458,7 +458,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return oldElement;
 	}
@@ -505,7 +505,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -547,7 +547,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return !diff.isEmpty();
 	}
@@ -591,7 +591,7 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return !diff.isEmpty();
 	}
@@ -620,14 +620,15 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 	}
 
-	private void notifyIfChanged() {
+	private void notifyIfChanged(ListDiff diff) {
 		if (hasListeners()) {
 			List oldList = cachedList;
 			List newList = cachedList = property.getList(source);
-			ListDiff diff = Diffs.computeListDiff(oldList, newList);
+			if (diff == null)
+				diff = Diffs.computeListDiff(oldList, newList);
 			if (!diff.isEmpty()) {
 				fireListChange(diff);
 			}

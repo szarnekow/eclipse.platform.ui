@@ -14,6 +14,7 @@ package org.eclipse.core.databinding.property.value;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -54,11 +55,11 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 				listener = property
 						.adaptListener(new IPropertyChangeListener() {
 							public void handlePropertyChange(
-									PropertyChangeEvent event) {
+									final PropertyChangeEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											notifyIfChanged();
+											notifyIfChanged((ValueDiff) event.diff);
 										}
 									});
 								}
@@ -77,7 +78,7 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 	}
 
 	protected Object doGetValue() {
-		notifyIfChanged();
+		notifyIfChanged(null);
 		return property.getValue(source);
 	}
 
@@ -89,15 +90,17 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 			updating = false;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 	}
 
-	private void notifyIfChanged() {
+	private void notifyIfChanged(ValueDiff diff) {
 		if (hasListeners()) {
 			Object oldValue = cachedValue;
 			Object newValue = cachedValue = property.getValue(source);
+			if (diff == null)
+				diff = Diffs.createValueDiff(oldValue, newValue);
 			if (hasListeners() && !Util.equals(oldValue, newValue)) {
-				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+				fireValueChange(diff);
 			}
 		}
 	}

@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesList;
 
@@ -27,16 +26,17 @@ import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesLi
  * 
  * @since 1.2
  */
-public abstract class ListProperty extends Property implements IListProperty {
+public abstract class ListProperty implements IListProperty {
 	public IObservableList observe(Object source) {
-		Realm realm = getPreferredRealm(source);
-		if (realm == null)
-			realm = Realm.getDefault();
-		return observe(realm, source);
+		return observe(Realm.getDefault(), source);
 	}
 
 	public IObservableFactory listFactory() {
-		return listFactory(Realm.getDefault());
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observe(target);
+			}
+		};
 	}
 
 	public IObservableFactory listFactory(final Realm realm) {

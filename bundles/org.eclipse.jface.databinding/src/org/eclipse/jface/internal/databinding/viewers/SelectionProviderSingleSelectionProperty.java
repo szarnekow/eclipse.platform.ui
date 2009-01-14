@@ -72,10 +72,9 @@ public class SelectionProviderSingleSelectionProperty extends
 		}
 
 		public void selectionChanged(SelectionChangedEvent event) {
-			listener
-					.handlePropertyChange(new PropertyChangeEvent(event
-							.getSource(),
-							SelectionProviderSingleSelectionProperty.this));
+			listener.handlePropertyChange(new PropertyChangeEvent(event
+					.getSource(),
+					SelectionProviderSingleSelectionProperty.this, null));
 		}
 	}
 

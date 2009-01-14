@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap;
 
@@ -27,16 +26,17 @@ import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap
  * 
  * @since 1.2
  */
-public abstract class MapProperty extends Property implements IMapProperty {
+public abstract class MapProperty implements IMapProperty {
 	public IObservableMap observe(Object source) {
-		Realm realm = getPreferredRealm(source);
-		if (realm == null)
-			realm = Realm.getDefault();
-		return observe(realm, source);
+		return observe(Realm.getDefault(), source);
 	}
 
 	public IObservableFactory mapFactory() {
-		return mapFactory(Realm.getDefault());
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observe(target);
+			}
+		};
 	}
 
 	public IObservableFactory mapFactory(final Realm realm) {

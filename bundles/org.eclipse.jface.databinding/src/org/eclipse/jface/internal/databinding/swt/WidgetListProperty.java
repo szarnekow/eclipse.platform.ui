@@ -22,10 +22,12 @@ import org.eclipse.swt.widgets.Widget;
  * 
  */
 public abstract class WidgetListProperty extends SimpleListProperty {
-	public Realm getPreferredRealm(Object source) {
-		if (source instanceof Widget)
-			return SWTObservables.getRealm(((Widget) source).getDisplay());
-		return super.getPreferredRealm(source);
+	public IObservableList observe(Object source) {
+		if (source instanceof Widget) {
+			return observe(SWTObservables.getRealm(((Widget) source)
+					.getDisplay()), source);
+		}
+		return super.observe(source);
 	}
 
 	public IObservableList observe(Realm realm, Object source) {

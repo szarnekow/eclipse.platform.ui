@@ -70,7 +70,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {
-											notifyIfChanged();
+											notifyIfChanged((SetDiff) event.diff);
 										}
 									});
 								}
@@ -113,10 +113,6 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 		return getSet().containsAll(c);
 	}
 
-	protected int doGetSize() {
-		return getSet().size();
-	}
-
 	public boolean isEmpty() {
 		getterCalled();
 		return getSet().isEmpty();
@@ -153,7 +149,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -196,7 +192,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 					updating = wasUpdating;
 				}
 
-				notifyIfChanged();
+				notifyIfChanged(null);
 
 				last = null;
 				expectedModCount = modCount;
@@ -228,7 +224,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -264,7 +260,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -301,7 +297,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -343,7 +339,7 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 
 		return true;
 	}
@@ -366,14 +362,15 @@ class SimpleSetPropertyObservableSet extends AbstractObservableSet implements
 			updating = wasUpdating;
 		}
 
-		notifyIfChanged();
+		notifyIfChanged(null);
 	}
 
-	private void notifyIfChanged() {
+	private void notifyIfChanged(SetDiff diff) {
 		if (hasListeners()) {
 			Set oldSet = cachedSet;
 			Set newSet = cachedSet = property.getSet(source);
-			SetDiff diff = Diffs.computeSetDiff(oldSet, newSet);
+			if (diff == null)
+				diff = Diffs.computeSetDiff(oldSet, newSet);
 			if (!diff.isEmpty())
 				fireSetChange(diff);
 		}

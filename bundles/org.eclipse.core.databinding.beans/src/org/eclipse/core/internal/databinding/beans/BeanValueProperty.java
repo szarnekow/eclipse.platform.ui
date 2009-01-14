@@ -15,6 +15,8 @@ package org.eclipse.core.internal.databinding.beans;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.PropertyChangeEvent;
@@ -66,8 +68,16 @@ public class BeanValueProperty extends SimpleValueProperty {
 
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
+				ValueDiff diff;
+				Object oldValue = evt.getOldValue();
+				Object newValue = evt.getNewValue();
+				if (oldValue != null && newValue != null) {
+					diff = Diffs.createValueDiff(oldValue, newValue);
+				} else {
+					diff = null;
+				}
 				listener.handlePropertyChange(new PropertyChangeEvent(evt
-						.getSource(), BeanValueProperty.this));
+						.getSource(), BeanValueProperty.this, diff));
 			}
 		}
 	}

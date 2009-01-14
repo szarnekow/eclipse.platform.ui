@@ -75,11 +75,11 @@ public interface IMapProperty extends IProperty {
 	public IObservableMap observe(Realm realm, Object source);
 
 	/**
-	 * Returns a factory for creating observable maps in the current default
-	 * realm, tracking this property of a particular property source.
+	 * Returns a factory for creating observable maps tracking this property of
+	 * a particular property source.
 	 * 
-	 * @return a factory for creating observable maps in current default realm,
-	 *         tracking this property of a particular property source.
+	 * @return a factory for creating observable maps tracking this property of
+	 *         a particular property source.
 	 */
 	public IObservableFactory mapFactory();
 

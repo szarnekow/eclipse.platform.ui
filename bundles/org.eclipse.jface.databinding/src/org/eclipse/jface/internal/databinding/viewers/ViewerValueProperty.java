@@ -22,12 +22,12 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class ViewerValueProperty extends SimpleValueProperty {
-	public Realm getPreferredRealm(Object source) {
+	public IObservableValue observe(Object source) {
 		if (source instanceof Viewer) {
-			return SWTObservables.getRealm(((Viewer) source).getControl()
-					.getDisplay());
+			return observe(SWTObservables.getRealm(((Viewer) source)
+					.getControl().getDisplay()), source);
 		}
-		return super.getPreferredRealm(source);
+		return super.observe(source);
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {

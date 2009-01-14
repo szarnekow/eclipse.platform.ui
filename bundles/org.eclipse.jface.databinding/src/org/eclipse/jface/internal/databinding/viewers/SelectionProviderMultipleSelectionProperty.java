@@ -76,7 +76,7 @@ public class SelectionProviderMultipleSelectionProperty extends
 		public void selectionChanged(SelectionChangedEvent event) {
 			listener.handlePropertyChange(new PropertyChangeEvent(event
 					.getSource(),
-					SelectionProviderMultipleSelectionProperty.this));
+					SelectionProviderMultipleSelectionProperty.this, null));
 		}
 	}
 

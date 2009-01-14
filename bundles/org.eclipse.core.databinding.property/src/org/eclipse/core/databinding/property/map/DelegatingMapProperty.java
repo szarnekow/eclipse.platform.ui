@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.Property;
 
 /**
  * @since 1.2
@@ -56,16 +55,6 @@ public abstract class DelegatingMapProperty extends MapProperty {
 
 	public Object getValueType() {
 		return valueType;
-	}
-
-	public Realm getPreferredRealm(Object source) {
-		IMapProperty delegate = getDelegate(source);
-		Realm realm = null;
-		if (delegate instanceof Property)
-			realm = ((Property) delegate).getPreferredRealm(source);
-		if (realm == null)
-			realm = super.getPreferredRealm(source);
-		return realm;
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {

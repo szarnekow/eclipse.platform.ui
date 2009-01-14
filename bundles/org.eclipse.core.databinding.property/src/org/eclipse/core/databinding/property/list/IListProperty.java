@@ -66,11 +66,11 @@ public interface IListProperty extends IProperty {
 	public IObservableList observe(Realm realm, Object source);
 
 	/**
-	 * Returns a factory for creating observable lists in the current default
-	 * realm, tracking this property of a particular property source.
+	 * Returns a factory for creating observable lists tracking this property of
+	 * a particular property source.
 	 * 
-	 * @return a factory for creating observable lists in current default realm,
-	 *         tracking this property of a particular property source.
+	 * @return a factory for creating observable lists tracking this property of
+	 *         a particular property source.
 	 */
 	public IObservableFactory listFactory();
 

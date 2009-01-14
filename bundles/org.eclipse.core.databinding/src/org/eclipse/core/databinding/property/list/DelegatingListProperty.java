@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.Property;
 
 /**
  * @since 1.2
@@ -51,16 +50,6 @@ public abstract class DelegatingListProperty extends ListProperty {
 
 	public Object getElementType() {
 		return elementType;
-	}
-
-	public Realm getPreferredRealm(Object source) {
-		IListProperty delegate = getDelegate(source);
-		Realm realm = null;
-		if (delegate instanceof Property)
-			realm = ((Property) delegate).getPreferredRealm(source);
-		if (realm == null)
-			realm = super.getPreferredRealm(source);
-		return realm;
 	}
 
 	public IObservableList observe(Realm realm, Object source) {

@@ -17,6 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -82,8 +83,17 @@ public class BeanMapProperty extends SimpleMapProperty {
 
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
+				MapDiff diff;
+				Object oldValue = evt.getOldValue();
+				Object newValue = evt.getNewValue();
+				if (oldValue != null && newValue != null) {
+					diff = Diffs.computeMapDiff(asMap(oldValue),
+							asMap(newValue));
+				} else {
+					diff = null;
+				}
 				listener.handlePropertyChange(new PropertyChangeEvent(evt
-						.getSource(), BeanMapProperty.this));
+						.getSource(), BeanMapProperty.this, diff));
 			}
 		}
 	}

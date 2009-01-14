@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.Property;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.property.SetPropertyDetailValuesMap;
@@ -28,16 +27,17 @@ import org.eclipse.core.internal.databinding.property.SetPropertyDetailValuesMap
  * 
  * @since 1.2
  */
-public abstract class SetProperty extends Property implements ISetProperty {
+public abstract class SetProperty implements ISetProperty {
 	public IObservableSet observe(Object source) {
-		Realm realm = getPreferredRealm(source);
-		if (realm == null)
-			realm = Realm.getDefault();
-		return observe(realm, source);
+		return observe(Realm.getDefault(), source);
 	}
 
 	public IObservableFactory setFactory() {
-		return setFactory(Realm.getDefault());
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observe(target);
+			}
+		};
 	}
 
 	public IObservableFactory setFactory(final Realm realm) {

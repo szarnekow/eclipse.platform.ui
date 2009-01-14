@@ -257,7 +257,7 @@ public class Snippet026AnonymousBeanProperties {
 
 			public void propertyChange(java.beans.PropertyChangeEvent evt) {
 				listener.handlePropertyChange(new PropertyChangeEvent(evt
-						.getSource(), ContactGroupContactsProperty.this));
+						.getSource(), ContactGroupContactsProperty.this, null));
 			}
 		}
 

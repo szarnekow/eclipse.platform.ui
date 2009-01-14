@@ -22,12 +22,12 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  */
 public abstract class ViewerSetProperty extends SimpleSetProperty {
-	public Realm getPreferredRealm(Object source) {
+	public IObservableSet observe(Object source) {
 		if (source instanceof Viewer) {
-			return SWTObservables.getRealm(((Viewer) source).getControl()
-					.getDisplay());
+			return observe(SWTObservables.getRealm(((Viewer) source)
+					.getControl().getDisplay()), source);
 		}
-		return super.getPreferredRealm(source);
+		return super.observe(source);
 	}
 
 	public IObservableSet observe(Realm realm, Object source) {

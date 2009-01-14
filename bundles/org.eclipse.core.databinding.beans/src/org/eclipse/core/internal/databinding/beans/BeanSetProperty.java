@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IPropertyChangeListener;
@@ -94,9 +95,17 @@ public class BeanSetProperty extends SimpleSetProperty {
 		}
 
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
+			SetDiff diff;
+			Object oldValue = evt.getOldValue();
+			Object newValue = evt.getNewValue();
+			if (oldValue != null && newValue != null) {
+				diff = Diffs.computeSetDiff(asSet(oldValue), asSet(newValue));
+			} else {
+				diff = null;
+			}
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
 				listener.handlePropertyChange(new PropertyChangeEvent(evt
-						.getSource(), BeanSetProperty.this));
+						.getSource(), BeanSetProperty.this, diff));
 			}
 		}
 	}

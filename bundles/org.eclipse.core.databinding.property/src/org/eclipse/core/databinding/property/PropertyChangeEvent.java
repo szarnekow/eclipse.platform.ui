@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.property;
 
 import java.util.EventObject;
 
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -29,16 +30,26 @@ public final class PropertyChangeEvent extends EventObject {
 	public final IProperty property;
 
 	/**
+	 * A diff object describing the change in state, or null for an unknown
+	 * change.
+	 */
+	public final IDiff diff;
+
+	/**
 	 * Constructs a PropertyChangeEvent with the given attributes
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param property
 	 *            the property that changed on the source
+	 * @param diff
+	 *            a diff describing the change in state, or null if the change
+	 *            is unknown.
 	 */
-	public PropertyChangeEvent(Object source, IProperty property) {
+	public PropertyChangeEvent(Object source, IProperty property, IDiff diff) {
 		super(source);
 		this.property = property;
+		this.diff = diff;
 	}
 
 	public boolean equals(Object obj) {
@@ -51,13 +62,15 @@ public final class PropertyChangeEvent extends EventObject {
 
 		PropertyChangeEvent that = (PropertyChangeEvent) obj;
 		return Util.equals(getSource(), that.getSource())
-				&& Util.equals(this.property, that.property);
+				&& Util.equals(this.property, that.property)
+				&& Util.equals(this.diff, that.diff);
 	}
 
 	public int hashCode() {
 		int hash = 17;
 		hash = hash * 37 + getSource().hashCode();
 		hash = hash * 37 + property.hashCode();
+		hash = hash * 37 + (diff == null ? 0 : diff.hashCode());
 		return hash;
 	}
 }
