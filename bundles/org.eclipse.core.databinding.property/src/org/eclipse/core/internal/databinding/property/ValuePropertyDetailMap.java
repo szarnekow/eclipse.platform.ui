@@ -45,14 +45,17 @@ public class ValuePropertyDetailMap extends MapProperty {
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observe(realm, source);
-		return detailProperty.observeDetail(master);
+		IObservableValue masterValue = masterProperty.observe(realm, source);
+		IObservableMap detailMap = detailProperty.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterValue);
+		return detailMap;
 	}
 
 	public IObservableMap observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty
-				.observeDetail(master);
-		return detailProperty.observeDetail(masterValue);
+		IObservableValue masterValue = masterProperty.observeDetail(master);
+		IObservableMap detailMap = detailProperty.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterValue);
+		return detailMap;
 	}
 
 	public String toString() {

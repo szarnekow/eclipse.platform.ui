@@ -42,13 +42,17 @@ public class ListPropertyDetailValuesList extends ListProperty {
 	}
 
 	public IObservableList observe(Realm realm, Object source) {
-		IObservableList master = masterProperty.observe(realm, source);
-		return detailProperty.observeDetail(master);
+		IObservableList masterList = masterProperty.observe(realm, source);
+		IObservableList detailList = detailProperty.observeDetail(masterList);
+		PropertyObservableUtil.cascadeDispose(detailList, masterList);
+		return detailList;
 	}
 
 	public IObservableList observeDetail(IObservableValue master) {
 		IObservableList masterList = masterProperty.observeDetail(master);
-		return detailProperty.observeDetail(masterList);
+		IObservableList detailList = detailProperty.observeDetail(masterList);
+		PropertyObservableUtil.cascadeDispose(detailList, masterList);
+		return detailList;
 	}
 
 	public String toString() {

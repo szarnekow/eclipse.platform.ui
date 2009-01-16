@@ -44,29 +44,40 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observe(realm, source);
-		return detailProperty.observeDetail(master);
+		IObservableValue masterValue = masterProperty.observe(realm, source);
+		IObservableValue detailValue = detailProperty
+				.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
+		return detailValue;
 	}
 
 	public IObservableValue observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty
-				.observeDetail(master);
-		return detailProperty.observeDetail(masterValue);
+		IObservableValue masterValue = masterProperty.observeDetail(master);
+		IObservableValue detailValue = detailProperty
+				.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
+		return detailValue;
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		master = masterProperty.observeDetail(master);
-		return detailProperty.observeDetail(master);
+		IObservableList masterList = masterProperty.observeDetail(master);
+		IObservableList detailList = detailProperty.observeDetail(masterList);
+		PropertyObservableUtil.cascadeDispose(detailList, masterList);
+		return detailList;
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
 		IObservableMap masterMap = masterProperty.observeDetail(master);
-		return detailProperty.observeDetail(masterMap);
+		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
+		return detailMap;
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		master = masterProperty.observeDetail(master);
-		return detailProperty.observeDetail(master);
+		IObservableMap masterMap = masterProperty.observeDetail(master);
+		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
+		return detailMap;
 	}
 
 	public String toString() {

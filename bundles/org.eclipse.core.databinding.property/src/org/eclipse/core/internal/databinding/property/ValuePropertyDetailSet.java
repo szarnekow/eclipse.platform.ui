@@ -42,14 +42,17 @@ public class ValuePropertyDetailSet extends SetProperty {
 	}
 
 	public IObservableSet observe(Realm realm, Object source) {
-		IObservableValue master = masterProperty.observe(realm, source);
-		return detailProperty.observeDetail(master);
+		IObservableValue masterValue = masterProperty.observe(realm, source);
+		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
+		return detailSet;
 	}
 
 	public IObservableSet observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty
-				.observeDetail(master);
-		return detailProperty.observeDetail(masterValue);
+		IObservableValue masterValue = masterProperty.observeDetail(master);
+		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
+		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
+		return detailSet;
 	}
 
 	public String toString() {
