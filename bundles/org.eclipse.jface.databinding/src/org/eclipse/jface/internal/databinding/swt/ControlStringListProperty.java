@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -44,7 +44,7 @@ public abstract class ControlStringListProperty extends WidgetListProperty {
 	abstract String[] doGetStringList(Control control);
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return null;
 	}
 

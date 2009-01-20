@@ -6,17 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation
+ *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
@@ -28,29 +32,48 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.value.SimpleValueProperty;
+import org.eclipse.core.internal.databinding.IdentityWrapper;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
-class ObservableListDelegatingValuePropertyObservableList extends
-		AbstractObservableList {
+public class ObservableListSimpleValuePropertyObservableList extends
+		AbstractObservableList implements IPropertyObservable {
 	private IObservableList masterList;
-	private DelegatingValueProperty detailProperty;
-	private DelegatingCache cache;
+	private SimpleValueProperty detailProperty;
+
+	private IObservableSet knownMasterElements;
+	private Map cachedValues;
+
+	private boolean updating;
 
 	private IListChangeListener masterListener = new IListChangeListener() {
 		public void handleListChange(ListChangeEvent event) {
-			if (isDisposed())
-				return;
+			if (!isDisposed()) {
+				updateKnownElements();
+				fireListChange(convertDiff(event.diff));
+			}
+		}
 
-			cache.addAll(masterList);
+		private void updateKnownElements() {
+			Set identityKnownElements = new HashSet();
+			for (Iterator it = masterList.iterator(); it.hasNext();) {
+				identityKnownElements.add(new IdentityWrapper(it.next()));
+			}
 
-			// Need both obsolete and new elements to convert diff
-			ListDiff diff = convertDiff(event.diff);
-
-			cache.retainAll(masterList);
-
-			fireListChange(diff);
+			knownMasterElements.retainAll(identityKnownElements);
+			knownMasterElements.addAll(identityKnownElements);
 		}
 
 		private ListDiff convertDiff(ListDiff diff) {
@@ -62,10 +85,10 @@ class ObservableListDelegatingValuePropertyObservableList extends
 				int index = masterDifference.getPosition();
 				boolean addition = masterDifference.isAddition();
 				Object masterElement = masterDifference.getElement();
-				Object detailValue = cache.get(masterElement);
-
+				Object elementDetailValue = detailProperty
+						.getValue(masterElement);
 				detailEntries[i] = Diffs.createListDiffEntry(index, addition,
-						detailValue);
+						elementDetailValue);
 			}
 			return Diffs.createListDiff(detailEntries);
 		}
@@ -77,25 +100,67 @@ class ObservableListDelegatingValuePropertyObservableList extends
 		}
 	};
 
+	private INativePropertyListener detailListener;
+
 	/**
 	 * @param masterList
 	 * @param valueProperty
 	 */
-	public ObservableListDelegatingValuePropertyObservableList(
-			IObservableList masterList, DelegatingValueProperty valueProperty) {
+	public ObservableListSimpleValuePropertyObservableList(
+			IObservableList masterList, SimpleValueProperty valueProperty) {
 		super(masterList.getRealm());
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;
-		this.cache = new DelegatingCache(getRealm(), valueProperty) {
-			void handleValueChange(Object masterElement, Object oldValue,
-					Object newValue) {
-				fireListChange(indicesOf(masterElement), oldValue, newValue);
+
+		ISimplePropertyListener listener = new ISimplePropertyListener() {
+			public void handlePropertyChange(SimplePropertyEvent event) {
+				if (!isDisposed() && !updating) {
+					notifyIfChanged(event.getSource());
+				}
 			}
 		};
-		cache.addAll(masterList);
+		this.detailListener = detailProperty.adaptListener(listener);
+	}
+
+	protected void firstListenerAdded() {
+		knownMasterElements = new WritableSet(getRealm());
+		cachedValues = new HashMap();
+		knownMasterElements.addSetChangeListener(new ISetChangeListener() {
+			public void handleSetChange(SetChangeEvent event) {
+				for (Iterator it = event.diff.getRemovals().iterator(); it
+						.hasNext();) {
+					IdentityWrapper wrapper = (IdentityWrapper) it.next();
+					Object key = wrapper.unwrap();
+					detailProperty.removeListener(key, detailListener);
+					cachedValues.remove(wrapper);
+				}
+				for (Iterator it = event.diff.getAdditions().iterator(); it
+						.hasNext();) {
+					IdentityWrapper wrapper = (IdentityWrapper) it.next();
+					Object key = wrapper.unwrap();
+					cachedValues.put(wrapper, detailProperty.getValue(key));
+					detailProperty.addListener(key, detailListener);
+				}
+			}
+		});
+		for (Iterator it = masterList.iterator(); it.hasNext();) {
+			knownMasterElements.add(new IdentityWrapper(it.next()));
+		}
 
 		masterList.addListChangeListener(masterListener);
 		masterList.addStaleListener(staleListener);
+	}
+
+	protected void lastListenerRemoved() {
+		masterList.removeListChangeListener(masterListener);
+		masterList.removeStaleListener(staleListener);
+		if (knownMasterElements != null) {
+			knownMasterElements.clear(); // clears cachedValues
+			knownMasterElements.dispose();
+			knownMasterElements = null;
+		}
+		cachedValues.clear();
+		cachedValues = null;
 	}
 
 	protected int doGetSize() {
@@ -107,10 +172,14 @@ class ObservableListDelegatingValuePropertyObservableList extends
 		ObservableTracker.getterCalled(this);
 	}
 
+	public Object getElementType() {
+		return detailProperty.getValueType();
+	}
+
 	public Object get(int index) {
 		getterCalled();
 		Object masterElement = masterList.get(index);
-		return cache.get(masterElement);
+		return detailProperty.getValue(masterElement);
 	}
 
 	public boolean add(Object o) {
@@ -127,7 +196,12 @@ class ObservableListDelegatingValuePropertyObservableList extends
 
 	public boolean contains(Object o) {
 		getterCalled();
-		return cache.contains(o);
+
+		for (Iterator it = masterList.iterator(); it.hasNext();) {
+			if (Util.equals(detailProperty.getValue(it.next()), o))
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isEmpty() {
@@ -153,7 +227,7 @@ class ObservableListDelegatingValuePropertyObservableList extends
 			public Object next() {
 				getterCalled();
 				Object masterElement = it.next();
-				return cache.get(masterElement);
+				return detailProperty.getValue(masterElement);
 			}
 
 			public void remove() {
@@ -183,7 +257,7 @@ class ObservableListDelegatingValuePropertyObservableList extends
 		Object[] masterElements = masterList.toArray();
 		Object[] result = new Object[masterElements.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = cache.get(masterElements[i]);
+			result[i] = detailProperty.getValue(masterElements[i]);
 		}
 		return result;
 	}
@@ -195,7 +269,7 @@ class ObservableListDelegatingValuePropertyObservableList extends
 			a = (Object[]) Array.newInstance(a.getClass().getComponentType(),
 					masterElements.length);
 		for (int i = 0; i < masterElements.length; i++) {
-			a[i] = cache.get(masterElements[i]);
+			a[i] = detailProperty.getValue(masterElements[i]);
 		}
 		return a;
 	}
@@ -237,7 +311,7 @@ class ObservableListDelegatingValuePropertyObservableList extends
 			public Object next() {
 				getterCalled();
 				lastMasterElement = it.next();
-				lastElement = cache.get(lastMasterElement);
+				lastElement = detailProperty.getValue(lastMasterElement);
 				haveIterated = true;
 				return lastElement;
 			}
@@ -250,7 +324,7 @@ class ObservableListDelegatingValuePropertyObservableList extends
 			public Object previous() {
 				getterCalled();
 				lastMasterElement = it.previous();
-				lastElement = cache.get(lastMasterElement);
+				lastElement = detailProperty.getValue(lastMasterElement);
 				haveIterated = true;
 				return lastElement;
 			}
@@ -269,17 +343,38 @@ class ObservableListDelegatingValuePropertyObservableList extends
 				if (!haveIterated)
 					throw new IllegalStateException();
 
-				cache.put(lastMasterElement, o);
+				boolean wasUpdating = updating;
+				updating = true;
+				try {
+					detailProperty.setValue(lastElement, o);
+				} finally {
+					updating = wasUpdating;
+				}
+
+				notifyIfChanged(lastMasterElement);
 
 				lastElement = o;
 			}
 		};
 	}
 
+	private void notifyIfChanged(Object masterElement) {
+		if (cachedValues != null) {
+			Object oldValue = cachedValues.get(new IdentityWrapper(
+					masterElement));
+			Object newValue = detailProperty.getValue(masterElement);
+			if (!Util.equals(oldValue, newValue)) {
+				cachedValues.put(new IdentityWrapper(masterElement), newValue);
+				fireListChange(indicesOf(masterElement), oldValue, newValue);
+			}
+		}
+	}
+
 	private int[] indicesOf(Object masterElement) {
 		List indices = new ArrayList();
 
-		for (ListIterator it = masterList.listIterator(); it.hasNext();) {
+		for (ListIterator it = ObservableListSimpleValuePropertyObservableList.this.masterList
+				.listIterator(); it.hasNext();) {
 			if (masterElement == it.next())
 				indices.add(new Integer(it.previousIndex()));
 		}
@@ -310,31 +405,44 @@ class ObservableListDelegatingValuePropertyObservableList extends
 	public Object set(int index, Object o) {
 		checkRealm();
 		Object masterElement = masterList.get(index);
-		return cache.put(masterElement, o);
+		Object oldValue = detailProperty.getValue(masterElement);
+
+		boolean wasUpdating = updating;
+		updating = true;
+		try {
+			detailProperty.setValue(masterElement, o);
+		} finally {
+			updating = wasUpdating;
+		}
+
+		notifyIfChanged(masterElement);
+
+		return oldValue;
 	}
 
 	public Object getObserved() {
 		return masterList;
 	}
 
-	public Object getElementType() {
-		return detailProperty.getValueType();
+	public IProperty getProperty() {
+		return detailProperty;
 	}
 
 	public synchronized void dispose() {
 		if (masterList != null) {
 			masterList.removeListChangeListener(masterListener);
-			masterList.removeStaleListener(staleListener);
 			masterList = null;
 		}
-
-		if (cache != null) {
-			cache.dispose();
-			cache = null;
+		if (knownMasterElements != null) {
+			knownMasterElements.clear(); // detaches listeners
+			knownMasterElements.dispose();
+			knownMasterElements = null;
 		}
 
 		masterListener = null;
+		detailListener = null;
 		detailProperty = null;
+		cachedValues = null;
 
 		super.dispose();
 	}

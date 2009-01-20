@@ -13,8 +13,8 @@
 package org.eclipse.jface.internal.databinding.viewers;
 
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -47,7 +47,7 @@ public class SelectionProviderSingleSelectionProperty extends
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return new SelectionChangedListener(listener);
 	}
 
@@ -65,14 +65,14 @@ public class SelectionProviderSingleSelectionProperty extends
 
 	private class SelectionChangedListener implements INativePropertyListener,
 			ISelectionChangedListener {
-		private IPropertyChangeListener listener;
+		private ISimplePropertyListener listener;
 
-		private SelectionChangedListener(IPropertyChangeListener listener) {
+		private SelectionChangedListener(ISimplePropertyListener listener) {
 			this.listener = listener;
 		}
 
 		public void selectionChanged(SelectionChangedEvent event) {
-			listener.handlePropertyChange(new PropertyChangeEvent(event
+			listener.handlePropertyChange(new SimplePropertyEvent(event
 					.getSource(),
 					SelectionProviderSingleSelectionProperty.this, null));
 		}

@@ -21,7 +21,7 @@ import org.eclipse.core.internal.databinding.Util;
  * 
  * @since 1.2
  */
-public final class PropertyChangeEvent extends EventObject {
+public final class SimplePropertyEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -46,7 +46,7 @@ public final class PropertyChangeEvent extends EventObject {
 	 *            a diff describing the change in state, or null if the change
 	 *            is unknown.
 	 */
-	public PropertyChangeEvent(Object source, IProperty property, IDiff diff) {
+	public SimplePropertyEvent(Object source, IProperty property, IDiff diff) {
 		super(source);
 		this.property = property;
 		this.diff = diff;
@@ -60,7 +60,7 @@ public final class PropertyChangeEvent extends EventObject {
 		if (getClass() != obj.getClass())
 			return false;
 
-		PropertyChangeEvent that = (PropertyChangeEvent) obj;
+		SimplePropertyEvent that = (SimplePropertyEvent) obj;
 		return Util.equals(getSource(), that.getSource())
 				&& Util.equals(this.property, that.property)
 				&& Util.equals(this.diff, that.diff);

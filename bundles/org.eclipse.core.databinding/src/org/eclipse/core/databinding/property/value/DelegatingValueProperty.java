@@ -17,7 +17,10 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.internal.databinding.property.value.ObservableListDelegatingValuePropertyObservableList;
+import org.eclipse.core.internal.databinding.property.value.ObservableMapDelegatingValuePropertyObservableMap;
+import org.eclipse.core.internal.databinding.property.value.ObservableSetDelegatingValuePropertyObservableMap;
 
 /**
  * @since 1.2
@@ -35,7 +38,16 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 		this.valueType = valueType;
 	}
 
-	protected final IValueProperty getDelegate(Object source) {
+	/**
+	 * Returns the property to delegate to for the specified source object.
+	 * Repeated calls to this method with the same source object returns the
+	 * same delegate instance.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return the property to delegate to for the specified source object.
+	 */
+	public final IValueProperty getDelegate(Object source) {
 		if (source == null)
 			return null;
 		IValueProperty delegate = doGetDelegate(source);
@@ -90,8 +102,8 @@ public abstract class DelegatingValueProperty extends ValueProperty {
 		protected void doSetValue(Object source, Object value) {
 		}
 
-		protected INativePropertyListener adaptListener(
-				IPropertyChangeListener listener) {
+		public INativePropertyListener adaptListener(
+				ISimplePropertyListener listener) {
 			return null;
 		}
 

@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.AbstractSet;
 import java.util.Collections;
@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
@@ -29,13 +28,16 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
-class ObservableSetDelegatingValuePropertyObservableMap extends
-		AbstractObservableMap implements IObserving {
+public class ObservableSetDelegatingValuePropertyObservableMap extends
+		AbstractObservableMap implements IPropertyObservable {
 	private IObservableSet masterSet;
 	private DelegatingValueProperty detailProperty;
 	private DelegatingCache cache;
@@ -205,6 +207,10 @@ class ObservableSetDelegatingValuePropertyObservableMap extends
 
 	public Object getObserved() {
 		return masterSet;
+	}
+
+	public IProperty getProperty() {
+		return detailProperty;
 	}
 
 	public Object getKeyType() {

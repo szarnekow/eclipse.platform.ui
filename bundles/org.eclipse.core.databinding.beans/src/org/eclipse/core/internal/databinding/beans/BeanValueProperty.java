@@ -18,8 +18,8 @@ import java.beans.PropertyDescriptor;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
@@ -54,15 +54,15 @@ public class BeanValueProperty extends SimpleValueProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			final IPropertyChangeListener listener) {
+			final ISimplePropertyListener listener) {
 		return new Listener(listener);
 	}
 
 	private class Listener implements INativePropertyListener,
 			PropertyChangeListener {
-		private final IPropertyChangeListener listener;
+		private final ISimplePropertyListener listener;
 
-		private Listener(IPropertyChangeListener listener) {
+		private Listener(ISimplePropertyListener listener) {
 			this.listener = listener;
 		}
 
@@ -76,7 +76,7 @@ public class BeanValueProperty extends SimpleValueProperty {
 				} else {
 					diff = null;
 				}
-				listener.handlePropertyChange(new PropertyChangeEvent(evt
+				listener.handlePropertyChange(new SimplePropertyEvent(evt
 						.getSource(), BeanValueProperty.this, diff));
 			}
 		}

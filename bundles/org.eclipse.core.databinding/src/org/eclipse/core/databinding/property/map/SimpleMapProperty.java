@@ -19,7 +19,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.internal.databinding.property.map.SimpleMapPropertyObservableMap;
 
 /**
  * Simplified abstract implementation of IMapProperty. This class takes care of
@@ -32,7 +33,7 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  * <li> {@link #getValueType()}
  * <li> {@link #doGetMap(Object)}
  * <li> {@link #doSetMap(Object, Map, MapDiff)}
- * <li> {@link #adaptListener(IPropertyChangeListener)}
+ * <li> {@link #adaptListener(ISimplePropertyListener)}
  * <li> {@link #doAddListener(Object, INativePropertyListener)}
  * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
@@ -42,8 +43,7 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  * 
  * @since 1.2
  */
-public abstract class SimpleMapProperty extends MapProperty implements
-		IMapProperty {
+public abstract class SimpleMapProperty extends MapProperty {
 	public IObservableMap observe(Realm realm, Object source) {
 		return new SimpleMapPropertyObservableMap(realm, source, this);
 	}
@@ -59,7 +59,7 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	 * @return a Map with the current contents of the source's map property
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final Map getMap(Object source) {
+	public final Map getMap(Object source) {
 		if (source == null)
 			return Collections.EMPTY_MAP;
 		return Collections.unmodifiableMap(doGetMap(source));
@@ -88,7 +88,7 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	 *            a diff describing the change
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void setMap(Object source, Map map, MapDiff diff) {
+	public final void setMap(Object source, Map map, MapDiff diff) {
 		if (source != null && !diff.isEmpty())
 			doSetMap(source, map, diff);
 	}
@@ -124,23 +124,23 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	 *             ISetProperty or IMapProperty) depending on the property.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract INativePropertyListener adaptListener(
-			IPropertyChangeListener listener);
+	public abstract INativePropertyListener adaptListener(
+			ISimplePropertyListener listener);
 
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)} .
+	 *            {@link #adaptListener(ISimplePropertyListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void addListener(Object source,
+	public final void addListener(Object source,
 			INativePropertyListener listener) {
 		if (source != null)
 			doAddListener(source, listener);
@@ -149,14 +149,14 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)} .
+	 *            {@link #adaptListener(ISimplePropertyListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doAddListener(Object source,
@@ -165,17 +165,17 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)} .
+	 *            {@link #adaptListener(ISimplePropertyListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void removeListener(Object source,
+	public final void removeListener(Object source,
 			INativePropertyListener listener) {
 		if (source != null)
 			doRemoveListener(source, listener);
@@ -184,14 +184,14 @@ public abstract class SimpleMapProperty extends MapProperty implements
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)} .
+	 *            {@link #adaptListener(ISimplePropertyListener)} .
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doRemoveListener(Object source,

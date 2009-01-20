@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
  * @since 1.2
@@ -36,6 +36,15 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		this.elementType = elementType;
 	}
 
+	/**
+	 * Returns the property to delegate to for the specified source object.
+	 * Repeated calls to this method with the same source object returns the
+	 * same delegate instance.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return the property to delegate to for the specified source object.
+	 */
 	protected final ISetProperty getDelegate(Object source) {
 		if (source == null)
 			return null;
@@ -45,6 +54,15 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		return delegate;
 	}
 
+	/**
+	 * Returns the property to delegate to for the specified source object.
+	 * Implementers must ensure that repeated calls to this method with the same
+	 * source object returns the same delegate instance.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return the property to delegate to for the specified source object.
+	 */
 	protected abstract ISetProperty doGetDelegate(Object source);
 
 	public Object getElementType() {
@@ -67,8 +85,8 @@ public abstract class DelegatingSetProperty extends SetProperty {
 		protected void doSetSet(Object source, Set set, SetDiff diff) {
 		}
 
-		protected INativePropertyListener adaptListener(
-				IPropertyChangeListener listener) {
+		public INativePropertyListener adaptListener(
+				ISimplePropertyListener listener) {
 			return null;
 		}
 

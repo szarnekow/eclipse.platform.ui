@@ -20,8 +20,8 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
@@ -74,7 +74,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return new CheckStateListener(listener);
 	}
 
@@ -90,9 +90,9 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 
 	private class CheckStateListener implements INativePropertyListener,
 			ICheckStateListener {
-		private IPropertyChangeListener listener;
+		private ISimplePropertyListener listener;
 
-		private CheckStateListener(IPropertyChangeListener listener) {
+		private CheckStateListener(ISimplePropertyListener listener) {
 			this.listener = listener;
 		}
 
@@ -103,7 +103,7 @@ public class CheckableCheckedElementsProperty extends ViewerSetProperty {
 			Set additions = checked ? elementSet : Collections.EMPTY_SET;
 			Set removals = checked ? Collections.EMPTY_SET : elementSet;
 			SetDiff diff = Diffs.createSetDiff(additions, removals);
-			listener.handlePropertyChange(new PropertyChangeEvent(event
+			listener.handlePropertyChange(new SimplePropertyEvent(event
 					.getSource(), CheckableCheckedElementsProperty.this, diff));
 		}
 	}

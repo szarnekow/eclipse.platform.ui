@@ -19,12 +19,12 @@ package org.eclipse.core.databinding.property;
  * 
  * @since 1.2
  */
-public interface IPropertyChangeListener {
+public interface ISimplePropertyListener {
 	/**
 	 * Handle the property change described in the event.
 	 * 
 	 * @param event
-	 *            an event describing the list change that occured.
+	 *            an event describing the property change that occured.
 	 */
-	public void handlePropertyChange(PropertyChangeEvent event);
+	public void handlePropertyChange(SimplePropertyEvent event);
 }

@@ -9,26 +9,28 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
-class ObservableSetSimpleValuePropertyObservableMap extends
-		ComputedObservableMap implements IObserving {
+public class ObservableSetSimpleValuePropertyObservableMap extends
+		ComputedObservableMap implements IPropertyObservable {
 	private SimpleValueProperty detailProperty;
 
 	private INativePropertyListener listener;
@@ -51,9 +53,9 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 		cachedValues = new HashMap(this);
 		if (listener == null) {
 			listener = detailProperty
-					.adaptListener(new IPropertyChangeListener() {
+					.adaptListener(new ISimplePropertyListener() {
 						public void handlePropertyChange(
-								final PropertyChangeEvent event) {
+								final SimplePropertyEvent event) {
 							if (!isDisposed() && !updating) {
 								getRealm().exec(new Runnable() {
 									public void run() {
@@ -120,6 +122,10 @@ class ObservableSetSimpleValuePropertyObservableMap extends
 
 	public Object getObserved() {
 		return keySet();
+	}
+
+	public IProperty getProperty() {
+		return detailProperty;
 	}
 
 	public synchronized void dispose() {

@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -48,7 +48,7 @@ public class StructuredViewerFiltersProperty extends ViewerSetProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return null;
 	}
 

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +27,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.IdentityWrapper;
 import org.eclipse.core.internal.databinding.Util;
 

@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
@@ -66,7 +66,7 @@ public class PojoMapProperty extends SimpleMapProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return null;
 	}
 

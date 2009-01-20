@@ -18,7 +18,11 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.internal.databinding.property.value.ObservableListSimpleValuePropertyObservableList;
+import org.eclipse.core.internal.databinding.property.value.ObservableMapSimpleValuePropertyObservableMap;
+import org.eclipse.core.internal.databinding.property.value.ObservableSetSimpleValuePropertyObservableMap;
+import org.eclipse.core.internal.databinding.property.value.SimpleValuePropertyObservableValue;
 
 /**
  * Simplified abstract implementation of IValueProperty. This class takes care
@@ -30,7 +34,7 @@ import org.eclipse.core.databinding.property.IPropertyChangeListener;
  * <li> {@link #getValueType()}
  * <li> {@link #doGetValue(Object)}
  * <li> {@link #doSetValue(Object, Object)}
- * <li> {@link #adaptListener(IPropertyChangeListener)}
+ * <li> {@link #adaptListener(ISimplePropertyListener)}
  * <li> {@link #doAddListener(Object, INativePropertyListener)}
  * <li> {@link #doRemoveListener(Object, INativePropertyListener)}
  * </ul>
@@ -49,7 +53,7 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 * @return the current value of the source's value property
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final Object getValue(Object source) {
+	public final Object getValue(Object source) {
 		return source == null ? null : doGetValue(source);
 	}
 
@@ -72,7 +76,7 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            the new value
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void setValue(Object source, Object value) {
+	public final void setValue(Object source, Object value) {
 		if (source != null)
 			doSetValue(source, value);
 	}
@@ -89,29 +93,25 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *            the property listener to receive events
 	 * @return a native listener which parlays property change events to the
 	 *         specified listener.
-	 * @throws ClassCastException
-	 *             if the provided listener does not implement the correct
-	 *             listener interface (IValueProperty, IListProperty,
-	 *             ISetProperty or IMapProperty) depending on the property.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected abstract INativePropertyListener adaptListener(
-			IPropertyChangeListener listener);
+	public abstract INativePropertyListener adaptListener(
+			ISimplePropertyListener listener);
 
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)}.
+	 *            {@link #adaptListener(ISimplePropertyListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void addListener(Object source,
+	public final void addListener(Object source,
 			INativePropertyListener listener) {
 		if (source != null)
 			doAddListener(source, listener);
@@ -120,14 +120,14 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	/**
 	 * Adds the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)}.
+	 *            {@link #adaptListener(ISimplePropertyListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doAddListener(Object source,
@@ -136,17 +136,17 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)}.
+	 *            {@link #adaptListener(ISimplePropertyListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected final void removeListener(Object source,
+	public final void removeListener(Object source,
 			INativePropertyListener listener) {
 		if (source != null)
 			doRemoveListener(source, listener);
@@ -155,14 +155,14 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	/**
 	 * Removes the specified listener as a listener for this property on the
 	 * specified property source. If the source object has no listener API for
-	 * this property (i.e. {@link #adaptListener(IPropertyChangeListener)}
+	 * this property (i.e. {@link #adaptListener(ISimplePropertyListener)}
 	 * returns null), this method does nothing.
 	 * 
 	 * @param source
 	 *            the property source
 	 * @param listener
 	 *            a listener obtained from calling
-	 *            {@link #adaptListener(IPropertyChangeListener)}.
+	 *            {@link #adaptListener(ISimplePropertyListener)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected abstract void doRemoveListener(Object source,

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
@@ -79,7 +79,7 @@ public class PojoListProperty extends SimpleListProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return null;
 	}
 

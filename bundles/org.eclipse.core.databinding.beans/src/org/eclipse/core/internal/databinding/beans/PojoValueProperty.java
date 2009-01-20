@@ -15,7 +15,7 @@ package org.eclipse.core.internal.databinding.beans;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 
 /**
@@ -52,7 +52,7 @@ public class PojoValueProperty extends SimpleValueProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			IPropertyChangeListener listener) {
+			ISimplePropertyListener listener) {
 		return null;
 	}
 

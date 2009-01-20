@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.AbstractSet;
 import java.util.Collections;
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
@@ -34,8 +33,11 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.IdentityWrapper;
 import org.eclipse.core.internal.databinding.Util;
 
@@ -43,8 +45,8 @@ import org.eclipse.core.internal.databinding.Util;
  * @since 1.2
  * 
  */
-class ObservableMapSimpleValuePropertyObservableMap extends
-		AbstractObservableMap implements IObserving {
+public class ObservableMapSimpleValuePropertyObservableMap extends
+		AbstractObservableMap implements IPropertyObservable {
 	private IObservableMap masterMap;
 	private SimpleValueProperty detailProperty;
 
@@ -133,8 +135,8 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 		this.masterMap = map;
 		this.detailProperty = valueProperty;
 
-		IPropertyChangeListener listener = new IPropertyChangeListener() {
-			public void handlePropertyChange(PropertyChangeEvent event) {
+		ISimplePropertyListener listener = new ISimplePropertyListener() {
+			public void handlePropertyChange(SimplePropertyEvent event) {
 				notifyIfChanged(event.getSource());
 			}
 		};
@@ -346,6 +348,10 @@ class ObservableMapSimpleValuePropertyObservableMap extends
 
 	public Object getObserved() {
 		return masterMap;
+	}
+
+	public IProperty getProperty() {
+		return detailProperty;
 	}
 
 	public synchronized void dispose() {

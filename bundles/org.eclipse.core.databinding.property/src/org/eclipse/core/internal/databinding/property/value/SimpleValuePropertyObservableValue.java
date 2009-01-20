@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
@@ -17,16 +17,17 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  * 
  */
-class SimpleValuePropertyObservableValue extends AbstractObservableValue
+public class SimpleValuePropertyObservableValue extends AbstractObservableValue
 		implements IPropertyObservable {
 	private Object source;
 	private SimpleValueProperty property;
@@ -53,9 +54,9 @@ class SimpleValuePropertyObservableValue extends AbstractObservableValue
 			cachedValue = property.getValue(source);
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IPropertyChangeListener() {
+						.adaptListener(new ISimplePropertyListener() {
 							public void handlePropertyChange(
-									final PropertyChangeEvent event) {
+									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
 										public void run() {

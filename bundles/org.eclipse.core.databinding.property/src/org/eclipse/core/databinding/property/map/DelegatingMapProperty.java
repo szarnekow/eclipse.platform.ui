@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
  * @since 1.2
@@ -38,7 +38,16 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		this.valueType = valueType;
 	}
 
-	protected final IMapProperty getDelegate(Object source) {
+	/**
+	 * Returns the property to delegate to for the specified source object.
+	 * Repeated calls to this method with the same source object returns the
+	 * same delegate instance.
+	 * 
+	 * @param source
+	 *            the property source (may be null)
+	 * @return the property to delegate to for the specified source object.
+	 */
+	public final IMapProperty getDelegate(Object source) {
 		if (source == null)
 			return null;
 		IMapProperty delegate = doGetDelegate(source);
@@ -47,6 +56,15 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		return delegate;
 	}
 
+	/**
+	 * Returns the property to delegate to for the specified source object.
+	 * Implementers must ensure that repeated calls to this method with the same
+	 * source object returns the same delegate instance.
+	 * 
+	 * @param source
+	 *            the property source
+	 * @return the property to delegate to for the specified source object.
+	 */
 	protected abstract IMapProperty doGetDelegate(Object source);
 
 	public Object getKeyType() {
@@ -69,8 +87,8 @@ public abstract class DelegatingMapProperty extends MapProperty {
 		protected void doSetMap(Object source, Map map, MapDiff diff) {
 		}
 
-		protected INativePropertyListener adaptListener(
-				IPropertyChangeListener listener) {
+		public INativePropertyListener adaptListener(
+				ISimplePropertyListener listener) {
 			return null;
 		}
 

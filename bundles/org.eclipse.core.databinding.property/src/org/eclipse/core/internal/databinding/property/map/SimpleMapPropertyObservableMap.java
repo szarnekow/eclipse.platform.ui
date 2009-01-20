@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.map;
+package org.eclipse.core.internal.databinding.property.map;
 
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -28,15 +28,16 @@ import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.IProperty;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
  * @since 1.2
  */
-class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
-		IPropertyObservable {
+public class SimpleMapPropertyObservableMap extends AbstractObservableMap
+		implements IPropertyObservable {
 	private Object source;
 	private SimpleMapProperty property;
 
@@ -78,9 +79,9 @@ class SimpleMapPropertyObservableMap extends AbstractObservableMap implements
 
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IPropertyChangeListener() {
+						.adaptListener(new ISimplePropertyListener() {
 							public void handlePropertyChange(
-									final PropertyChangeEvent event) {
+									final SimplePropertyEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {

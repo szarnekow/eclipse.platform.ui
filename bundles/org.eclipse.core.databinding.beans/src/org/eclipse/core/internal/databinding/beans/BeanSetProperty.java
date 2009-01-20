@@ -23,8 +23,8 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
@@ -82,15 +82,15 @@ public class BeanSetProperty extends SimpleSetProperty {
 	}
 
 	public INativePropertyListener adaptListener(
-			final IPropertyChangeListener listener) {
+			final ISimplePropertyListener listener) {
 		return new Listener(listener);
 	}
 
 	private class Listener implements INativePropertyListener,
 			PropertyChangeListener {
-		private final IPropertyChangeListener listener;
+		private final ISimplePropertyListener listener;
 
-		private Listener(IPropertyChangeListener listener) {
+		private Listener(ISimplePropertyListener listener) {
 			this.listener = listener;
 		}
 
@@ -104,7 +104,7 @@ public class BeanSetProperty extends SimpleSetProperty {
 				diff = null;
 			}
 			if (propertyDescriptor.getName().equals(evt.getPropertyName())) {
-				listener.handlePropertyChange(new PropertyChangeEvent(evt
+				listener.handlePropertyChange(new SimplePropertyEvent(evt
 						.getSource(), BeanSetProperty.this, diff));
 			}
 		}

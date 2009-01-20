@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.value;
+package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.AbstractSet;
 import java.util.Collections;
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
@@ -29,13 +28,16 @@ import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
+import org.eclipse.core.databinding.property.IProperty;
+import org.eclipse.core.databinding.property.IPropertyObservable;
+import org.eclipse.core.databinding.property.value.DelegatingValueProperty;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.2
  */
-class ObservableMapDelegatingValuePropertyObservableMap extends
-		AbstractObservableMap implements IObserving {
+public class ObservableMapDelegatingValuePropertyObservableMap extends
+		AbstractObservableMap implements IPropertyObservable {
 	private IObservableMap masterMap;
 	private DelegatingValueProperty detailProperty;
 	private DelegatingCache cache;
@@ -238,6 +240,10 @@ class ObservableMapDelegatingValuePropertyObservableMap extends
 
 	public Object getObserved() {
 		return masterMap;
+	}
+
+	public IProperty getProperty() {
+		return detailProperty;
 	}
 
 	public Object getKeyType() {

@@ -22,8 +22,8 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
@@ -81,16 +81,16 @@ public class BeanListProperty extends SimpleListProperty {
 		return propertyValue;
 	}
 
-	protected INativePropertyListener adaptListener(
-			final IPropertyChangeListener listener) {
+	public INativePropertyListener adaptListener(
+			final ISimplePropertyListener listener) {
 		return new Listener(listener);
 	}
 
 	private class Listener implements INativePropertyListener,
 			PropertyChangeListener {
-		private final IPropertyChangeListener listener;
+		private final ISimplePropertyListener listener;
 
-		private Listener(IPropertyChangeListener listener) {
+		private Listener(ISimplePropertyListener listener) {
 			this.listener = listener;
 		}
 
@@ -105,7 +105,7 @@ public class BeanListProperty extends SimpleListProperty {
 				} else {
 					diff = null;
 				}
-				listener.handlePropertyChange(new PropertyChangeEvent(evt
+				listener.handlePropertyChange(new SimplePropertyEvent(evt
 						.getSource(), BeanListProperty.this, diff));
 			}
 		}

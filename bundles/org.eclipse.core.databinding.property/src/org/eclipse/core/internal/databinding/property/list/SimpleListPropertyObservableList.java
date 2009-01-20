@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
-package org.eclipse.core.databinding.property.list;
+package org.eclipse.core.internal.databinding.property.list;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,18 +25,19 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IPropertyChangeListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
-import org.eclipse.core.databinding.property.PropertyChangeEvent;
+import org.eclipse.core.databinding.property.ISimplePropertyListener;
+import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
  * @since 1.2
  * 
  */
-class SimpleListPropertyObservableList extends AbstractObservableList implements
-		IPropertyObservable {
+public class SimpleListPropertyObservableList extends AbstractObservableList
+		implements IPropertyObservable {
 	private Object source;
 	private SimpleListProperty property;
 
@@ -66,9 +67,9 @@ class SimpleListPropertyObservableList extends AbstractObservableList implements
 
 			if (listener == null) {
 				listener = property
-						.adaptListener(new IPropertyChangeListener() {
+						.adaptListener(new ISimplePropertyListener() {
 							public void handlePropertyChange(
-									final PropertyChangeEvent event) {
+									final SimplePropertyEvent event) {
 								modCount++;
 								if (!isDisposed() && !updating) {
 									getRealm().exec(new Runnable() {
