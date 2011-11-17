@@ -19,6 +19,11 @@ import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.css.sac.CSSException;
 import org.w3c.dom.css.CSSPrimitiveValue;
@@ -133,76 +138,204 @@ public class CSSPropertyPaddingSWTHandler extends
 
 	public String retrieveCSSPropertyPadding(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad == null) {
+			return "";
+		}
+		// int top = pad.x, right = pad.y, bottom = pad.width, left =
+		// pad.height;
+		return pad.x + "px " + pad.y + "px " + pad.width + "px " + pad.height
+				+ "px";
 	}
 
 	public String retrieveCSSPropertyPaddingTop(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad == null) {
+			return "";
+		}
+		// int top = pad.x, right = pad.y, bottom = pad.width, left =
+		// pad.height;
+		return pad.x + "px";
 	}
 
 	public String retrieveCSSPropertyPaddingRight(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad == null) {
+			return "";
+		}
+		// int top = pad.x, right = pad.y, bottom = pad.width, left =
+		// pad.height;
+		return pad.y + "px";
 	}
 
 	public String retrieveCSSPropertyPaddingBottom(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad == null) {
+			return "";
+		}
+		// int top = pad.x, right = pad.y, bottom = pad.width, left =
+		// pad.height;
+		return pad.width + "px";
 	}
 
 	public String retrieveCSSPropertyPaddingLeft(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad == null) {
+			return "";
+		}
+		// int top = pad.x, right = pad.y, bottom = pad.width, left =
+		// pad.height;
+		return pad.height + "px";
 	}
 	
 	private void setPadding(Object element, CSSValue value, String pseudo) {
 		Widget widget = SWTElementHelpers.getWidget(element);
-		
+
+		int top = 0, bottom = 0, left = 0, right = 0;
+		Rectangle pad = getPadding(element, pseudo);
+		if (pad != null) {
+			// XXX: the following mapping seems strange!
+			top = pad.x;
+			right = pad.y;
+			bottom = pad.width;
+			left = pad.height;
+		}
+		CSS2PaddingPropertiesImpl padding = (CSS2PaddingPropertiesImpl) value;
+		CSSValue vTop = padding.top;
+		CSSValue vRight = padding.right;
+		CSSValue vBottom = padding.bottom;
+		CSSValue vLeft = padding.left;
+
+		if (vTop != null
+				&& (vTop.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+			top = (int) ((CSSPrimitiveValue) vTop)
+					.getFloatValue(CSSPrimitiveValue.CSS_PX);
+		}
+
+		if (vRight != null
+				&& (vRight.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+			right = (int) ((CSSPrimitiveValue) vRight)
+					.getFloatValue(CSSPrimitiveValue.CSS_PX);
+		}
+
+		if (vBottom != null
+				&& (vBottom.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+			bottom = (int) ((CSSPrimitiveValue) vBottom)
+					.getFloatValue(CSSPrimitiveValue.CSS_PX);
+		}
+
+		if (vLeft != null
+				&& (vLeft.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+			left = (int) ((CSSPrimitiveValue) vLeft)
+					.getFloatValue(CSSPrimitiveValue.CSS_PX);
+		}
+
 		if (widget instanceof CTabFolder) {
 			CTabFolder folder = (CTabFolder) widget;
 			CTabFolderRenderer renderer = ((CTabFolder) folder).getRenderer();
-			if (renderer == null) return;
-			
+			if (renderer == null)
+				return;
+
 			try {
-				Method m = renderer.getClass().getMethod("getPadding", new Class[]{});
-				Rectangle pad = (Rectangle) m.invoke(renderer);
-					
 				 // TBD: is there a CTF equivalent ?
-				CSS2PaddingPropertiesImpl padding = (CSS2PaddingPropertiesImpl) value;
-				CSSValue vTop = padding.top;
-				CSSValue vRight = padding.right;
-				CSSValue vBottom = padding.bottom;
-				CSSValue vLeft = padding.left;
-				
-				int top = pad.x, right = pad.y, bottom = pad.width, left = pad.height;
-						
-				if (vTop != null && (vTop.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vTop).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					 top = (int) ((CSSPrimitiveValue) vTop).getFloatValue(CSSPrimitiveValue.CSS_PX);
-				}
-				
-				if (vRight != null && (vRight.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vRight).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					right = (int) ((CSSPrimitiveValue) vRight).getFloatValue(CSSPrimitiveValue.CSS_PX);
-				}
-				
-				if (vBottom != null && (vBottom.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vBottom).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					bottom = (int) ((CSSPrimitiveValue) vBottom).getFloatValue(CSSPrimitiveValue.CSS_PX);
-				}
-				
-				if (vLeft != null && (vLeft.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vLeft).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-					left = (int) ((CSSPrimitiveValue) vLeft).getFloatValue(CSSPrimitiveValue.CSS_PX);
-				}
-			
-				Method m2 = renderer.getClass().getMethod("setPadding", new Class[]{int.class, int.class, int.class, int.class});
+				Method m2 = renderer.getClass().getMethod(
+						"setPadding",
+						new Class[] { int.class, int.class, int.class,
+								int.class });
 				m2.invoke(renderer, left, right, top, bottom);
 			} catch (Exception e) {
 				
 			}
+		} else if (widget instanceof Composite) {
+			Composite composite = (Composite) widget;
+			if (composite.getLayout() instanceof GridLayout) {
+				GridLayout layout = (GridLayout) composite.getLayout();
+				// perhaps we should subtract out marginHeigh and marginWidth?
+				layout.marginTop = top;
+				layout.marginBottom = bottom;
+				layout.marginLeft = left;
+				layout.marginRight = right;
+			} else if (composite.getLayout() instanceof RowLayout) {
+				RowLayout layout = (RowLayout) composite.getLayout();
+				// perhaps we should subtract out marginHeigh and marginWidth?
+				layout.marginTop = top;
+				layout.marginBottom = bottom;
+				layout.marginLeft = left;
+				layout.marginRight = right;
+			} else if (composite.getLayout() instanceof FormLayout) {
+				FormLayout layout = (FormLayout) composite.getLayout();
+				// perhaps we should subtract out marginHeigh and marginWidth?
+				layout.marginTop = top;
+				layout.marginBottom = bottom;
+				layout.marginLeft = left;
+				layout.marginRight = right;
+			} else if (composite.getLayout() instanceof FillLayout) {
+				FillLayout layout = (FillLayout) composite.getLayout();
+				// top and left win
+				layout.marginHeight = top;
+				layout.marginWidth = left;
+			}
+			composite.layout(false);
 		}
+
+	}
+
+	private Rectangle getPadding(Object element, String pseudo) {
+		Widget widget = SWTElementHelpers.getWidget(element);
+
+		if (widget instanceof CTabFolder) {
+			CTabFolder folder = (CTabFolder) widget;
+			CTabFolderRenderer renderer = ((CTabFolder) folder).getRenderer();
+			if (renderer == null)
+				return null;
+			
+			try {
+				Method m = renderer.getClass().getMethod("getPadding",
+						new Class[] {});
+				return (Rectangle) m.invoke(renderer);
+			} catch (Exception e) {
+				
+			}
+		} else if (widget instanceof Composite) {
+			Composite composite = (Composite) widget;
+			int top = 0, bottom = 0, left = 0, right = 0;
+			if (composite.getLayout() instanceof GridLayout) {
+				GridLayout layout = (GridLayout) composite.getLayout();
+				// perhaps we should add marginHeight or marginWidth as approp?
+				top = layout.marginTop;
+				bottom = layout.marginBottom;
+				left = layout.marginLeft;
+				right = layout.marginRight;
+			} else if (composite.getLayout() instanceof RowLayout) {
+				RowLayout layout = (RowLayout) composite.getLayout();
+				// perhaps we should add marginHeight or marginWidth as approp?
+				top = layout.marginTop;
+				bottom = layout.marginBottom;
+				left = layout.marginLeft;
+				right = layout.marginRight;
+			} else if (composite.getLayout() instanceof FormLayout) {
+				FormLayout layout = (FormLayout) composite.getLayout();
+				// perhaps we should add marginHeight or marginWidth as approp?
+				top = layout.marginTop;
+				bottom = layout.marginBottom;
+				left = layout.marginLeft;
+				right = layout.marginRight;
+			} else if (composite.getLayout() instanceof FillLayout) {
+				FillLayout layout = (FillLayout) composite.getLayout();
+				top = bottom = layout.marginHeight;
+				left = right = layout.marginWidth;
+			}
+			if (top == 0 && bottom == 0 && left == 0 && right == 0) {
+				return null;
+			}
+			// int top = pad.x, right = pad.y, bottom = pad.width, left =
+			// pad.height;
+			return new Rectangle(top, right, bottom, left);
+		}
+		return null;
 	}
 }

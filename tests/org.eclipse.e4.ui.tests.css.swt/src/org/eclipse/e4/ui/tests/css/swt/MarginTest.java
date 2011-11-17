@@ -13,11 +13,16 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
 public class MarginTest extends CSSSWTTestCase {
@@ -30,7 +35,7 @@ public class MarginTest extends CSSSWTTestCase {
 	private final static int BOTTOM = 2;
 	private final static int LEFT = 3;
 	
-	protected Control createTestControl(String styleSheet) {
+	protected Control createTestControl(String styleSheet, Layout layout) {
 		Display display = Display.getDefault();
 		engine = createEngine(styleSheet, display);
 		
@@ -39,16 +44,19 @@ public class MarginTest extends CSSSWTTestCase {
 		Composite panel = new Composite(shell, SWT.NONE);
 		panel.setData(CSSSWTConstants.MARGIN_WRAPPER_KEY, true);
 		
-		//Must be grid, see CSSPropertyMarginSWTHandler
-		GridLayout layout = new GridLayout();
-		layout.marginTop = 0;
-		layout.marginRight = 0;
-		layout.marginBottom = 0;
-		layout.marginLeft = 0;
 		panel.setLayout(layout);
 
 		Button buttonToTest = new Button(panel, SWT.CHECK);
 		buttonToTest.setText("Some button text");
+
+		if (layout instanceof FormLayout) {
+			FormData fd = new FormData();
+			fd.top = new FormAttachment();
+			fd.left = new FormAttachment();
+			fd.right = new FormAttachment();
+			fd.bottom = new FormAttachment();
+			buttonToTest.setLayoutData(fd);
+		}
 
 		// Apply styles
 		engine.applyStyles(shell, true);
@@ -110,62 +118,141 @@ public class MarginTest extends CSSSWTTestCase {
 		return buttonToTest;
 	}
 
-	public void testTopMargin() {
-		Control control = createTestControl("Button { margin-top: 10}");
+	public void testGLTopMargin() {
+		Control control = createTestControl("Button { margin-top: 10}",
+				new GridLayout());
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(0, getMargin(control, RIGHT));
-		assertEquals(0, getMargin(control, BOTTOM));
+		// assertEquals(0, getMargin(control, BOTTOM)); // with GridLayout will
+		// be 10 too
 		assertEquals(0, getMargin(control, LEFT));
 	}
 
-	public void testRightMargin() {
-		Control control = createTestControl("Button { margin-right: 20}");
+	public void testGLRightMargin() {
+		Control control = createTestControl("Button { margin-right: 20}",
+				new GridLayout());
 		assertEquals(0, getMargin(control, TOP));
 		assertEquals(20, getMargin(control, RIGHT));
 		assertEquals(0, getMargin(control, BOTTOM));
-		assertEquals(0, getMargin(control, LEFT));
+		// assertEquals(0, getMargin(control, LEFT)); // with GridLayout will be
+		// 20 too
 	}
 
-	public void testBottomMargin() {
-		Control control = createTestControl("Button { margin-bottom: 30}");
-		assertEquals(0, getMargin(control, TOP));
+	public void testGLBottomMargin() {
+		Control control = createTestControl("Button { margin-bottom: 30}",
+				new GridLayout());
+		// assertEquals(0, getMargin(control, TOP)); // with GridLayout will be
+		// 30 too
 		assertEquals(0, getMargin(control, RIGHT));
 		assertEquals(30, getMargin(control, BOTTOM));
 		assertEquals(0, getMargin(control, LEFT));
 	}
 
-	public void testLeftMargin() {
-		Control control = createTestControl("Button { margin-left: 40}");
+	public void testGLLeftMargin() {
+		Control control = createTestControl("Button { margin-left: 40}",
+				new GridLayout());
 		assertEquals(0, getMargin(control, TOP));
-		assertEquals(0, getMargin(control, RIGHT));
+		// assertEquals(0, getMargin(control, RIGHT)); // with GridLayout will
+		// be 40 too
 		assertEquals(0, getMargin(control, BOTTOM));
 		assertEquals(40, getMargin(control, LEFT));
 	}
 
-	public void testMargin1Value() {
-		Control control = createTestControl("Button { margin: 15}");
+	public void testGLMargin1Value() {
+		Control control = createTestControl("Button { margin: 15}",
+				new GridLayout());
 		assertEquals(15, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
 		assertEquals(15, getMargin(control, BOTTOM));
 		assertEquals(15, getMargin(control, LEFT));
 	}
 	
-	public void testMargin2Values() {
-		Control control = createTestControl("Button { margin: 10 15}");
+	public void testGLMargin2Values() {
+		Control control = createTestControl("Button { margin: 10 15}",
+				new GridLayout());
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
 		assertEquals(10, getMargin(control, BOTTOM));
 		assertEquals(15, getMargin(control, LEFT));
 	}
 
-	public void testMargin4Values() {
-		Control control = createTestControl("Button { margin: 10 15 20 40}");
+	// disabled as GridLayout doesn't support 4 independent margins
+	// public void testGLMargin4Values() {
+	// Control control = createTestControl("Button { margin: 10 15 20 40}", new
+	// GridLayout());
+	// assertEquals(10, getMargin(control, TOP));
+	// assertEquals(15, getMargin(control, RIGHT));
+	// assertEquals(20, getMargin(control, BOTTOM));
+	// assertEquals(40, getMargin(control, LEFT));
+	// }
+	
+	public void testFLTopMargin() {
+		Control control = createTestControl("Button { margin-top: 10}",
+				new FormLayout());
+		assertEquals(10, getMargin(control, TOP));
+		assertEquals(0, getMargin(control, RIGHT));
+		// assertEquals(0, getMargin(control, BOTTOM)); // with GridLayout will
+		// be 10 too
+		assertEquals(0, getMargin(control, LEFT));
+	}
+
+	public void testFLRightMargin() {
+		Control control = createTestControl("Button { margin-right: 20}",
+				new FormLayout());
+		assertEquals(0, getMargin(control, TOP));
+		assertEquals(20, getMargin(control, RIGHT));
+		assertEquals(0, getMargin(control, BOTTOM));
+		// assertEquals(0, getMargin(control, LEFT)); // with GridLayout will be
+		// 20 too
+	}
+
+	public void testFLBottomMargin() {
+		Control control = createTestControl("Button { margin-bottom: 30}",
+				new FormLayout());
+		// assertEquals(0, getMargin(control, TOP)); // with GridLayout will be
+		// 30 too
+		assertEquals(0, getMargin(control, RIGHT));
+		assertEquals(30, getMargin(control, BOTTOM));
+		assertEquals(0, getMargin(control, LEFT));
+	}
+
+	public void testFLLeftMargin() {
+		Control control = createTestControl("Button { margin-left: 40}",
+				new FormLayout());
+		assertEquals(0, getMargin(control, TOP));
+		// assertEquals(0, getMargin(control, RIGHT)); // with GridLayout will
+		// be 40 too
+		assertEquals(0, getMargin(control, BOTTOM));
+		assertEquals(40, getMargin(control, LEFT));
+	}
+
+	public void testFLMargin1Value() {
+		Control control = createTestControl("Button { margin: 15}",
+				new FormLayout());
+		assertEquals(15, getMargin(control, TOP));
+		assertEquals(15, getMargin(control, RIGHT));
+		assertEquals(15, getMargin(control, BOTTOM));
+		assertEquals(15, getMargin(control, LEFT));
+	}
+
+	public void testFLMargin2Values() {
+		Control control = createTestControl("Button { margin: 10 15}",
+				new FormLayout());
+		assertEquals(10, getMargin(control, TOP));
+		assertEquals(15, getMargin(control, RIGHT));
+		assertEquals(10, getMargin(control, BOTTOM));
+		assertEquals(15, getMargin(control, LEFT));
+	}
+
+	public void testFLMargin4Values() {
+		Control control = createTestControl("Button { margin: 10 15 20 40}",
+				new FormLayout());
 		assertEquals(10, getMargin(control, TOP));
 		assertEquals(15, getMargin(control, RIGHT));
 		assertEquals(20, getMargin(control, BOTTOM));
 		assertEquals(40, getMargin(control, LEFT));
 	}
-	
+
 	/*
 	 * Test handling if there is no layout on the control so can't set margins
 	 */	
@@ -201,16 +288,28 @@ public class MarginTest extends CSSSWTTestCase {
 	private int getMargin(Control control, int side) {
 		//Note: relies on implementation details of how we achieve margins on the widgets
 		//See CSSPropertyMarginSWTHandler
-		GridLayout layout = (GridLayout) control.getParent().getLayout();
-		switch (side) {
-		case TOP:
-			return layout.marginTop;
-		case RIGHT:
-			return layout.marginRight;			
-		case BOTTOM:
-			return layout.marginBottom;			
-		case LEFT:
-			return layout.marginLeft;	
+		if (control.getLayoutData() instanceof GridData) {
+			GridData data = (GridData) control.getLayoutData();
+			switch (side) {
+			case TOP:
+			case BOTTOM:
+				return data.verticalIndent;
+			case LEFT:
+			case RIGHT:
+				return data.horizontalIndent;
+			}
+		} else if (control.getLayoutData() instanceof FormData) {
+			FormData data = (FormData) control.getLayoutData();
+			switch (side) {
+			case TOP:
+				return data.top.offset;
+			case BOTTOM:
+				return data.bottom.offset;
+			case LEFT:
+				return data.left.offset;
+			case RIGHT:
+				return data.right.offset;
+			}
 		}
 		return -1;
 	}

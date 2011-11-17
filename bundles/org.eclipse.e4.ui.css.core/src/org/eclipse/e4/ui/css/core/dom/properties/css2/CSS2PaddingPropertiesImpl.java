@@ -24,8 +24,8 @@ public class CSS2PaddingPropertiesImpl implements CSSValue {
 	public CSSValue right;
 	
 	public String getCssText() {
-		// TODO Auto-generated method stub
-		return null;
+		return top.getCssText() + " " + right.getCssText() + " "
+				+ bottom.getCssText() + " " + left.getCssText();
 	}
 
 	public short getCssValueType() {

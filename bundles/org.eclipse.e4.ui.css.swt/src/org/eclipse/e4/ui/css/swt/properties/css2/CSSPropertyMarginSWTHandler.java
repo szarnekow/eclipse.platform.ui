@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010,2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis (MT) - adaptation for padding tests
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Widget;
@@ -69,26 +71,28 @@ public class CSSPropertyMarginSWTHandler extends
 			if(length < 2 || length > 4)
 				throw new CSSException("Invalid margin property list length");
 			
+			// Reverse application order to ensure last value holds (in case
+			// the underlying layout only supports a subset
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, LEFT, valueList.item(3), pseudo);
 				setMargin(element, BOTTOM, valueList.item(2), pseudo);
-				setMargin(element, LEFT, valueList.item(3), pseudo);				
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, TOP, valueList.item(0), pseudo);
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
-				setMargin(element, BOTTOM, valueList.item(2), pseudo);
 				setMargin(element, LEFT, valueList.item(1), pseudo);
+				setMargin(element, BOTTOM, valueList.item(2), pseudo);
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, TOP, valueList.item(0), pseudo);
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
-				setMargin(element, TOP, valueList.item(0), pseudo);
-				setMargin(element, RIGHT, valueList.item(1), pseudo);
-				setMargin(element, BOTTOM, valueList.item(0), pseudo);
 				setMargin(element, LEFT, valueList.item(1), pseudo);
+				setMargin(element, BOTTOM, valueList.item(0), pseudo);
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, TOP, valueList.item(0), pseudo);
 			}
 		} else {
 			throw new CSSException("Invalid margin property value");
@@ -117,49 +121,34 @@ public class CSSPropertyMarginSWTHandler extends
 
 	public String retrieveCSSPropertyMargin(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getMargin(element, TOP, pseudo)).append("px ");
+		sb.append(getMargin(element, RIGHT, pseudo)).append("px ");
+		sb.append(getMargin(element, BOTTOM, pseudo)).append("px ");
+		sb.append(getMargin(element, LEFT, pseudo)).append("px");
+		return sb.toString();
 	}
 
 	public String retrieveCSSPropertyMarginTop(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getMargin(element, TOP, pseudo) + "px";
 	}
 
 	public String retrieveCSSPropertyMarginRight(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getMargin(element, RIGHT, pseudo) + "px";
 	}
 
 	public String retrieveCSSPropertyMarginBottom(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getMargin(element, BOTTOM, pseudo) + "px";
 	}
 
 	public String retrieveCSSPropertyMarginLeft(Object element, String pseudo,
 			CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getMargin(element, LEFT, pseudo) + "px";
 	}
 
-	private GridLayout getLayout(Control control) {
-		if (control == null)
-			return null;
-		Composite parent = control.getParent();
-		if (parent == null)
-			return null;
-		if(parent.getData(CSSSWTConstants.MARGIN_WRAPPER_KEY) == null)
-			return null;
-		
-		Layout layout = parent.getLayout();
-		if (layout == null || ! (layout instanceof GridLayout))
-			return null;
-		return (GridLayout) layout;
-	}
-	
 	private void setMargin(Object element, int side, CSSValue value, String pseudo) {
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
@@ -170,22 +159,98 @@ public class CSSPropertyMarginSWTHandler extends
 		if(! (widget instanceof Control))
 			return;
 		
-		GridLayout layout = getLayout((Control) widget);
-		if(layout == null)
-			return;
-		switch (side) {
-		case TOP:
-			layout.marginTop = pixelValue;
-			break;
-		case RIGHT:
-			layout.marginRight = pixelValue;
-			break;
-		case BOTTOM:
-			layout.marginBottom = pixelValue;			
-			break;
-		case LEFT:
-			layout.marginLeft = pixelValue;
-			break;
+		Control control = (Control) widget;
+		Layout layout = control.getParent().getLayout();
+		Object layoutData = control.getLayoutData();
+
+		if (layout instanceof GridLayout) {
+			GridData data = layoutData instanceof GridData ? (GridData) layoutData
+					: new GridData();
+			if (data != null) {
+				switch (side) {
+				case TOP:
+				case BOTTOM:
+					data.verticalIndent = pixelValue;
+					break;
+				case RIGHT:
+				case LEFT:
+					data.horizontalIndent = pixelValue;
+					break;
+				}
+			}
+			layoutData = data;
+		} else if (layout instanceof FormLayout) {
+			FormData data = layoutData instanceof FormData ? (FormData) layoutData
+					: new FormData();
+			// unclear what should happen if no FormAttachment exists
+			switch (side) {
+			case TOP:
+				if (data.top != null) {
+					data.top.offset = pixelValue;
+				}
+				break;
+			case BOTTOM:
+				if (data.bottom != null) {
+					data.bottom.offset = pixelValue;
+				}
+				break;
+			case RIGHT:
+				if (data.right != null) {
+					data.right.offset = pixelValue;
+				}
+				break;
+			case LEFT:
+				if (data.left != null) {
+					data.left.offset = pixelValue;
+				}
+				break;
+			}
+			layoutData = data;
 		}
+		control.setLayoutData(layoutData);
 	}
+
+	private int getMargin(Object element, int side, String pseudo) {
+		Widget widget = SWTElementHelpers.getWidget(element);
+
+		if (!(widget instanceof Control))
+			return 0;
+
+		Control control = (Control) widget;
+		Layout layout = control.getParent().getLayout();
+		if (layout instanceof GridLayout) {
+			if (!(control.getLayoutData() instanceof GridData)) {
+				return 0;
+			}
+			GridData data = (GridData) control.getLayoutData();
+			if (data != null) {
+				switch (side) {
+				case TOP:
+				case BOTTOM:
+					return data.verticalIndent;
+				case RIGHT:
+				case LEFT:
+					return data.horizontalIndent;
+				}
+			}
+		} else if (layout instanceof FormLayout) {
+			if (!(control.getLayoutData() instanceof GridData)) {
+				return 0;
+			}
+			FormData data = (FormData) control.getLayoutData();
+			// could search other children to find their refs?
+			switch (side) {
+			case TOP:
+				return data.top != null ? data.top.offset : 0;
+			case BOTTOM:
+				return data.bottom != null ? data.bottom.offset : 0;
+			case RIGHT:
+				return data.right != null ? data.right.offset : 0;
+			case LEFT:
+				return data.left != null ? data.left.offset : 0;
+			}
+		}
+		return 0;
+	}
+
 }

@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.swt.SWT;
@@ -40,6 +39,10 @@ public class CTabItemTest extends CSSSWTTestCase {
 	}
 
 	private void spinEventLoop() {
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+		}
 		while (shell.getDisplay().readAndDispatch())
 			;
 	}
