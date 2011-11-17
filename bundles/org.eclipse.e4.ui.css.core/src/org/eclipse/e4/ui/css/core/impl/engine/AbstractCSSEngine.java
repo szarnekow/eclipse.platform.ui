@@ -289,17 +289,50 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	/*--------------- Parse CSS Selector -----------------*/
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.lang.
+	 * String)
+	 */
 	public SelectorList parseSelectors(String selector) throws IOException {
 		Reader reader = new StringReader(selector);
 		return parseSelectors(reader);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.io.Reader
+	 * )
+	 */
 	public SelectorList parseSelectors(Reader reader) throws IOException {
 		InputSource source = new InputSource();
 		source.setCharacterStream(reader);
 		return parseSelectors(source);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.io.
+	 * InputStream)
+	 */
+	public SelectorList parseSelectors(InputStream stream) throws IOException {
+		InputSource source = new InputSource();
+		source.setByteStream(stream);
+		return parseSelectors(source);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(org.w3c.css
+	 * .sac.InputSource)
+	 */
 	public SelectorList parseSelectors(InputSource source) throws IOException {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
