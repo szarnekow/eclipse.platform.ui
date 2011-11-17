@@ -78,7 +78,7 @@ public class ValueTest extends TestCase {
 		CSSValue value = engine.parsePropertyValue("url(./somepath/picture.gif)");
 		assertTrue(value instanceof Measure);
 		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_URI);
-		assertEquals( "./somepath/picture.gif", value.getCssText() );
+		assertEquals("url(./somepath/picture.gif)", value.getCssText());
 	}
 	
 	;	
