@@ -121,9 +121,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			String attName = (String) event
 					.getProperty(UIEvents.EventTags.ATTNAME);
-			if (element instanceof MMenuItem) {
-				MMenuItem itemModel = (MMenuItem) element;
-				if (UIEvents.UIElement.TOBERENDERED.equals(attName)) {
+			if (UIEvents.UIElement.TOBERENDERED.equals(attName)) {
+				if (element instanceof MMenuItem) {
+					MMenuItem itemModel = (MMenuItem) element;
 					Object obj = itemModel.getParent();
 					if (!(obj instanceof MMenu)) {
 						return;
@@ -144,8 +144,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 						}
 					}
 				}
-			}
-			if (UIEvents.UIElement.VISIBLE.equals(attName)) {
+			} else if (UIEvents.UIElement.VISIBLE.equals(attName)) {
 				if (element instanceof MMenu) {
 					MMenu menuModel = (MMenu) element;
 					MenuManager manager = getManager(menuModel);
@@ -690,8 +689,19 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		return null;
 	}
 
+	@SuppressWarnings("cast")
 	public MenuManager getManager(MMenu model) {
-		return modelToManager.get(model);
+		MenuManager mgr = modelToManager.get(model);
+		if (mgr == null
+				&& (Object) model.getParent() instanceof MMenuContribution) {
+			for (MMenu m : modelToManager.keySet()) {
+				if (m.getElementId().equals(model.getElementId())) {
+					mgr = modelToManager.get(m);
+					break;
+				}
+			}
+		}
+		return mgr;
 	}
 
 	public MMenu getMenuModel(MenuManager manager) {
