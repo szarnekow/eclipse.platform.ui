@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -205,6 +206,8 @@ public class ActionSet {
 	protected void addContribution(String idContrib, ArrayList<MMenuContribution> contributions,
 			IConfigurationElement element, boolean isMenu, String parentId) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution
+				.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
@@ -268,12 +271,15 @@ public class ActionSet {
 		}
 		menuContributionGroupIds.add(parentId + group);
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.setContributorURI(URIHelper.constructPlatformURI(configElement
+				.getContributor()));
 		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
 		menuContribution.setParentId(parentId);
 		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setContributorURI(URIHelper.constructPlatformURI(configElement.getContributor()));
 		sep.getTags().add(MenuManagerRenderer.GROUP_MARKER);
 		sep.setVisible(false);
 		sep.setElementId(group);
@@ -294,6 +300,7 @@ public class ActionSet {
 		toolBarContribution.setParentId(parentId);
 		toolBarContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		sep.setContributorURI(URIHelper.constructPlatformURI(configElement.getContributor()));
 		sep.setElementId(group);
 		sep.setVisible(false);
 		toolBarContribution.getChildren().add(sep);
@@ -376,6 +383,8 @@ public class ActionSet {
 
 		final String elementId = MenuHelper.getId(element);
 		MTrimContribution trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
+		trimContribution
+				.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 		trimContribution.getTags().add(ContributionsAnalyzer.MC_TOOLBAR);
 		trimContribution.getTags().add("scheme:toolbar"); //$NON-NLS-1$
 		if (idContrib != null && idContrib.length() > 0) {
@@ -387,6 +396,7 @@ public class ActionSet {
 		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$		trimContribution.setVisibleWhen(createVisibleWhen());
 		MToolBar tb = MenuFactoryImpl.eINSTANCE.createToolBar();
 		tb.setElementId(tpath);
+		tb.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 		trimContribution.getChildren().add(tb);
 		trimContributions.add(trimContribution);
 	}
@@ -394,6 +404,8 @@ public class ActionSet {
 	private void processGroups(String idContrib, ArrayList<MMenuContribution> contributions,
 			IConfigurationElement element) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution
+				.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
@@ -411,6 +423,7 @@ public class ActionSet {
 			String tag = sepAddition.getName();
 			MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 			sep.setElementId(name);
+			sep.setContributorURI(URIHelper.constructPlatformURI(sepAddition.getContributor()));
 			if ("groupMarker".equals(tag)) { //$NON-NLS-1$
 				sep.setVisible(false);
 				sep.getTags().add(MenuManagerRenderer.GROUP_MARKER);

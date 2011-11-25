@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
@@ -78,6 +79,8 @@ public class ViewRegistry implements IViewRegistry {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
 					MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
 					descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+					descriptor.setContributorURI(URIHelper.constructPlatformURI(element
+							.getContributor()));
 					String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 					descriptor.setElementId(id);
 					if (id.equals(IPageLayout.ID_RES_NAV)

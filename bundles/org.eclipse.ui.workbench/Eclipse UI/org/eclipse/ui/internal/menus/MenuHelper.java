@@ -37,6 +37,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -425,6 +426,7 @@ public class MenuHelper {
 		MMenu element = MenuFactoryImpl.eINSTANCE.createMenu();
 		String id = MenuHelper.getId(menuAddition);
 		element.setElementId(id);
+		element.setContributorURI(URIHelper.constructPlatformURI(menuAddition.getContributor()));
 		String text = MenuHelper.getLabel(menuAddition);
 		String mnemonic = MenuHelper.getMnemonic(menuAddition);
 		if (text != null && mnemonic != null) {
@@ -476,6 +478,7 @@ public class MenuHelper {
 				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MRenderedMenuItem item = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 			item.setLabel(text);
+			item.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 			if (iconUri != null) {
 				item.setIconURI(iconUri);
 			}
@@ -516,6 +519,7 @@ public class MenuHelper {
 		if (iconUri != null) {
 			item.setIconURI(iconUri);
 		}
+		item.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 		return item;
 	}
 
@@ -552,6 +556,7 @@ public class MenuHelper {
 			app.getCommands().add(cmd);
 		}
 		final MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+		item.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
 		if (style == null || style.length() == 0) {
@@ -566,6 +571,7 @@ public class MenuHelper {
 			item.setType(ItemType.RADIO);
 		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menu.setContributorURI(URIHelper.constructPlatformURI(element.getContributor()));
 			ECommandService cs = app.getContext().get(ECommandService.class);
 			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
 			IContextFunction generator = new ContextFunction() {

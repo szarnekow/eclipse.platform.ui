@@ -18,7 +18,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -110,6 +112,7 @@ public class MenuAdditionCacheEntry {
 		if (idContrib != null && idContrib.length() > 0) {
 			menuContribution.setElementId(idContrib);
 		}
+		setContributorURI(menuContribution, configElement);
 		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
 			menuContribution.setParentId("popup"); //$NON-NLS-1$
 		} else {
@@ -132,6 +135,10 @@ public class MenuAdditionCacheEntry {
 		processMenuChildren(menuContributions, configElement, filter);
 	}
 
+	private void setContributorURI(MApplicationElement element, IConfigurationElement ce) {
+		element.setContributorURI(URIHelper.constructPlatformURI(configElement.getContributor()));
+	}
+
 	/**
 	 * @param menuContributions
 	 * @param filter
@@ -148,6 +155,7 @@ public class MenuAdditionCacheEntry {
 			if (idContrib != null && idContrib.length() > 0) {
 				menuContribution.setElementId(idContrib);
 			}
+			setContributorURI(menuContribution, configElement);
 			menuContribution.setParentId(idContrib);
 			menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 			menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
@@ -192,6 +200,7 @@ public class MenuAdditionCacheEntry {
 
 				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 				menuItem.setElementId(id);
+				setContributorURI(menuItem, child);
 				menuItem.setContributionItem(generator);
 				container.getChildren().add(menuItem);
 			}
@@ -205,6 +214,7 @@ public class MenuAdditionCacheEntry {
 	private MMenuElement createMenuCommandAddition(IConfigurationElement commandAddition) {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.setElementId(MenuHelper.getId(commandAddition));
+		setContributorURI(item, commandAddition);
 		String commandId = MenuHelper.getCommandId(commandAddition);
 		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
 		if (commandById == null) {
@@ -248,6 +258,7 @@ public class MenuAdditionCacheEntry {
 		String name = MenuHelper.getName(sepAddition);
 		MMenuElement element = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 		element.setElementId(name);
+		setContributorURI(element, sepAddition);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
 			element.setVisible(false);
 			element.getTags().add(MenuManagerRenderer.GROUP_MARKER);
@@ -281,6 +292,7 @@ public class MenuAdditionCacheEntry {
 		if (idContrib != null && idContrib.length() > 0) {
 			trimContribution.setElementId(idContrib);
 		}
+		setContributorURI(trimContribution, element);
 		trimContribution.setParentId(location.getPath());
 		String query = location.getQuery();
 		if (query == null || query.length() == 0) {
@@ -291,6 +303,7 @@ public class MenuAdditionCacheEntry {
 		for (IConfigurationElement toolbar : toolbars) {
 			MToolBar item = MenuFactoryImpl.eINSTANCE.createToolBar();
 			item.setElementId(MenuHelper.getId(toolbar));
+			setContributorURI(item, element);
 			processToolbarChildren(toolBarContributions, toolbar, item.getElementId(),
 					"after=additions"); //$NON-NLS-1$
 			trimContribution.getChildren().add(item);
@@ -334,6 +347,7 @@ public class MenuAdditionCacheEntry {
 		String id = MenuHelper.getId(element);
 		MToolControl control = MenuFactoryImpl.eINSTANCE.createToolControl();
 		control.setElementId(id);
+		setContributorURI(control, element);
 		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
 		ControlContributionRegistry.add(id, element);
 		return control;
@@ -343,6 +357,7 @@ public class MenuAdditionCacheEntry {
 		String name = MenuHelper.getName(sepAddition);
 		MToolBarElement element = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 		element.setElementId(name);
+		setContributorURI(element, sepAddition);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
 			element.setToBeRendered(false);
 		}
@@ -352,6 +367,7 @@ public class MenuAdditionCacheEntry {
 	private MToolBarElement createToolBarCommandAddition(final IConfigurationElement commandAddition) {
 		MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 		item.setElementId(MenuHelper.getId(commandAddition));
+		setContributorURI(item, commandAddition);
 		String commandId = MenuHelper.getCommandId(commandAddition);
 		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
 		if (commandById == null) {
